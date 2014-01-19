@@ -15,16 +15,28 @@
 
 #define NULL								0
 
-typedef struct AEPoint {
+struct AEPoint {
+
 	FLOAT x, y;
+
+	AEPoint(FLOAT _x, FLOAT _y) {
+		_x = x;  _y = y;
+	}
+
 };
 
-typedef struct AERect {
+struct AERect {
+
 	FLOAT x1, y1, x2, y2;
+
+	AERect(FLOAT _x1, FLOAT _y1, FLOAT _x2, FLOAT _y2) {
+		x1 = _x1;  y1 = _y1;  x2 = _x2;  y2 = _y2;
+	}
+
 };
 
 
-typedef struct AEBiasRect {
+struct AEBiasRect {
 	FLOAT x1, y1, x2, y2, x3, y3, x4, y4;
 };
 
@@ -56,8 +68,6 @@ public:
 	static FLOAT calcDistance(AEPoint p1, AEPoint p2) { return sqrtf((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)); }
 	static INT randomIntBetween(INT start, INT end) { return (rand() % (end - start + 1)) + start; }
 	static FLOAT randomClampf() { return rand() / double(RAND_MAX); }
-	static AEPoint createPoint(FLOAT _x, FLOAT _y) { AEPoint p;  p.x = _x;  p.y = _y;  return p; }
-	static AERect createRect(FLOAT _x1, FLOAT _y1, FLOAT _x2, FLOAT _y2) { AERect r;  r.x1 = _x1;  r.y1 = _y1;  r.x2 = _x2;  r.y2 = _y2;  return r; }
 	
 	static AERect getInversedRect(AERect r, INT direction);
 	static AEBiasRect getInversedRect(AEBiasRect r, INT direction);

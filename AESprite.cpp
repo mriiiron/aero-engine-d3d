@@ -12,9 +12,10 @@ extern AEResourceTable rTable;
 extern AEObjectTable oTable;
 
 AESprite::AESprite(AERO_SPRITE_DESC desc, AEScene* _sceneRef) {
+	index = 0;
 	oid = desc.oid;  team = desc.team;  cx = desc.cx;  cy = desc.cy;
 	vx = vy = ax = ay = angle = vangle = gndSpeed = 0.0f;
-	frame = time = facing = timeToStiff = keyState = atkJudgeLock = 0;
+	frameNum = time = facing = timeToStiff = keyState = atkJudgeLock = 0;
 	sceneRef = _sceneRef;
 	AEBackground* bg = sceneRef->getBackground();
 	onLandform = (bg == NULL ? -1 : bg->getLandformIndexBelow(INT(cx), INT(cy), &drop));

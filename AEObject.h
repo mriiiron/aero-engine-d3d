@@ -11,13 +11,13 @@
 
 
 #include <string>
-#include "AEObjAnimation.h"
+#include "AEAnimation.h"
 
 
 // Types of Objects.
-typedef enum _ObjType {
+typedef enum AEObjType {
 	OBJ_UNKNOWN, OBJ_CHARACTER, OBJ_PROJECTILE
-} ObjType;
+};
 
 
 // OBJECT: a complex union consists of various kinds of data:
@@ -38,26 +38,18 @@ public:
 
 	static const INT MAX_OBJECT_ACTIONS		= 100;
 
-	VOID addAnimToSlot(INT slot, AEAnimation* _anim) { anim[slot] = _anim; }
-	VOID setOid(INT _oid) { oid = _oid; }
-	VOID setName(std::string _name) { name = _name; }
-	VOID setType(INT _type) {
-		switch (_type) {
-		case 0: otype = OBJ_CHARACTER;  break;
-		case 1: otype = OBJ_PROJECTILE;  break;
-		default: break;
-		}
-	}
-	AEAnimation* getAnim(INT index) { return anim[index]; }
-	ObjType getType() { return otype; }
+	AEObject(AERO_OBJECT_DESC desc, AEAnimation** _animTable);
+	VOID addAnimToSlot(INT slot, AEAnimation* _anim) { animTable[slot] = _anim; }
+	AEAnimation* getAnim(INT index) { return animTable[index]; }
+	AEObjType getType() { return otype; }
 	std::string getName() { return name; }
 
 private:
 
 	INT oid;
 	std::string name;
-	AEAnimation* anim[MAX_OBJECT_ACTIONS];
-	ObjType otype;
+	AEAnimation* animTable[MAX_OBJECT_ACTIONS];
+	AEObjType otype;
 
 };
 
@@ -66,28 +58,12 @@ struct AERO_OBJECT_DESC {
 
 	INT oid;
 	std::string name;
-	ObjType otype;
+	AEObjType otype;
 
 	AERO_OBJECT_DESC() {
 		oid = 0;
 		name = "Unknown Object";
 		otype = OBJ_UNKNOWN;
 	}
-
-};
-
-
-class AEObjectTable {
-
-public:
-
-	static const INT MAX_TOTAL_OBJECTS		= 100;
-
-	VOID addAt(INT index, AEObject* obj) { table[index] = obj; }
-	AEObject* get(INT index) { return table[index]; }
-
-private:
-
-	AEObject* table[MAX_TOTAL_OBJECTS];
 
 };

@@ -46,28 +46,3 @@ protected:
 	INT index;
 
 };
-
-class AEAITable {
-
-public:
-
-	static const INT MAX_ONLINE_AIS = 120;
-
-	AEAITable();
-	AEAI* get(INT index) { return table[index]; }
-	AEAI* getByHash(INT hashIndex) { return table[hash[hashIndex]]; }
-	INT getHashCount() { return pHash; }
-	VOID add(AEAI* ai);
-	VOID addAt(INT index, AEAI* sp);
-	VOID remove(INT index);
-	VOID clear();
-	VOID update();
-
-private:
-
-	AEAI* table[MAX_ONLINE_AIS];
-	INT occupied[MAX_ONLINE_AIS];
-	INT hash[MAX_ONLINE_AIS];
-	INT maxIndex, pHash;
-
-};

@@ -19,6 +19,7 @@ public:
 
 	static const INT MAX_ATTRIB_COUNT			= 20;
 	
+	AEFrame(AERO_FRAME_DESC desc);
 	VOID setImageFromRes(AEResource* _res, INT _imgOffset, INT _imgCells) { res = _res;  imgOffset = _imgOffset;  imgCells = _imgCells; }
 	VOID setSize(INT _width, INT _height) { width = _width;  height = _height; }
 	VOID setCenter(INT _centerx, INT _centery) { centerx = _centerx;  centery = _centery; }
@@ -45,7 +46,7 @@ private:
 	INT imgOffset, imgCells;
 	INT width, height, centerx, centery;
 	INT shiftx, shifty, dvx, dvy;
-	AEFrameOptional* optionalParam[MAX_ATTRIB_COUNT];
+	AEFrameAttrib* attrib[MAX_ATTRIB_COUNT];
 
 };
 
@@ -66,27 +67,28 @@ struct AERO_FRAME_DESC {
 
 };
 
+
 // Animation Class: Arranges what and how frames should be displayed.
 class AEAnimation {
 
 public:
 
-	static const INT MAX_FRAMES				= 100;
+	static const INT MAX_FRAME_COUNT			= 100;
 
-	AEAnimation(INT _frameCount);
+	AEAnimation(AERO_ANIMATION_DESC desc, AEFrame** _frameTable, INT* _endTimeTable);
 	
 	VOID cloneFrame(INT srcIndex, INT dstIndex);
 	VOID setLoop(INT _isLoop) { isAnimLoop = _isLoop; }
 	VOID setState(INT _state) { state = _state; }
 	VOID setNext(INT _next) { next = _next; }
 	VOID setTTL(INT _timeToLive) { timeToLive = _timeToLive; }
-	VOID setEndTime(INT index, INT _endTime) { endTime[index] = _endTime; }
-	VOID setFrameCenter(INT index, INT _centerx, INT _centery) { frame[index]->setCenter(_centerx, _centery); }
-	VOID setShift(INT index, INT _shiftx, INT _shifty) { frame[index]->setShift(_shiftx, _shifty); }
-	VOID setDv(INT index, INT _dvx, INT _dvy) { frame[index]->setDv(_dvx, _dvy); }
+	VOID setEndTime(INT index, INT _endTime) { endTimeTable[index] = _endTime; }
+	VOID setFrameCenter(INT index, INT _centerx, INT _centery) { frameTable[index]->setCenter(_centerx, _centery); }
+	VOID setShift(INT index, INT _shiftx, INT _shifty) { frameTable[index]->setShift(_shiftx, _shifty); }
+	VOID setDv(INT index, INT _dvx, INT _dvy) { frameTable[index]->setDv(_dvx, _dvy); }
 	VOID setFrameImage(INT index, INT _rid, INT _offset, INT _cells);
-	AEFrame* getFrame(INT index) { return frame[index]; }
-	INT getEndTime(INT index) { return endTime[index]; }
+	AEFrame* getFrame(INT index) { return frameTable[index]; }
+	INT getEndTime(INT index) { return endTimeTable[index]; }
 	INT getFrameCount() { return frameCount; }
 	BOOLEAN isLoop() { return isAnimLoop; }
 	INT getNext() { return next; }
@@ -99,8 +101,8 @@ private:
 
 	// Defining frames. Each frame has a time value to indicate that when it would change to next frame.
 	INT frameCount;
-	AEFrame* frame[MAX_FRAMES];
-	INT* endTime;
+	AEFrame* frameTable[MAX_FRAME_COUNT];
+	INT endTimeTable[MAX_FRAME_COUNT];
 
 	// Indicating whether this animation is loopable.
 	// If so, then we should define its time to live. When it is expired, it would change to its next animation.
@@ -111,5 +113,22 @@ private:
 
 	// When displaying this Animation, the object is at which state.
 	INT state;
+
+};
+
+
+struct AERO_ANIMATION_DESC {
+
+	INT frameCount;
+	INT timeToLive, next;
+	BOOLEAN isAnimLoop;
+	INT state;
+
+	AERO_ANIMATION_DESC() {
+		frameCount = 0;
+		timeToLive = next = 0;
+		isAnimLoop = FALSE;
+		state = 0;
+	}
 
 };

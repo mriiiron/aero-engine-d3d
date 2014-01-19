@@ -15,24 +15,6 @@
 #include "AEKeyboard.h"
 #include "AEObject.h"
 
-struct AERO_SPRITE_DESC {
-
-	INT oid;
-	INT team;
-	FLOAT cx;
-	FLOAT cy;
-	INT action;
-	INT inverse;
-
-	AERO_SPRITE_DESC() {
-		oid = team = 0;
-		cx = cy = 0.0f;
-		action = 0;
-		inverse = AESprite::FACING_RIGHT;
-	}
-
-};
-
 
 class AEScene;
 
@@ -62,7 +44,7 @@ public:
 	VOID setVAngle(FLOAT _vangle) { vangle = _vangle; }
 	VOID setGroundSpeed(FLOAT _speed) { gndSpeed = _speed; }
 	VOID setAngle(FLOAT _angle) { angle = _angle; }
-	VOID rotateDeg(FLOAT degree) { angle += AEUtil::deg2rad(degree); }
+	VOID rotateDeg(FLOAT degree) { angle += AEMath::deg2rad(degree); }
 	VOID rotateRad(FLOAT rad) { angle += rad; }
 	VOID setFacing(INT _facing) { facing = _facing; }
 	VOID turnOver() { facing = 1 - facing; }
@@ -79,7 +61,7 @@ public:
 	INT getIndex() { return index; }
 	INT getOid() { return oid; }
 	INT getAction() { return action; }
-	INT getFrame() { return frame; }
+	INT getFrameNum() { return frameNum; }
 	INT getState() { return state; }
 	INT getTeam() { return team; }
 	INT getStiffTime() { return timeToStiff; }
@@ -101,27 +83,10 @@ public:
 	/* CHARACTER ONLY */
 	INT getKeyState() { return keyState; }
 	INT getHP() { return hpValue; }
-	AEScene* getScene() { return scene; }
+	AEScene* getSceneRef() { return sceneRef; }
 	AEKeyboardHandler* getKeyboardHandler() { return keyboardHandler; }
 	VOID takeDamage(INT damage) { hpValue -= damage; }
-	//VOID pressUp();
-	//VOID pressDown();
-	//VOID pressLeft();
-	//VOID pressRight();
-	//VOID pressAttack();
-	//VOID pressJump();
-	//VOID pressDefend();
-	//VOID pressForward();
-	//VOID pressBackward();
-	//VOID releaseUp();
-	//VOID releaseDown();
-	//VOID releaseLeft();
-	//VOID releaseRight();
-	//VOID releaseAttack();
-	//VOID releaseJump();
-	//VOID releaseDefend();
-	//VOID input(INT _input);
-	string getObjName();
+	std::string getObjName();
 	VOID changeAction(INT _action);
 	VOID toNextFrame(AEAnimation anim);
 	VOID paintShadow();
@@ -133,7 +98,7 @@ public:
 
 protected:
 
-	INT index, oid, action, frame, time, timeToLive, timeToStiff;
+	INT index, oid, action, frameNum, time, timeToLive, timeToStiff;
 	FLOAT cx, cy, vx, vy, ax, ay, angle, vangle, gndSpeed;
 	INT state, team, keyState, drop, onLandform;
 	BYTE facing, atkJudgeLock;
@@ -145,29 +110,20 @@ protected:
 };
 
 
-class AESpriteTable {
+struct AERO_SPRITE_DESC {
 
-public:
+	INT oid;
+	INT team;
+	FLOAT cx;
+	FLOAT cy;
+	INT action;
+	INT inverse;
 
-	static const INT MAX_ONLINE_SPRITES		= 120;
-
-	AESpriteTable();
-	AESprite* get(INT index) { return table[index]; }
-	AESprite* getByHash(INT hashIndex) { return table[hash[hashIndex]]; }
-	INT getHashCount() { return pHash; }
-	VOID add(AESprite* sp);
-	VOID addAt(INT index, AESprite* sp);
-	VOID remove(INT index);
-	VOID clear();
-	VOID handleCollisions();
-	VOID update();
-	VOID paint();
-
-private:
-
-	AESprite* table[MAX_ONLINE_SPRITES];
-	INT occupied[MAX_ONLINE_SPRITES];
-	INT hash[MAX_ONLINE_SPRITES];
-	INT maxIndex, pHash;
+	AERO_SPRITE_DESC() {
+		oid = team = 0;
+		cx = cy = 0.0f;
+		action = 0;
+		inverse = AESprite::FACING_RIGHT;
+	}
 
 };
