@@ -30,7 +30,7 @@ class AEHeadUpDisplay {
 
 public:
 
-	static const INT MAX_TEXT_COUNT			= 30;
+	static const INT MAX_TEXT_COUNT				= 30;
 	static const INT MAX_IMAGE_COUNT			= 30;
 
 	AEHeadUpDisplay();

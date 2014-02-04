@@ -14,19 +14,19 @@
 #pragma once
 
 
-typedef struct AELandformElem {
+struct AELandformElem {
 	INT altitude;
 	FLOAT slope;
 };
 
 
-typedef struct AELandform {
+struct AELandform {
 	AELandformElem* data;
 	INT left, right;
 };
 
 
-typedef struct AEBGLayerFrame {
+struct AEBGLayerFrame {
 	INT width, height;
 	INT rid;
 	INT imgOffset;
@@ -54,7 +54,7 @@ private:
 };
 
 
-typedef struct AEAnimRef {
+struct AEAnimRef {
 	INT x, y;
 	INT animIndex;
 	INT time, frame;
@@ -92,6 +92,23 @@ private:
 };
 
 
+struct AERO_BACKGROUND_DESC {
+
+	std::string name;
+	FLOAT locX, locY;
+	INT width, height;
+	INT layerCount, landformCount;
+
+	AERO_BACKGROUND_DESC() {
+		name = "Unknown Background";
+		locX = locY = 0.0f;
+		width = height = 0;
+		layerCount = landformCount = 0;
+	}
+
+};
+
+
 class AEBackground {
 
 public:
@@ -106,8 +123,8 @@ public:
 	INT getYonBG(INT cy) { return cy - INT(location.y); }
 	INT getAELandformIndexBelow(INT cx, INT cy, INT* drop);
 	AELandform* getAELandform(INT index) { return landformTable[index]; }
-	VOID loadAELandformsFromMonochrome(GLubyte* pixels, INT width, INT height, INT byteLine);
-	VOID loadAELandforms(GLubyte* pixels, INT width, INT height);
+	VOID loadAELandformsFromMonochrome(BYTE* pixels, INT width, INT height, INT byteLine);
+	VOID loadAELandforms(BYTE* pixels, INT width, INT height);
 	VOID addAnimAt(INT index, AEBGLayerAnim layerAnim);
 	VOID update();
 	VOID paint(AEPoint cameraCenter);
@@ -127,23 +144,6 @@ private:
 	AEBGLayer* layerTable[MAX_LAYER_COUNT];
 	AELandform* landformTable[MAX_LANDFORM_COUNT];
 	AEBGLayerAnim* animTable[MAX_ANIM_COUNT];
-
-};
-
-
-struct AERO_BACKGROUND_DESC {
-
-	std::string name;
-	FLOAT locX, locY;
-	INT width, height;
-	INT layerCount, landformCount;
-
-	AERO_BACKGROUND_DESC() {
-		name = "Unknown Background";
-		locX = locY = 0.0f;
-		width = height = 0;
-		layerCount = landformCount = 0;
-	}
 
 };
 

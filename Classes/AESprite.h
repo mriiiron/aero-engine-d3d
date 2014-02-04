@@ -12,11 +12,29 @@
 
 #pragma once
 
-#include "AEKeyboard.h"
 #include "AEObject.h"
 
 
 class AEScene;
+
+
+struct AERO_SPRITE_DESC {
+
+	INT oid;
+	INT team;
+	FLOAT cx;
+	FLOAT cy;
+	INT action;
+	INT inverse;
+
+	AERO_SPRITE_DESC() {
+		oid = team = 0;
+		cx = cy = 0.0f;
+		action = 0;
+		inverse = 0;
+	}
+
+};
 
 
 class AESprite {
@@ -32,8 +50,7 @@ public:
 	static const INT FACING_RIGHT				= 0;
 	static const INT FACING_LEFT				= 1;
 
-	AESprite(AERO_SPRITE_DESC desc, AEScene* sceneRef);
-	~AESprite() { delete keyboardHandler; }
+	AESprite(AERO_SPRITE_DESC desc);
 	
 	VOID setIndex(INT _index) { index = _index; }
 	VOID setState(INT _state) { state = _state; }
@@ -44,7 +61,7 @@ public:
 	VOID setVAngle(FLOAT _vangle) { vangle = _vangle; }
 	VOID setGroundSpeed(FLOAT _speed) { gndSpeed = _speed; }
 	VOID setAngle(FLOAT _angle) { angle = _angle; }
-	VOID rotateDeg(FLOAT degree) { angle += AEMath::deg2rad(degree); }
+	VOID rotateDeg(FLOAT degree) { angle += AENSMath::deg2rad(degree); }
 	VOID rotateRad(FLOAT rad) { angle += rad; }
 	VOID setFacing(INT _facing) { facing = _facing; }
 	VOID turnOver() { facing = 1 - facing; }
@@ -65,26 +82,23 @@ public:
 	INT getState() { return state; }
 	INT getTeam() { return team; }
 	INT getStiffTime() { return timeToStiff; }
-	INT getGroundSpeed() { return gndSpeed; }
+	FLOAT getGroundSpeed() { return gndSpeed; }
 	FLOAT getCx() { return cx; }
 	FLOAT getCy() { return cy; }
-	AEPoint getCenter() { return AEUtil::createPoint(cx, cy); }
+	AEPoint getCenter() { return AEPoint(cx, cy); }
 	FLOAT getAngle() { return angle; }
 	FLOAT getVx() { return vx; }
 	FLOAT getVy() { return vy; }
 	FLOAT getVAngle() { return vangle; }
 	FLOAT getAx() { return ax; }
 	FLOAT getAy() { return ay; }
-	AEVector2 getFaceVector();
 	BOOLEAN inputStateJudge(INT _input);
 	INT log2(INT key);
-	AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, GLbyte facing);
-	AEBiasRect calcRotatedRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, GLbyte facing);
+	AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
+	AEBiasRect calcRotatedRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
 	/* CHARACTER ONLY */
 	INT getKeyState() { return keyState; }
 	INT getHP() { return hpValue; }
-	AEScene* getSceneRef() { return sceneRef; }
-	AEKeyboardHandler* getKeyboardHandler() { return keyboardHandler; }
 	VOID takeDamage(INT damage) { hpValue -= damage; }
 	std::string getObjName();
 	VOID changeAction(INT _action);
@@ -103,27 +117,6 @@ protected:
 	INT state, team, keyState, drop, onLandform;
 	BYTE facing, atkJudgeLock;
 	INT hpValue, hpMax;
-	
-	AEScene* sceneRef;
-	AEKeyboardHandler* keyboardHandler;
-
-};
-
-
-struct AERO_SPRITE_DESC {
-
-	INT oid;
-	INT team;
-	FLOAT cx;
-	FLOAT cy;
-	INT action;
-	INT inverse;
-
-	AERO_SPRITE_DESC() {
-		oid = team = 0;
-		cx = cy = 0.0f;
-		action = 0;
-		inverse = AESprite::FACING_RIGHT;
-	}
+	BOOLEAN deadFlag;
 
 };

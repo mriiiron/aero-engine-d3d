@@ -13,6 +13,23 @@ public:
 };
 
 
+struct AERO_FRAME_DESC {
+
+	AEResource* res;
+	INT imgOffset, imgCells;
+	INT width, height, centerx, centery;
+	INT shiftx, shifty, dvx, dvy;
+
+	AERO_FRAME_DESC() {
+		res = nullptr;
+		imgOffset = imgCells = 0;
+		width = height = centerx = centery = 0;
+		shiftx = shifty = dvx = dvy = 0;
+	}
+
+};
+
+
 class AEFrame {
 
 public:
@@ -37,7 +54,7 @@ public:
 	INT getDvx() { return dvx; }
 	INT getDvy() { return dvy; }
 
-	AEFrameAttrib* getOptional(INT index) { return optionalParam[index]; }
+	AEFrameAttrib* getOptional(INT index) { return attrib[index]; }
 	VOID addOptionalByStrAt(std::string line);
 
 private:
@@ -51,18 +68,18 @@ private:
 };
 
 
-struct AERO_FRAME_DESC {
+struct AERO_ANIMATION_DESC {
 
-	AEResource* res;
-	INT imgOffset, imgCells;
-	INT width, height, centerx, centery;
-	INT shiftx, shifty, dvx, dvy;
+	INT frameCount;
+	INT timeToLive, next;
+	BOOLEAN isAnimLoop;
+	INT state;
 
-	AERO_FRAME_DESC() {
-		res = nullptr;
-		imgOffset = imgCells = 0;
-		width = height = centerx = centery = 0;
-		shiftx = shifty = dvx = dvy = 0;
+	AERO_ANIMATION_DESC() {
+		frameCount = 0;
+		timeToLive = next = 0;
+		isAnimLoop = FALSE;
+		state = 0;
 	}
 
 };
@@ -113,22 +130,5 @@ private:
 
 	// When displaying this Animation, the object is at which state.
 	INT state;
-
-};
-
-
-struct AERO_ANIMATION_DESC {
-
-	INT frameCount;
-	INT timeToLive, next;
-	BOOLEAN isAnimLoop;
-	INT state;
-
-	AERO_ANIMATION_DESC() {
-		frameCount = 0;
-		timeToLive = next = 0;
-		isAnimLoop = FALSE;
-		state = 0;
-	}
 
 };

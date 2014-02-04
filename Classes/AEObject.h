@@ -15,8 +15,23 @@
 
 
 // Types of Objects.
-typedef enum AEObjType {
+enum AEObjType {
 	OBJ_UNKNOWN, OBJ_CHARACTER, OBJ_PROJECTILE
+};
+
+
+struct AERO_OBJECT_DESC {
+
+	INT oid;
+	std::string name;
+	AEObjType otype;
+
+	AERO_OBJECT_DESC() {
+		oid = 0;
+		name = "Unknown Object";
+		otype = OBJ_UNKNOWN;
+	}
+
 };
 
 
@@ -50,20 +65,5 @@ private:
 	std::string name;
 	AEAnimation* animTable[MAX_OBJECT_ACTIONS];
 	AEObjType otype;
-
-};
-
-
-struct AERO_OBJECT_DESC {
-
-	INT oid;
-	std::string name;
-	AEObjType otype;
-
-	AERO_OBJECT_DESC() {
-		oid = 0;
-		name = "Unknown Object";
-		otype = OBJ_UNKNOWN;
-	}
 
 };

@@ -28,8 +28,7 @@ public:
 
 	virtual VOID update();
 	virtual VOID paint();
-	virtual VOID keyDown(GLubyte key, int x, int y) = 0;
-	virtual VOID keyUp(GLubyte key, int x, int y) = 0;
+	virtual VOID processInput(CHAR* pKeyStateBuffer) = 0;
 
 protected:
 

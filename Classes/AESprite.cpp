@@ -4,100 +4,84 @@
 #include "AEMath.h"
 #include "AEPhysics.h"
 #include "AEResource.h"
+#include "AETable.h"
 #include "AEBackground.h"
-#include "AEScene.h"
 #include "AESprite.h"
 
-extern AEResourceTable rTable;
-extern AEObjectTable oTable;
+extern AEConstantTable<AEResource, 100>			resourceTable;
+extern AEConstantTable<AEObject, 100>			objectTable;
 
-AESprite::AESprite(AERO_SPRITE_DESC desc, AEScene* _sceneRef) {
+AESprite::AESprite(AERO_SPRITE_DESC desc) {
+	state = 0;
 	index = 0;
 	oid = desc.oid;  team = desc.team;  cx = desc.cx;  cy = desc.cy;
 	vx = vy = ax = ay = angle = vangle = gndSpeed = 0.0f;
 	frameNum = time = facing = timeToStiff = keyState = atkJudgeLock = 0;
-	sceneRef = _sceneRef;
-	AEBackground* bg = sceneRef->getBackground();
-	onLandform = (bg == NULL ? -1 : bg->getLandformIndexBelow(INT(cx), INT(cy), &drop));
+	onLandform = 0;
 	hpValue = hpMax = 100;
 	if (desc.inverse)
 		turnOver();
 	if (oid >= 0)
 		changeAction(desc.action);
-	keyboardHandler = NULL;
+	deadFlag = FALSE;
 }
 
-AEVector2 AESprite::getFaceVector() {
-	if (angle == 3.14159265f / 2) {
-		return AEVector2(0.0f, 1.0f);
-	}
-	else if (angle == -3.14159265f / 2) {
-		return AEVector2(0.0f, -1.0f);
-	}
-	else if (angle > -3.14159265f / 2 && angle < 3.14159265f / 2) {
-		return AEVector2(1.0f, tan(angle));
-	}
-	else {
-		return AEVector2(-1.0f, -tan(angle));
-	}
-}
-
-AEPoint AESprite::calcRotatedPoint(AEPoint point, GLfloat cx, GLfloat cy, AEFrame* f, GLfloat angle, GLbyte facing) {
-	GLfloat cosA = cos(angle), sinA = sin(angle);
-	AEPoint rotated;
+AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing) {
+	FLOAT cosA = cos(angle), sinA = sin(angle);
+	FLOAT x, y;
 	if (facing == FACING_RIGHT) {
-		rotated.x = cx + (point.x - f->getCenterx()) * cosA - (point.y - f->getCentery()) * sinA;
-		rotated.y = cy + (point.x - f->getCenterx()) * sinA + (point.y - f->getCentery()) * cosA;
+		x = cx + (point.x - f->getCenterx()) * cosA - (point.y - f->getCentery()) * sinA;
+		y = cy + (point.x - f->getCenterx()) * sinA + (point.y - f->getCentery()) * cosA;
 	}
 	else {
-		rotated.x = cx - (point.x - f->getCenterx()) * cosA + (point.y - f->getCentery()) * sinA;
-		rotated.y = cy + (point.x - f->getCenterx()) * sinA + (point.y - f->getCentery()) * cosA;
+		x = cx - (point.x - f->getCenterx()) * cosA + (point.y - f->getCentery()) * sinA;
+		y = cy + (point.x - f->getCenterx()) * sinA + (point.y - f->getCentery()) * cosA;
 	}
-	return rotated;
+	return AEPoint(x, y);
 }
 
-AEBiasRect AESprite::calcRotatedRect(GLfloat cx, GLfloat cy, AEFrame* f, GLfloat angle, GLbyte facing) {
-	GLfloat cosA = cos(angle), sinA = sin(angle);
-	AEBiasRect bRect;
+AEBiasRect AESprite::calcRotatedRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing) {
+	FLOAT cosA = cos(angle), sinA = sin(angle);
 	INT centerx = f->getCenterx(), centery = f->getCentery();
 	INT width = f->getWidth(), height = f->getHeight();
+	FLOAT x1, y1, x2, y2, x3, y3, x4, y4;
 	if (facing == FACING_RIGHT) {
-		bRect.x1 = cx - centerx * cosA + centery * sinA;
-		bRect.y1 = cy - centerx * sinA - centery * cosA;
-		bRect.x2 = bRect.x1 + width * cosA;
-		bRect.y2 = bRect.y1 + width * sinA;
-		bRect.x3 = bRect.x2 - height * sinA;
-		bRect.y3 = bRect.y2 + height * cosA;
-		bRect.x4 = bRect.x1 - height * sinA;
-		bRect.y4 = bRect.y1 + height * cosA;
+		x1 = cx - centerx * cosA + centery * sinA;
+		y1 = cy - centerx * sinA - centery * cosA;
+		x2 = x1 + width * cosA;
+		y2 = y1 + width * sinA;
+		x3 = x2 - height * sinA;
+		y3 = y2 + height * cosA;
+		x4 = x1 - height * sinA;
+		y4 = y1 + height * cosA;
 	}
 	else {
-		bRect.x2 = cx + centerx * cosA - centery * sinA;
-		bRect.y2 = cy - centerx * sinA - centery * cosA;
-		bRect.x1 = bRect.x2 - width * cosA;
-		bRect.y1 = bRect.y2 + width * sinA;
-		bRect.x3 = bRect.x2 + height * sinA;
-		bRect.y3 = bRect.y2 + height * cosA;
-		bRect.x4 = bRect.x1 + height * sinA;
-		bRect.y4 = bRect.y1 + height * cosA;
+		x2 = cx + centerx * cosA - centery * sinA;
+		y2 = cy - centerx * sinA - centery * cosA;
+		x1 = x2 - width * cosA;
+		y1 = y2 + width * sinA;
+		x3 = x2 + height * sinA;
+		y3 = y2 + height * cosA;
+		x4 = x1 + height * sinA;
+		y4 = y1 + height * cosA;
 	}
-	return bRect;
+	return AEBiasRect(x1, y1, x2, y2, x3, y3, x4, y4);
 }
 
-string AESprite::getObjName() {
-	return oTable.get(oid)->getName();
+std::string AESprite::getObjName() {
+	return objectTable.get(oid)->getName();
 }
 
-GLvoid AESprite::changeAction(INT _action) {
+VOID AESprite::changeAction(INT _action) {
 	if (_action == 1000) {
-		scene->getSpriteTable()->remove(index);
+		deadFlag = TRUE;
 		return;
 	}
 	action = _action;
-	AEAnimation* anim = oTable.get(oid)->getAnim(action);
+	AEAnimation* anim = objectTable.get(oid)->getAnim(action);
 	state = anim->getState();
 	timeToLive = anim->getTTL();
-	frame = time = 0;
+	frameNum = time = 0;
 	if (state >= AEObject::STATE_CHAR_ACTION) {
 		INT dvx = anim->getFrame(frame)->getDvx();
 		if (dvx == 999)
@@ -113,14 +97,6 @@ GLvoid AESprite::changeAction(INT _action) {
 	else { 
 		ax = vx = ay = vy = 0.0;
 	}
-	//if (anim->getFrame(frame).cast != NULL) {
-	//	AEFrame* f = anim->getFrame(frame);
-	//	AEPoint castPoint = calcRotatedPoint(cx, cy, &f, angle, facing);
-	//	if (facing == 0)
-	//		scene->getSpriteTable()->add(new AESprite(scene, f.cast->oid, team, castPoint.x, castPoint.y, f.cast->action));
-	//	else
-	//		scene->getSpriteTable()->add(new AESprite(scene, f.cast->oid, team, castPoint.x, castPoint.y, f.cast->action, CAST_INVERSE));
-	//}
 }
 
 INT AESprite::log2(INT key) {
@@ -136,17 +112,17 @@ INT AESprite::log2(INT key) {
 	}
 }
 
-//GLvoid AESprite::pressUp() {
+//VOID AESprite::pressUp() {
 //	keyDown(AEKeyboardHandler::AKS_UP);
 //	inputState[AEKeyboardHandler::INPUT_8] = AEKeyboardHandler::INPUT_JUDGE_TOLERATION;
 //}
 //
-//GLvoid AESprite::pressDown() {
+//VOID AESprite::pressDown() {
 //	keyDown(AEKeyboardHandler::AKS_DOWN);
 //	inputState[AEKeyboardHandler::INPUT_2] = AEKeyboardHandler::INPUT_JUDGE_TOLERATION;
 //}
 //
-//GLvoid AESprite::pressLeft() {
+//VOID AESprite::pressLeft() {
 //	keyDown(AEKeyboardHandler::AKS_LEFT);
 //	if (facing == FACING_RIGHT)
 //		inputState[AEKeyboardHandler::INPUT_4] = AEKeyboardHandler::INPUT_JUDGE_TOLERATION;
@@ -154,7 +130,7 @@ INT AESprite::log2(INT key) {
 //		inputState[AEKeyboardHandler::INPUT_6] = AEKeyboardHandler::INPUT_JUDGE_TOLERATION;
 //}
 //
-//GLvoid AESprite::pressRight() {
+//VOID AESprite::pressRight() {
 //	keyDown(AEKeyboardHandler::AKS_RIGHT);
 //	if (facing == FACING_RIGHT)
 //		inputState[AEKeyboardHandler::INPUT_6] = AEKeyboardHandler::INPUT_JUDGE_TOLERATION;
@@ -162,7 +138,7 @@ INT AESprite::log2(INT key) {
 //		inputState[AEKeyboardHandler::INPUT_4] = AEKeyboardHandler::INPUT_JUDGE_TOLERATION;
 //}
 //
-//GLvoid AESprite::pressAttack() {
+//VOID AESprite::pressAttack() {
 //	if (!isKeyDown(AEKeyboardHandler::BKS_ATTACK)) {
 //		keyDown(AEKeyboardHandler::BKS_ATTACK);
 //		if (isKeyDown(AEKeyboardHandler::AKS_UP)) {
@@ -183,14 +159,14 @@ INT AESprite::log2(INT key) {
 //	}
 //}
 //
-//GLvoid AESprite::pressJump() {
+//VOID AESprite::pressJump() {
 //	if (!isKeyDown(AEKeyboardHandler::BKS_JUMP)) {
 //		keyDown(AEKeyboardHandler::BKS_JUMP);
 //		inputState[AEKeyboardHandler::INPUT_J] = AEKeyboardHandler::INPUT_JUDGE_TOLERATION;
 //	}
 //}
 //
-//GLvoid AESprite::pressDefend() {
+//VOID AESprite::pressDefend() {
 //	if (!isKeyDown(AEKeyboardHandler::BKS_DEFEND)) {
 //		keyDown(AEKeyboardHandler::BKS_DEFEND);
 //		if (isKeyDown(AEKeyboardHandler::AKS_UP)) {
@@ -202,29 +178,29 @@ INT AESprite::log2(INT key) {
 //	}
 //}
 //
-//GLvoid AESprite::pressForward() {
+//VOID AESprite::pressForward() {
 //	if (facing == FACING_RIGHT)
 //		pressRight();
 //	else
 //		pressLeft();
 //}
 //
-//GLvoid AESprite::pressBackward() {
+//VOID AESprite::pressBackward() {
 //	if (facing == FACING_LEFT)
 //		pressRight();
 //	else
 //		pressLeft();
 //}
 //
-//GLvoid AESprite::releaseUp() {
+//VOID AESprite::releaseUp() {
 //	keyUp(AEKeyboardHandler::AKS_UP);
 //}
 //
-//GLvoid AESprite::releaseDown() {
+//VOID AESprite::releaseDown() {
 //	keyUp(AEKeyboardHandler::AKS_DOWN);
 //}
 //
-//GLvoid AESprite::releaseLeft() {
+//VOID AESprite::releaseLeft() {
 //	keyUp(AEKeyboardHandler::AKS_LEFT);
 //	if (facing == FACING_RIGHT && action == AEObject::STATE_CHAR_BACKWARD || facing == FACING_LEFT && action == AEObject::STATE_CHAR_FORWARD) {
 //		changeAction(AEObject::ACT_CHAR_STAND);
@@ -232,7 +208,7 @@ INT AESprite::log2(INT key) {
 //	}
 //}
 //
-//GLvoid AESprite::releaseRight() {
+//VOID AESprite::releaseRight() {
 //	keyUp(AEKeyboardHandler::AKS_RIGHT);
 //	if (facing == FACING_RIGHT && action == AEObject::STATE_CHAR_FORWARD || facing == FACING_LEFT && action == AEObject::STATE_CHAR_BACKWARD) {
 //		changeAction(AEObject::ACT_CHAR_STAND);
@@ -240,30 +216,30 @@ INT AESprite::log2(INT key) {
 //	}	
 //}
 //
-//GLvoid AESprite::releaseAttack() {
+//VOID AESprite::releaseAttack() {
 //	keyUp(AEKeyboardHandler::BKS_ATTACK);
 //}
 //
-//GLvoid AESprite::releaseJump() {
+//VOID AESprite::releaseJump() {
 //	keyUp(AEKeyboardHandler::BKS_JUMP);
 //}
 //
-//GLvoid AESprite::releaseDefend() {
+//VOID AESprite::releaseDefend() {
 //	keyUp(AEKeyboardHandler::BKS_DEFEND);
 //}
 //
-//GLvoid AESprite::input(INT _input) {
+//VOID AESprite::input(INT _input) {
 //	inputState[_input] = AEKeyboardHandler::INPUT_JUDGE_TOLERATION;
 //}
 
-GLbyte AESprite::inputStateJudge(INT slot) {
+BYTE AESprite::inputStateJudge(INT slot) {
 	if (keyboardHandler != NULL && keyboardHandler->getInputState(slot) > 0)
 		return 1;
 	else
 		return 0;
 }
 
-GLvoid AESprite::testKeyState() {
+VOID AESprite::testKeyState() {
 	//if (state >= AEObject::STATE_CHAR_ACTION)
 	//	return;
 	//if (inputStateJudge(AEKeyboardHandler::INPUT_A)) {
@@ -316,8 +292,8 @@ GLvoid AESprite::testKeyState() {
 	//}
 }
 
-GLvoid AESprite::update() {
-	AEAnimation* anim = (oid < 0 ? NULL : oTable.get(oid)->getAnim(action));
+VOID AESprite::update() {
+	AEAnimation* anim = (oid < 0 ? NULL : objectTable.get(oid)->getAnim(action));
 	if (oid >= 0) {
 		if (timeToLive == 0) {
 			changeAction(anim->getNext());
@@ -335,15 +311,15 @@ GLvoid AESprite::update() {
 	if (angle > 3.14159265f) angle -= 2 * 3.14159265f;
 	time++;
 	if (oid >= 0) {
-		if (time >= anim->getEndTime(frame)) {
-			cx += (fac * anim->getFrame(frame)->getShiftx());
-			cy += anim->getFrame(frame)->getShifty();
-			frame++;
+		if (time >= anim->getEndTime(frameNum)) {
+			cx += (fac * anim->getFrame(frameNum)->getShiftx());
+			cy += anim->getFrame(frameNum)->getShifty();
+			frameNum++;
 			if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
 				time = 0;
 			}
-			if (frame == anim->getFrameCount()) {
-				frame = 0;
+			if (frameNum == anim->getFrameCount()) {
+				frameNum = 0;
 				if (!anim->isLoop()) {
 					changeAction(anim->getNext());
 					return;
@@ -353,7 +329,7 @@ GLvoid AESprite::update() {
 	}
 }
 
-//GLvoid AESprite::updateSample() {
+//VOID AESprite::updateSample() {
 //	AEBackground* bg = scene->getBackground();
 //	for (int i = 0; i < AEKeyboardHandler::INPUT_COUNT; i++) {
 //		if (inputState[i] > 0)
@@ -363,7 +339,7 @@ GLvoid AESprite::update() {
 //		timeToStiff--;
 //		return;
 //	}
-//	AEAnimation* anim = oTable.get(oid)->getAnim(action);
+//	AEAnimation* anim = objectTable.get(oid)->getAnim(action);
 //	if (timeToLive == 0) {
 //		changeAction(anim->getNext());
 //		return;
@@ -406,7 +382,7 @@ GLvoid AESprite::update() {
 //				onLandform = bg->getLandformIndexBelow(INT(cx), INT(cy), &drop);
 //				if (state == AEObject::STATE_CHAR_FALLING) {
 //					if (abs(vx) > 0.1) {
-//						GLfloat slope = -vy / vx;
+//						FLOAT slope = -vy / vx;
 //						if (slope > tan(75 * 3.14159 / 180)) {
 //							changeAction(AEObject::ACT_CHAR_FALL_90);
 //						}
@@ -454,15 +430,15 @@ GLvoid AESprite::update() {
 //					if (gndSpeed != 0.0) {
 //						ax = AEPhysics::RESISTANCE_GROUND;
 //						if (gndSpeed * ax > 0) ax = -ax;
-//						GLfloat newSpeed = gndSpeed + ax;
+//						FLOAT newSpeed = gndSpeed + ax;
 //						if (newSpeed * gndSpeed <= 0) {
 //							ax = newSpeed = 0.0;
 //						}
 //						gndSpeed = newSpeed;
 //					}
 //				}
-//				GLfloat slope = bg->getLandform(onLandform).data[bg->getXonBG(INT(cx))].slope;
-//				GLfloat string = sqrt(1.0 + slope * slope);
+//				FLOAT slope = bg->getLandform(onLandform).data[bg->getXonBG(INT(cx))].slope;
+//				FLOAT string = sqrt(1.0 + slope * slope);
 //				vx = gndSpeed * 1.0 / string;
 //				vy = gndSpeed * fac * slope / string;
 //			}
@@ -472,8 +448,8 @@ GLvoid AESprite::update() {
 //			}
 //		}
 //	}
-//	JumpParas* jump = anim->getFrame(frame).jumpTo;
-//	KeyReleaseParas* release = anim->getFrame(frame).keyRelease;
+//	JumpParas* jump = anim->getFrame(frameNum).jumpTo;
+//	KeyReleaseParas* release = anim->getFrame(frameNum).keyRelease;
 //	if (jump != NULL) {
 //		for (INT input = 0; input < AEKeyboardHandler::INPUT_COUNT; input++) {
 //			if (jump->action[input] > 0 && inputStateJudge(input)) {
@@ -487,28 +463,28 @@ GLvoid AESprite::update() {
 //		return;
 //	}
 //	time++;
-//	if (time >= anim->getEndTime(frame)) {
+//	if (time >= anim->getEndTime(frameNum)) {
 //		unlockAtkJudge();
-//		cx += (fac * anim->getFrame(frame).shiftx);
-//		cy += anim->getFrame(frame).shifty;
+//		cx += (fac * anim->getFrame(frameNum).shiftx);
+//		cy += anim->getFrame(frameNum).shifty;
 //		if (state <= AEObject::STATE_CHAR_INAIR) {
 //			cy = bg->getLocation().y + bg->getLandform(onLandform).data[bg->getXonBG(INT(cx))].altitude;
 //		}
-//		angle += AEUtil::deg2rad(anim->getFrame(frame).rotate);
-//		HoldParas* hold = anim->getFrame(frame).hold;
+//		angle += AEUtil::deg2rad(anim->getFrame(frameNum).rotate);
+//		HoldParas* hold = anim->getFrame(frameNum).hold;
 //		if (hold != NULL && isKeyDown(hold->key) > 0) {
-//			if (frame == 0)
+//			if (frameNum == 0)
 //				time = 0;
 //			else
-//				time = anim->getEndTime(frame - 1);
+//				time = anim->getEndTime(frameNum - 1);
 //		}	
 //		else {
-//			frame++;
+//			frameNum++;
 //			if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
 //				time = 0;
 //			}
-//			if (frame == anim->getFrameCount()) {
-//				frame = 0;
+//			if (frameNum == anim->getFrameCount()) {
+//				frameNum = 0;
 //				if (!anim->isLoop()) {
 //					changeAction(anim->getNext());
 //					return;
@@ -516,23 +492,23 @@ GLvoid AESprite::update() {
 //			}
 //			if (state >= AEObject::STATE_CHAR_ACTION) {
 //				if (state < AEObject::STATE_CHAR_INAIR) {
-//					INT dvx = anim->getFrame(frame).dvx;
+//					INT dvx = anim->getFrame(frameNum).dvx;
 //					if (dvx == 999)
 //						gndSpeed = 0;
 //					else
 //						gndSpeed += dvx;
 //				}
 //				else {
-//					INT dvx = anim->getFrame(frame).dvx;
+//					INT dvx = anim->getFrame(frameNum).dvx;
 //					if (dvx == 999)
 //						vx = 0;
 //					else
 //						vx += dvx;
 //				}
 //			}
-//			if (anim->getFrame(frame).cast != NULL) {
-//				Frame f = anim->getFrame(frame);
-//				AEPoint castPoint = calcRotatedPoint(cx, cy, &f, angle, facing);
+//			if (anim->getFrame(frameNum).cast != NULL) {
+//				Frame f = anim->getFrame(frameNum);
+//				AEPoint castPoint = calcPoint(cx, cy, &f, angle, facing);
 //				if (facing == 0)
 //					scene->getSpriteTable()->add(new AESprite(scene, f.cast->oid, team, castPoint.x, castPoint.y, f.cast->action));
 //				else
@@ -543,27 +519,27 @@ GLvoid AESprite::update() {
 //	testKeyState();
 //}
 
-GLvoid AESprite::paintShadow() {
+VOID AESprite::paintShadow() {
 	AEResource* shadow = rTable.get(101);
 	AERect shadowRect = AEUtil::createRect(cx - shadow->getCellWidth() / 2, cy - drop - shadow->getCellHeight() / 2, cx + shadow->getCellWidth() / 2, cy - drop + shadow->getCellHeight() / 2);
 	AEUtil::paintRect(shadow->getTexture(), AEUtil::createRect(0.0, 0.0, 1.0, 1.0), shadowRect);
 }
 
-GLvoid AESprite::paintCrosshair() {
+VOID AESprite::paintCrosshair() {
 	AEResource* crosshair = rTable.get(100);
 	AERect crossRect = AEUtil::createRect(cx - crosshair->getCellWidth() / 2, cy - crosshair->getCellHeight() / 2, cx + crosshair->getCellWidth() / 2, cy + crosshair->getCellHeight() / 2);
 	AEUtil::paintRect(crosshair->getTexture(), AEUtil::createRect(0.0, 0.0, 1.0, 1.0), crossRect);
 }
 
-GLvoid AESprite::paint() {
+VOID AESprite::paint() {
 	glColor3f(1.0, 1.0, 1.0);
-	AEObject* obj = oTable.get(oid);
+	AEObject* obj = objectTable.get(oid);
 	if (onLandform >= 0)
 		paintShadow();
-	AEFrame* f = obj->getAnim(action)->getFrame(frame);
+	AEFrame* f = obj->getAnim(action)->getFrame(frameNum);
 	AEResource* res = f->getResource();
 	AERect texClip = res->getTexCoords(f->getImgOffset(), f->getImgCells());
-	AEBiasRect sprRect = calcRotatedRect(cx, cy, f, angle, facing);
+	AEBiasRect sprRect = calcRect(cx, cy, f, angle, facing);
 	if (facing == FACING_RIGHT)
 		AEUtil::paintRect(res->getTexture(), texClip, sprRect);
 	else
@@ -581,7 +557,7 @@ AESpriteTable::AESpriteTable() {
 	}
 }
 
-GLvoid AESpriteTable::add(AESprite* sp) {
+VOID AESpriteTable::add(AESprite* sp) {
 	for (INT i = 0; i <= maxIndex; i++) {
 		if (!occupied[i]) {
 			sp->setIndex(i);
@@ -601,7 +577,7 @@ GLvoid AESpriteTable::add(AESprite* sp) {
 	}
 }
 
-GLvoid AESpriteTable::addAt(INT index, AESprite* sp) {
+VOID AESpriteTable::addAt(INT index, AESprite* sp) {
 	if (occupied[index]) {
 		printf("Error on adding sprite: Slot Occupied.\n");
 		return;
@@ -614,7 +590,7 @@ GLvoid AESpriteTable::addAt(INT index, AESprite* sp) {
 	hash[pHash] = maxIndex;  pHash++;
 }
 
-GLvoid AESpriteTable::remove(INT index) {
+VOID AESpriteTable::remove(INT index) {
 	if (!occupied[index]) {
 		printf("Error on removing sprite: Slot Empty.\n");
 		return;
@@ -633,18 +609,18 @@ GLvoid AESpriteTable::remove(INT index) {
 	}
 }
 
-GLvoid AESpriteTable::clear() {
+VOID AESpriteTable::clear() {
 	for (int i = 0; i <= maxIndex; i++) {
 		if (occupied[i])
 			remove(i);
 	}
 }
 
-GLvoid AESpriteTable::handleCollisions() {
+VOID AESpriteTable::handleCollisions() {
 
 }
 
-GLvoid AESpriteTable::update() {
+VOID AESpriteTable::update() {
 	for (int i = 0; i <= maxIndex; i++) {
 		if (occupied[i])
 			table[i]->update();
@@ -652,7 +628,7 @@ GLvoid AESpriteTable::update() {
 	handleCollisions();
 }
 
-GLvoid AESpriteTable::paint() {
+VOID AESpriteTable::paint() {
 	for (int i = 0; i <= maxIndex; i++) {
 		if (occupied[i])
 			table[i]->paint();

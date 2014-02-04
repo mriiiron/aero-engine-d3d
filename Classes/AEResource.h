@@ -17,6 +17,21 @@ typedef enum AEResType {
 };
 
 
+struct AERO_RESOURCE_DESC {
+
+	INT tex;
+	INT cellW, cellH;
+	AEResType rtype;
+
+	AERO_RESOURCE_DESC() {
+		tex = 0;
+		cellW = cellH = 0;
+		rtype = RES_UNKNOWN;
+	}
+
+};
+
+
 class AEResource {
 
 public:
@@ -32,20 +47,5 @@ private:
 	INT tex;
 	AEResType rtype;
 	INT cellW, cellH;
-
-};
-
-
-struct AERO_RESOURCE_DESC {
-
-	INT tex;
-	INT cellW, cellH;
-	AEResType rtype;
-
-	AERO_RESOURCE_DESC() {
-		tex = 0;
-		cellW = cellH = 0;
-		rtype = RES_UNKNOWN;
-	}
 
 };
