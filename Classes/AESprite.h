@@ -52,6 +52,7 @@ public:
 
 	AESprite(AERO_SPRITE_DESC desc);
 	
+	// Get'n'set
 	VOID setIndex(INT _index) { index = _index; }
 	VOID setState(INT _state) { state = _state; }
 	VOID setAx(FLOAT _ax) { ax = _ax; }
@@ -61,20 +62,8 @@ public:
 	VOID setVAngle(FLOAT _vangle) { vangle = _vangle; }
 	VOID setGroundSpeed(FLOAT _speed) { gndSpeed = _speed; }
 	VOID setAngle(FLOAT _angle) { angle = _angle; }
-	VOID rotateDeg(FLOAT degree) { angle += AENSMath::deg2rad(degree); }
-	VOID rotateRad(FLOAT rad) { angle += rad; }
-	VOID setFacing(INT _facing) { facing = _facing; }
-	VOID turnOver() { facing = 1 - facing; }
-	VOID resetKeys() { keyState = 0; }
+	VOID setFacing(BYTE _facing) { facing = _facing; }
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
-	VOID stiffen(INT _time) { timeToStiff = _time; }
-	VOID lockAtkJudge() { atkJudgeLock = 1; }
-	VOID unlockAtkJudge() { atkJudgeLock = 0; }
-	VOID keyDown(INT _key) { keyState = keyState | _key; }
-	VOID keyUp(INT _key) { keyState = keyState & ~_key; }
-	BYTE getFacing() { return facing; }
-	BOOLEAN isAtkJudgeLocked() { return atkJudgeLock; }
-	BOOLEAN isKeyDown(INT _key) { return _key & keyState; }
 	INT getIndex() { return index; }
 	INT getOid() { return oid; }
 	INT getAction() { return action; }
@@ -82,33 +71,43 @@ public:
 	INT getState() { return state; }
 	INT getTeam() { return team; }
 	INT getStiffTime() { return timeToStiff; }
+	INT getKeyState() { return keyState; }
+	INT getHP() { return hpValue; }
+	BYTE getFacing() { return facing; }
 	FLOAT getGroundSpeed() { return gndSpeed; }
 	FLOAT getCx() { return cx; }
 	FLOAT getCy() { return cy; }
-	AEPoint getCenter() { return AEPoint(cx, cy); }
 	FLOAT getAngle() { return angle; }
 	FLOAT getVx() { return vx; }
 	FLOAT getVy() { return vy; }
 	FLOAT getVAngle() { return vangle; }
 	FLOAT getAx() { return ax; }
 	FLOAT getAy() { return ay; }
-	BOOLEAN inputStateJudge(INT _input);
-	INT log2(INT key);
-	AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
-	AEBiasRect calcRotatedRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
-	/* CHARACTER ONLY */
-	INT getKeyState() { return keyState; }
-	INT getHP() { return hpValue; }
-	VOID takeDamage(INT damage) { hpValue -= damage; }
+	AEPoint getCenter();
 	std::string getObjName();
+
+	VOID rotateDeg(FLOAT degree) { angle += AENSMath::deg2rad(degree); }
+	VOID rotateRad(FLOAT rad) { angle += rad; }
+	VOID turnOver() { facing = 1 - facing; }
+	VOID resetKeyState() { keyState = 0; }
+	VOID stiffen(INT _time) { timeToStiff = _time; }
+	VOID lockAtkJudge() { atkJudgeLock = 1; }
+	VOID unlockAtkJudge() { atkJudgeLock = 0; }
+	VOID keyDown(INT _key) { keyState = keyState | _key; }
+	VOID keyUp(INT _key) { keyState = keyState & ~_key; }
+	VOID takeDamage(INT damage) { hpValue -= damage; }
+	BOOLEAN isAtkJudgeLocked() { return atkJudgeLock; }
+	BOOLEAN isKeyDown(INT _key) { return _key & keyState; }
+
 	VOID changeAction(INT _action);
 	VOID toNextFrame(AEAnimation anim);
-	VOID paintShadow();
-	VOID paintCrosshair();
-	VOID paint();
 
-	virtual VOID testKeyState();
+	AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
+	AEBiasRect calcRotatedRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
+
+	virtual VOID applyControl();
 	virtual VOID update();
+	virtual VOID addToRenderBuffer();
 
 protected:
 

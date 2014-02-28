@@ -37,12 +37,12 @@ public:
 	static const INT MAX_ATTRIB_COUNT			= 20;
 	
 	AEFrame(AERO_FRAME_DESC desc);
+
 	VOID setImageFromRes(AEResource* _res, INT _imgOffset, INT _imgCells) { res = _res;  imgOffset = _imgOffset;  imgCells = _imgCells; }
 	VOID setSize(INT _width, INT _height) { width = _width;  height = _height; }
 	VOID setCenter(INT _centerx, INT _centery) { centerx = _centerx;  centery = _centery; }
 	VOID setShift(INT _shiftx, INT _shifty) { shiftx = _shiftx;  shifty = _shifty; }
 	VOID setDv(INT _dvx, INT _dvy) { dvx = _dvx;  dvy = _dvy; }
-	AEResource* getResource() { return res; }
 	INT getImgOffset() { return imgOffset; }
 	INT getImgCells() { return imgCells; }
 	INT getWidth() { return width; }
@@ -53,9 +53,10 @@ public:
 	INT getShifty() { return shifty; }
 	INT getDvx() { return dvx; }
 	INT getDvy() { return dvy; }
-
+	AEResource* getResource() { return res; }
 	AEFrameAttrib* getOptional(INT index) { return attrib[index]; }
-	VOID addOptionalByStrAt(std::string line);
+
+	virtual VOID addOptionalByStrAt(std::string line);
 
 private:
 
@@ -95,7 +96,7 @@ public:
 	AEAnimation(AERO_ANIMATION_DESC desc, AEFrame** _frameTable, INT* _endTimeTable);
 	
 	VOID cloneFrame(INT srcIndex, INT dstIndex);
-	VOID setLoop(INT _isLoop) { isAnimLoop = _isLoop; }
+	VOID setLoop(BOOLEAN _isLoop) { isAnimLoop = _isLoop; }
 	VOID setState(INT _state) { state = _state; }
 	VOID setNext(INT _next) { next = _next; }
 	VOID setTTL(INT _timeToLive) { timeToLive = _timeToLive; }
@@ -112,7 +113,7 @@ public:
 	INT getTTL() { return timeToLive; }
 	INT getState() { return state; }
 
-	virtual VOID loadFrameOptional(INT index, INT _slot, std::string str) {}
+	VOID loadFrameOptional(INT index, INT _slot, std::string str);
 
 private:
 

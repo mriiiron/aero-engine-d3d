@@ -25,6 +25,7 @@ class AEParticle {
 public:
 
 	AEParticle();
+
 	BOOLEAN isEnabled() { return enabled; }
 	VOID setMatrixEmitter(AEParticleEmitter* _matrixEmit) { matrixEmit = _matrixEmit; }
 	VOID setAttachEmitter(AEParticleEmitter* _attachEmit) { attachEmit = _attachEmit; }
@@ -59,35 +60,6 @@ protected:
 };
 
 
-class AEParticleEmitter {
-
-public:
-
-	static const INT MAX_PARTICLE_COUNT			= 1000;
-
-	AEParticleEmitter(FLOAT _x, FLOAT _y, FLOAT _z = 0.0, INT _count = 1, INT _life = 100);
-	VOID setPosition(FLOAT _x, FLOAT _y, FLOAT _z = 0.0) { x = _x;  y = _y;  z = _z; }
-	VOID setIndex(INT _index) { index = _index; }
-	VOID resetTime() { time = 0; }
-	FLOAT getX() { return x; }
-	FLOAT getY() { return y; }
-	FLOAT getZ() { return z; }
-	INT getCount() { return count; }
-
-	virtual VOID update() = 0;
-	virtual VOID paint();
-
-protected:
-
-	INT index;
-	AEParticle* group[MAX_PARTICLE_COUNT];
-	INT count;
-	FLOAT x, y, z;
-	INT time, life;
-
-};
-
-
 struct AERO_PARTICLE_EMITTER_DESC {
 
 	INT index;
@@ -98,5 +70,35 @@ struct AERO_PARTICLE_EMITTER_DESC {
 	AERO_PARTICLE_EMITTER_DESC() {
 		
 	}
+
+};
+
+
+class AEParticleEmitter {
+
+public:
+
+	static const INT MAX_PARTICLE_COUNT			= 1000;
+
+	AEParticleEmitter(AERO_PARTICLE_EMITTER_DESC desc);
+
+	VOID setPosition(FLOAT _x, FLOAT _y, FLOAT _z = 0.0) { x = _x;  y = _y;  z = _z; }
+	VOID setIndex(INT _index) { index = _index; }
+	VOID resetTime() { time = 0; }
+	FLOAT getX() { return x; }
+	FLOAT getY() { return y; }
+	FLOAT getZ() { return z; }
+	INT getCount() { return count; }
+
+	virtual VOID update() = 0;
+	virtual VOID paint() = 0;
+
+protected:
+
+	INT index;
+	AEParticle* group[MAX_PARTICLE_COUNT];
+	INT count;
+	FLOAT x, y, z;
+	INT time, life;
 
 };

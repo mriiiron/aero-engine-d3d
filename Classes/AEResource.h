@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <vector>
 #include "AEMath.h"
 
 
@@ -19,12 +20,12 @@ typedef enum AEResType {
 
 struct AERO_RESOURCE_DESC {
 
-	INT tex;
+	ID3D11ShaderResourceView* tex;
 	INT cellW, cellH;
 	AEResType rtype;
 
 	AERO_RESOURCE_DESC() {
-		tex = 0;
+		tex = nullptr;
 		cellW = cellH = 0;
 		rtype = RES_UNKNOWN;
 	}
@@ -37,15 +38,24 @@ class AEResource {
 public:
 
 	AEResource(AERO_RESOURCE_DESC desc);
-	INT getTexture() { return tex; }
+
+	ID3D11ShaderResourceView* getTexture() { return tex; }
 	INT getCellWidth() { return cellW; }
 	INT getCellHeight() { return cellH; }
-	AERect getTexCoords(INT imgOffset, INT imgCells);
+
+	AERect getTexClip(INT imgOffset, INT imgCellCount);
+	VOID addToRenderBuffer(AERect paintArea, AERect texClip);
+	VOID addToRenderBuffer(AEBiasRect paintArea, AERect texClip);
+	VOID clearRenderBuffer(); 
+	VOID render();
 
 private:
 	
-	INT tex;
+	ID3D11ShaderResourceView* tex;
 	AEResType rtype;
 	INT cellW, cellH;
+
+	std::vector<SimpleVertex> vertexBuffer;
+	// std::vector<INT> indexBuffer;
 
 };

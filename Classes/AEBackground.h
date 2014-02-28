@@ -38,6 +38,8 @@ class AEBGLayerAnim {
 public:
 
 	AEBGLayerAnim() { frames = NULL;  endTimes = NULL;  frameCount = 0; }
+	~AEBGLayerAnim();
+
 	VOID setFrameImage(INT index, INT _rid, INT _offset, INT _width, INT _height);
 	VOID setFrameCount(INT _frameCount) { frameCount = _frameCount;  frames = new AEBGLayerFrame[_frameCount];  endTimes = new INT[_frameCount];}
 	VOID setEndTime(INT index, INT _endTime) { endTimes[index] = _endTime; }
@@ -67,15 +69,14 @@ public:
 
 	static const INT MAX_LAYER_ANIMS			= 20;
 
-	AEBGLayer(INT _rid, INT _depth, INT _width, INT _height, FLOAT _offsetx, FLOAT _offsety);
-	INT getLayerRid() { return rid; }
+	AEBGLayer(INT _depth, INT _width, INT _height, AEPoint _offsetPosition);
 	INT getDepth() { return depth; }
 	INT getWidth() { return width; }
 	INT getHeight() { return height; }
 	INT getAnimCount() { return animCount; }
 	INT getTimeOfAnim(INT index) { return anim[index].time; }
 	INT getFrameOfAnim(INT index) { return anim[index].frame; }
-	AEAnimRef getAEAnimRef(INT index) { return anim[index]; }
+	AEAnimRef getAnimRef(INT index) { return anim[index]; }
 	AEPoint getOffsetPosition() { return offsetPosition; }
 	VOID addAEAnimRef(AEAnimRef AEAnimRef) { anim[animCount] = AEAnimRef;  animCount++; }
 	VOID incTimeForAnim(INT index) { anim[index].time = anim[index].time + 1; }
@@ -84,7 +85,7 @@ public:
 
 private:
 
-	INT rid, depth, width, height;
+	INT depth, width, height;
 	AEPoint offsetPosition;
 	INT animCount;
 	AEAnimRef anim[MAX_LAYER_ANIMS];
@@ -97,13 +98,11 @@ struct AERO_BACKGROUND_DESC {
 	std::string name;
 	FLOAT locX, locY;
 	INT width, height;
-	INT layerCount, landformCount;
 
 	AERO_BACKGROUND_DESC() {
 		name = "Unknown Background";
 		locX = locY = 0.0f;
 		width = height = 0;
-		layerCount = landformCount = 0;
 	}
 
 };
@@ -116,29 +115,33 @@ public:
 	static const INT MAX_LAYER_COUNT			= 10;
 	static const INT MAX_ANIM_COUNT				= 50;
 	static const INT MAX_LANDFORM_COUNT			= 50;
-	static const INT ONAELandform_TOLERANCE		= 2;
+	static const INT ON_LANDFORM_TOLERANCE		= 2;
 
-	AEBackground(AERO_BACKGROUND_DESC desc, AEBGLayer** _layerTable, AELandform** _landformTable, AEBGLayerAnim** _animTable);
-	INT getXonBG(INT cx) { return cx - INT(location.x); }
-	INT getYonBG(INT cy) { return cy - INT(location.y); }
+	AEBackground(AERO_BACKGROUND_DESC desc);
+	~AEBackground();
+
+	INT getXbyBGCoord(INT cx) { return cx - INT(locX); }
+	INT getYbyBGCoord(INT cy) { return cy - INT(locY); }
 	INT getAELandformIndexBelow(INT cx, INT cy, INT* drop);
-	AELandform* getAELandform(INT index) { return landformTable[index]; }
-	VOID loadAELandformsFromMonochrome(BYTE* pixels, INT width, INT height, INT byteLine);
-	VOID loadAELandforms(BYTE* pixels, INT width, INT height);
-	VOID addAnimAt(INT index, AEBGLayerAnim layerAnim);
-	VOID update();
-	VOID paint(AEPoint cameraCenter);
-	AEPoint getLocation() { return location; }
 	INT getWidth() { return width; }
 	INT getHeight() { return height; }
 	INT getLayerCount() { return layerCount; }
+	AEPoint getLocation() { return AEPoint(locX, locY); }
+	AELandform* getAELandform(INT index) { return landformTable[index]; }
 	AEBGLayer* getLayer(INT index) { return layerTable[index]; }
 	VOID setLayer(INT index, AEBGLayer* _layer) { layerTable[index] = _layer; }
+
+	VOID loadAELandformsFromMonochrome(BYTE* pixels, INT width, INT height, INT byteLine);
+	VOID loadAELandforms(BYTE* pixels, INT width, INT height);
+	VOID addAnimAt(INT index, AEBGLayerAnim layerAnim);
+
+	VOID update();
+	VOID addToRenderBuffer(AEPoint cameraCenter);
 
 private:
 
 	std::string name;
-	AEPoint location;
+	FLOAT locX, locY;
 	INT width, height;
 	INT layerCount, landformCount;
 	AEBGLayer* layerTable[MAX_LAYER_COUNT];
@@ -161,7 +164,6 @@ public:
 private:
 
 	AEBackground* lib[MAX_BG_COUNT];
-	AEConstantTable<AEResource, 100>* bgResTable;
 	INT maxIndex;
 
 };

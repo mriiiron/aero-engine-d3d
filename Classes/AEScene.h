@@ -20,20 +20,22 @@ class AEScene {
 
 public:
 
-	AEScene(AEBackground* bg, AEHashedTable<AESprite, 100>* sTable, AEHeadUpDisplay* hud);
+	AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
+	~AEScene();
+
 	VOID addSprite(AESprite* _sp);
 	AEBackground* getBackground() { return bg; }
-	AEHashedTable<AESprite, 100>* getSpriteTable() { return sTable; }
+	AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
 	AEHeadUpDisplay* getHUD() { return hud; }
 
 	virtual VOID update();
 	virtual VOID paint();
-	virtual VOID processInput(CHAR* pKeyStateBuffer) = 0;
+	virtual VOID processInput(CHAR* pKeyStateBuffer);
 
 protected:
 
 	AEBackground* bg;
-	AEHashedTable<AESprite, 100>* sTable;
+	AEHashedTable<AESprite>* spriteTable;
 	AEHeadUpDisplay* hud;
 
 };
@@ -43,13 +45,17 @@ class AESceneManager {
 
 public:
 
-	static const INT MAX_SCENE_COUNT		= 20;
+	static const INT MAX_SCENE_COUNT			= 20;
+	static const INT SCENE_NONE					= -1;
 
 	AESceneManager();
+
+	AEScene* getActiveScene() { return activeSceneIndex >= 0 ? table[activeSceneIndex] : nullptr; }
+	
 	VOID addSceneAt(INT index, AEScene* scene);
 	VOID stopAll();
 	VOID runScene(INT index);
-	AEScene* getActiveScene() { return activeSceneIndex >= 0 ? table[activeSceneIndex] : nullptr; }
+	
 
 private:
 

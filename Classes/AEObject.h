@@ -54,6 +54,7 @@ public:
 	static const INT MAX_OBJECT_ACTIONS		= 100;
 
 	AEObject(AERO_OBJECT_DESC desc, AEAnimation** _animTable);
+
 	VOID addAnimToSlot(INT slot, AEAnimation* _anim) { animTable[slot] = _anim; }
 	AEAnimation* getAnim(INT index) { return animTable[index]; }
 	AEObjType getType() { return otype; }

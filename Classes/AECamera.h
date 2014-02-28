@@ -24,19 +24,19 @@ public:
 	VOID move();
 	VOID update();
 	VOID changeTarget();
-	VOID setFocus(FLOAT _x, FLOAT _y) { crosshair.x = _x;  crosshair.y = _y; }
+	VOID setFocus(FLOAT _x, FLOAT _y) { focus.x = _x;  focus.y = _y; }
 	VOID setVx(FLOAT _vx) { vx = _vx; }
 	VOID setVy(FLOAT _vy) { vy = _vy; }
 	VOID setMode(AECameraMode _mode) { mode = _mode; }
-	VOID setTarget(INT _target) { target = _target; }
-	VOID shiftCrossHair(FLOAT _shiftx, FLOAT _shifty) { crosshair.x += _shiftx;  crosshair.y += _shifty; }
-	AEPoint getCrosshair() { return crosshair; }
+	VOID setTargetID(INT _targetID) { targetID = _targetID; }
+	VOID moveFocus(FLOAT dx, FLOAT dy) { focus.x += dx;  focus.y += dy; }
+	AEPoint getFocus() { return focus; }
 
 private:
 
-	INT mode;
-	AEPoint crosshair;
+	AECameraMode mode;
+	AEPoint focus;
 	FLOAT vx, vy;
-	INT target;
+	INT targetID;
 
 };

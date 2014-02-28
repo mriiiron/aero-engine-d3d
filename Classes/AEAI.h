@@ -33,8 +33,8 @@ public:
 	VOID disable() { enabled = FALSE; }
 	VOID setIndex(INT _index) { index = _index; }
 	BOOLEAN isEnabled() { return (enabled ? 1 : 0); }
-	INT checkdistXWith(AESprite* sp) { return fabs(self->getCx() - sp->getCx()); }
-	INT checkdistYWith(AESprite* sp) { return fabs(self->getCy() - sp->getCy()); }
+	INT checkdistXWith(AESprite* sp) { return INT(fabs(self->getCx() - sp->getCx())); }
+	INT checkdistYWith(AESprite* sp) { return INT(fabs(self->getCy() - sp->getCy())); }
 
 	virtual VOID execute() = 0;
 
