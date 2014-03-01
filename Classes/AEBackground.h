@@ -118,7 +118,6 @@ public:
 	static const INT ON_LANDFORM_TOLERANCE		= 2;
 
 	AEBackground(AERO_BACKGROUND_DESC desc);
-	~AEBackground();
 
 	INT getXbyBGCoord(INT cx) { return cx - INT(locX); }
 	INT getYbyBGCoord(INT cy) { return cy - INT(locY); }
@@ -158,8 +157,10 @@ public:
 	static const INT MAX_BG_COUNT				= 30;
 
 	AEBackgroundLibrary();
-	VOID add(AEBackground* bg);
+
 	AEBackground* get(INT index) { return lib[index]; }
+
+	VOID add(AEBackground* bg);
 
 private:
 

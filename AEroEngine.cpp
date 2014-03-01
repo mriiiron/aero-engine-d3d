@@ -1,6 +1,5 @@
 #include <d3d11_1.h>
 #include <directxmath.h>
-#include <dinput.h>
 #include <vector>
 #include "AEroEngine.h"
 
@@ -29,10 +28,8 @@ ID3D11Buffer*								g_pIndexBuffer = nullptr;
 ID3D11Buffer*								g_pCBNeverChanges = nullptr;
 ID3D11Buffer*								g_pCBChangeOnResize = nullptr;
 ID3D11Buffer*								g_pCBChangesEveryFrame = nullptr;
-ID3D11ShaderResourceView*					g_pTextureRV = nullptr;
+ID3D11ShaderResourceView*					g_pTestTextureRV = nullptr;
 ID3D11SamplerState*							g_pSamplerLinear = nullptr;
-LPDIRECTINPUT8								g_pDirectInput = nullptr;
-LPDIRECTINPUTDEVICE8						g_pKeyboardDevice = nullptr;
 CHAR										g_pKeyStateBuffer[256] = { 0 };
 XMMATRIX									g_World;
 XMMATRIX									g_View;

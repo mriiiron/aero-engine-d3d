@@ -30,12 +30,6 @@ AEBackground::AEBackground(AERO_BACKGROUND_DESC desc) {
 	}
 }
 
-AEBackground::~AEBackground() {
-	delete [] layerTable;
-	delete [] landformTable;
-	delete [] animTable;
-}
-
 VOID AEBackground::loadAELandformsFromMonochrome(BYTE* pixels, INT width, INT height, INT byteLine) {
 
 }
@@ -67,7 +61,7 @@ VOID AEBackground::addToRenderBuffer(AEPoint cameraCenter) {
 	for (INT i = layerCount - 1; i >= 0; i--) {
 		FLOAT dx = cameraCenter.x;
 		FLOAT depth = FLOAT(layerTable[i]->getDepth());
-		FLOAT correction = dx * depth / 100.0;
+		FLOAT correction = dx * depth / 100.0f;
 		for (INT j = 0; j < layerTable[i]->getAnimCount(); j++) {
 			AEAnimRef ref = layerTable[i]->getAnimRef(j);
 			AEBGLayerAnim* lanim = animTable[ref.animIndex];
@@ -82,4 +76,21 @@ VOID AEBackground::addToRenderBuffer(AEPoint cameraCenter) {
 			res->addToRenderBuffer(animRect, texClip);
 		}
 	}
+}
+
+
+AEBackgroundLibrary::AEBackgroundLibrary() {
+	maxIndex = 0;
+	for (INT i = 0; i < MAX_BG_COUNT; i++) {
+		lib[i] = NULL;
+	}
+}
+
+VOID AEBackgroundLibrary::add(AEBackground* bg) {
+	if (maxIndex > MAX_BG_COUNT) {
+		// Error
+		return;
+	}
+	lib[maxIndex] = bg;
+	maxIndex++;
 }

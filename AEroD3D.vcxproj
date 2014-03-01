@@ -43,6 +43,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -76,7 +77,6 @@
     <ClCompile Include="Classes\AEResource.cpp" />
     <ClCompile Include="Classes\AEScene.cpp" />
     <ClCompile Include="Classes\AESprite.cpp" />
-    <ClCompile Include="Classes\AETable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AEroEngine.h" />

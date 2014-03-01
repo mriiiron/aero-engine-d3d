@@ -48,9 +48,6 @@
     <ClCompile Include="Classes\AESprite.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\AETable.cpp">
-      <Filter>Classes</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\AEGameControl.cpp">
       <Filter>Classes</Filter>
     </ClCompile>

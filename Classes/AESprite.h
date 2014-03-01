@@ -97,7 +97,7 @@ public:
 	VOID keyUp(INT _key) { keyState = keyState & ~_key; }
 	VOID takeDamage(INT damage) { hpValue -= damage; }
 	BOOLEAN isAtkJudgeLocked() { return atkJudgeLock; }
-	BOOLEAN isKeyDown(INT _key) { return _key & keyState; }
+	BOOLEAN isKeyDown(INT _key) { return (BOOLEAN)(_key & keyState); }
 
 	VOID changeAction(INT _action);
 	VOID toNextFrame(AEAnimation anim);

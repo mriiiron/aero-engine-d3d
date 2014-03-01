@@ -13,7 +13,7 @@
 #pragma once
 
 
-typedef struct AEHUDText {
+struct AEHUDText {
 	
 	INT x, y;
 	std::string text;
@@ -26,7 +26,7 @@ typedef struct AEHUDText {
 };
 
 
-typedef struct AEHUDImage {
+struct AEHUDImage {
 
 	INT x, y;
 	AEResource* res;

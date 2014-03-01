@@ -1,11 +1,12 @@
 #include <d3d11_1.h>
 #include "AEResource.h"
 
-extern ID3D11DeviceContext*					g_pImmediateContext = nullptr;
-extern ID3D11Buffer*						g_pVertexBuffer = nullptr;
-extern ID3D11Buffer*						g_pIndexBuffer = nullptr;
+extern ID3D11DeviceContext*					g_pImmediateContext;
+extern ID3D11Buffer*						g_pVertexBuffer;
+extern ID3D11Buffer*						g_pIndexBuffer;
 
 AEResource::AEResource(AERO_RESOURCE_DESC desc) {
+	rid = desc.rid;
 	tex = desc.tex;
 	rtype = desc.rtype;
 	cellW = desc.cellW;
@@ -16,34 +17,34 @@ AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount) {
 	FLOAT x1, x2, y1, y2;
 	switch (rtype) {
 	case RES_1x1:
-		x1 = 0.0;
-		x2 = 1.0;
-		y2 = 1.0;
-		y1 = 0.0;
+		x1 = 0.0f;
+		x2 = 1.0f;
+		y2 = 1.0f;
+		y1 = 0.0f;
 		break;
 	case RES_1x5:
-		x1 = 0.2 * (imgOffset % 5);
-		x2 = x1 + 0.2 * imgCellCount;
-		y2 = 1.0;
-		y1 = 0.0;
+		x1 = 0.2f * (imgOffset % 5);
+		x2 = x1 + 0.2f * imgCellCount;
+		y2 = 1.0f;
+		y1 = 0.0f;
 		break;
 	case RES_2x5:
-		x1 = 0.2 * (imgOffset % 5);
-		x2 = x1 + 0.2 * imgCellCount;
-		y2 = 1.0 - 0.5 * (imgOffset / 5);
-		y1 = y2 - 0.5;
+		x1 = 0.2f * (imgOffset % 5);
+		x2 = x1 + 0.2f * imgCellCount;
+		y2 = 1.0f - 0.5f * (imgOffset / 5);
+		y1 = y2 - 0.5f;
 		break;
 	case RES_4x5:
-		x1 = 0.2 * (imgOffset % 5);
-		x2 = x1 + 0.2 * imgCellCount;
-		y2 = 1.0 - 0.25 * (imgOffset / 5);
-		y1 = y2 - 0.25;
+		x1 = 0.2f * (imgOffset % 5);
+		x2 = x1 + 0.2f * imgCellCount;
+		y2 = 1.0f - 0.25f * (imgOffset / 5);
+		y1 = y2 - 0.25f;
 		break;
 	case RES_5x10:
-		x1 = 0.1 * (imgOffset % 10);
-		x2 = x1 + 0.1 * imgCellCount;
-		y2 = 1.0 - 0.2 * (imgOffset / 10);
-		y1 = y2 - 0.2;
+		x1 = 0.1f * (imgOffset % 10);
+		x2 = x1 + 0.1f * imgCellCount;
+		y2 = 1.0f - 0.2f * (imgOffset / 10);
+		y1 = y2 - 0.2f;
 		break;
 	default:
 		break;

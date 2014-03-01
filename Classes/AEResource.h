@@ -20,11 +20,13 @@ typedef enum AEResType {
 
 struct AERO_RESOURCE_DESC {
 
+	INT rid;
 	ID3D11ShaderResourceView* tex;
 	INT cellW, cellH;
 	AEResType rtype;
 
 	AERO_RESOURCE_DESC() {
+		rid = 0;
 		tex = nullptr;
 		cellW = cellH = 0;
 		rtype = RES_UNKNOWN;
@@ -51,6 +53,7 @@ public:
 
 private:
 	
+	INT rid;
 	ID3D11ShaderResourceView* tex;
 	AEResType rtype;
 	INT cellW, cellH;
