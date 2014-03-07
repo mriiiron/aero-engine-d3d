@@ -44,6 +44,7 @@ public:
 	ID3D11ShaderResourceView* getTexture() { return tex; }
 	INT getCellWidth() { return cellW; }
 	INT getCellHeight() { return cellH; }
+	BOOLEAN isBufferEmpty() { return (vertexBuffer.size() == 0 ? TRUE : FALSE); }
 
 	AERect getTexClip(INT imgOffset, INT imgCellCount);
 	VOID addToRenderBuffer(AERect paintArea, AERect texClip);

@@ -51,20 +51,21 @@ class AEObject {
 
 public:
 
-	static const INT MAX_OBJECT_ACTIONS		= 100;
+	static const INT MAX_ANIM_COUNT			= 100;
 
-	AEObject(AERO_OBJECT_DESC desc, AEAnimation** _animTable);
+	AEObject(AERO_OBJECT_DESC desc);
 
-	VOID addAnimToSlot(INT slot, AEAnimation* _anim) { animTable[slot] = _anim; }
 	AEAnimation* getAnim(INT index) { return animTable[index]; }
 	AEObjType getType() { return otype; }
 	std::string getName() { return name; }
+
+	VOID addAnim(INT slot, AEAnimation* _anim);
 
 private:
 
 	INT oid;
 	std::string name;
-	AEAnimation* animTable[MAX_OBJECT_ACTIONS];
+	AEAnimation* animTable[MAX_ANIM_COUNT];
 	AEObjType otype;
 
 };

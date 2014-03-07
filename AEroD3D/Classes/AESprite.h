@@ -25,13 +25,13 @@ struct AERO_SPRITE_DESC {
 	FLOAT cx;
 	FLOAT cy;
 	INT action;
-	INT inverse;
+	INT facing;
 
 	AERO_SPRITE_DESC() {
 		oid = team = 0;
 		cx = cy = 0.0f;
 		action = 0;
-		inverse = 0;
+		facing = 0;
 	}
 
 };
@@ -41,11 +41,6 @@ class AESprite {
 
 public:
 
-	static const INT TEAM_NONE					= 0;
-	static const INT TEAM_1						= 1;
-	static const INT TEAM_2						= 2;
-	static const INT TEAM_3						= 3;
-	static const INT TEAM_4						= 4;
 	static const INT CAST_INVERSE				= 1;
 	static const INT FACING_RIGHT				= 0;
 	static const INT FACING_LEFT				= 1;

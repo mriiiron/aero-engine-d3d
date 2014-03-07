@@ -22,6 +22,10 @@ AEScene::~AEScene() {
 	delete hud;
 }
 
+VOID AEScene::addSprite(AESprite* sprite) {
+	spriteTable->add(sprite);
+}
+
 VOID AEScene::update() {
 	bg->update();
 	for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {

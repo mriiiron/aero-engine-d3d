@@ -19,8 +19,7 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	frameNum = time = facing = timeToStiff = keyState = atkJudgeLock = 0;
 	onLandform = 0;
 	hpValue = hpMax = 100;
-	if (desc.inverse)
-		turnOver();
+	facing = desc.facing;
 	if (oid >= 0)
 		changeAction(desc.action);
 	deadFlag = FALSE;
