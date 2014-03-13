@@ -25,7 +25,7 @@ protected:
 	T** table;
 	BOOLEAN* occupied;
 	INT* hash;
-	INT maxIndex, maxElemCount, currMaxIndex, pHash;
+	INT maxIndex, maxElemCount, pHash;
 
 };
 

@@ -47,6 +47,25 @@ AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f
 	return AEPoint(x, y);
 }
 
+AERect AESprite::calcRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing) {
+	INT centerx = f->getCenterx(), centery = f->getCentery();
+	INT width = f->getWidth(), height = f->getHeight();
+	FLOAT x1, y1, x2, y2;
+	if (facing == FACING_RIGHT) {
+		x1 = cx - centerx;
+		y1 = cy - centery;
+		x2 = x1 + width;
+		y2 = y1 + height;
+	}
+	else {
+		x1 = cx + centerx;
+		y1 = cy - centery;
+		x2 = x1 - width;
+		y2 = y1 + height;
+	}
+	return AERect(x1, y1, x2, y2);
+}
+
 AEBiasRect AESprite::calcRotatedRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing) {
 	FLOAT cosA = cos(angle), sinA = sin(angle);
 	INT centerx = f->getCenterx(), centery = f->getCentery();
@@ -143,6 +162,12 @@ VOID AESprite::addToRenderBuffer() {
 	AEFrame* f = obj->getAnim(action)->getFrame(frameNum);
 	AEResource* res = f->getResource();
 	AERect texClip = res->getTexClip(f->getImgOffset(), f->getImgCells());
-	AEBiasRect paintArea = calcRotatedRect(cx, cy, f, angle, facing);
-	res->addToRenderBuffer(paintArea, texClip);
+	if (angle == 0.0f) {
+		AERect paintArea = calcRect(cx, cy, f, facing);
+		res->addToRenderBuffer(paintArea, texClip);
+	}
+	else {
+		AEBiasRect paintArea = calcRotatedRect(cx, cy, f, angle, facing);
+		res->addToRenderBuffer(paintArea, texClip);
+	}
 }

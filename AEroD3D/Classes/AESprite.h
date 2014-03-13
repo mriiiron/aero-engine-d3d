@@ -98,6 +98,7 @@ public:
 	VOID toNextFrame(AEAnimation anim);
 
 	AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
+	AERect calcRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing);
 	AEBiasRect calcRotatedRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
 
 	virtual VOID applyControl();

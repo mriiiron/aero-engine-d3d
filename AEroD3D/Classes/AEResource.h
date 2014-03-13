@@ -51,6 +51,7 @@ public:
 	VOID addToRenderBuffer(AEBiasRect paintArea, AERect texClip);
 	VOID clearRenderBuffer(); 
 	VOID render();
+	VOID releaseTexture();
 
 private:
 	

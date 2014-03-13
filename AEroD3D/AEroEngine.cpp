@@ -1,5 +1,6 @@
 #include <d3d11_1.h>
 #include <directxmath.h>
+#include <d3d11sdklayers.h>
 #include <vector>
 #include "AEroEngine.h"
 
@@ -28,15 +29,13 @@ ID3D11Buffer*								g_pIndexBuffer = nullptr;
 ID3D11Buffer*								g_pCBNeverChanges = nullptr;
 ID3D11Buffer*								g_pCBChangeOnResize = nullptr;
 ID3D11Buffer*								g_pCBChangesEveryFrame = nullptr;
-ID3D11ShaderResourceView*					g_pTestTextureRV = nullptr;
 ID3D11SamplerState*							g_pSamplerLinear = nullptr;
+ID3D11Debug*								g_pDebug = nullptr;
 CHAR										g_pKeyStateBuffer[256] = { 0 };
 XMMATRIX									g_World;
 XMMATRIX									g_View;
 XMMATRIX									g_Projection;
 XMFLOAT4									g_vMeshColor( 1.0f, 1.0f, 1.0f, 1.0f );
-std::vector<SimpleVertex>					vertices;
-std::vector<INT>							indices;
 
 //--------------------------------------------------------------------------------------
 // AE Global Variables
@@ -48,3 +47,33 @@ AEHashedTable<AEParticleEmitter>			particleTable(1000);
 AEBackgroundLibrary							bgLib;
 AESceneManager								sceneManager;
 AECamera									camera;
+
+
+//--------------------------------------------------------------------------------------
+// Clean up the objects we've created
+//--------------------------------------------------------------------------------------
+void AENSCore::CleanupDevice() {
+
+	if (g_pImmediateContext) g_pImmediateContext->ClearState();
+	if (g_pSamplerLinear) g_pSamplerLinear->Release();
+	if (g_pCBNeverChanges) g_pCBNeverChanges->Release();
+	if (g_pCBChangeOnResize) g_pCBChangeOnResize->Release();
+	if (g_pCBChangesEveryFrame) g_pCBChangesEveryFrame->Release();
+	if (g_pVertexBuffer) g_pVertexBuffer->Release();
+	if (g_pIndexBuffer) g_pIndexBuffer->Release();
+	if (g_pVertexLayout) g_pVertexLayout->Release();
+	if (g_pVertexShader) g_pVertexShader->Release();
+	if (g_pPixelShader) g_pPixelShader->Release();
+	if (g_pDepthStencil) g_pDepthStencil->Release();
+	if (g_pDepthStencilView) g_pDepthStencilView->Release();
+	if (g_pRenderTargetView) g_pRenderTargetView->Release();
+	if (g_pSwapChain) g_pSwapChain->Release();
+	if (g_pImmediateContext1) g_pImmediateContext1->Release();
+	if (g_pImmediateContext) g_pImmediateContext->Release();
+	if (g_pd3dDevice1) g_pd3dDevice1->Release();
+	if (g_pd3dDevice) g_pd3dDevice->Release();
+
+	g_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	if (g_pDebug) g_pDebug->Release();
+
+}

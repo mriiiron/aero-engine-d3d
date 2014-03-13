@@ -18,3 +18,9 @@
 
 #include "Classes\AEScene.h"
 #include "Classes\AEAI.h"
+
+namespace AENSCore {
+
+	void CleanupDevice();
+
+}

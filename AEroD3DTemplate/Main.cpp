@@ -21,6 +21,7 @@
 #include <directxmath.h>
 #include <directxcolors.h>
 #include <dinput.h>
+#include <d3d11sdklayers.h>
 #include <vector>
 #include "DDSTextureLoader.h"
 #include "resource.h"
@@ -47,7 +48,6 @@ struct CBChangeOnResize
 struct CBChangesEveryFrame
 {
 	XMMATRIX mWorld;
-	XMFLOAT4 vMeshColor;
 };
 
 
@@ -74,8 +74,8 @@ extern ID3D11Buffer*						g_pIndexBuffer;
 extern ID3D11Buffer*						g_pCBNeverChanges;
 extern ID3D11Buffer*						g_pCBChangeOnResize;
 extern ID3D11Buffer*						g_pCBChangesEveryFrame;
-extern ID3D11ShaderResourceView*			g_pTestTextureRV;
 extern ID3D11SamplerState*					g_pSamplerLinear;
+extern ID3D11Debug*							g_pDebug;
 
 LPDIRECTINPUT8								g_pDirectInput;
 LPDIRECTINPUTDEVICE8						g_pKeyboardDevice;
@@ -84,7 +84,6 @@ extern CHAR									g_pKeyStateBuffer[256];
 extern XMMATRIX								g_World;
 extern XMMATRIX								g_View;
 extern XMMATRIX								g_Projection;
-extern XMFLOAT4								g_vMeshColor;
 extern std::vector<SimpleVertex>			vertices;
 extern std::vector<INT>						indices;
 
@@ -105,9 +104,8 @@ extern AECamera								camera;
 //--------------------------------------------------------------------------------------
 HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow );
 HRESULT InitDevice();
-void CleanupDevice();
 LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
-void Initialize();
+void InitGameplay();
 void Update();
 void Render();
 
@@ -126,11 +124,11 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	if( FAILED( InitDevice() ) )
 	{
-		CleanupDevice();
+		AENSCore::CleanupDevice();
 		return 0;
 	}
 
-	Initialize();
+	InitGameplay();
 
 	// Main message loop
 	MSG msg = {0};
@@ -148,7 +146,13 @@ int WINAPI wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		}
 	}
 
-	CleanupDevice();
+	// Release objects, including textures stored in AEResources
+	for (INT i = 0; i < resourceTable.getMaxElemCount(); i++) {
+		if (resourceTable.isOccupied(i)) {
+			resourceTable.getItem(i)->releaseTexture();
+		}
+	}
+	AENSCore::CleanupDevice();
 
 	return ( int )msg.wParam;
 }
@@ -262,6 +266,7 @@ HRESULT InitDevice()
 	};
 	UINT numFeatureLevels = ARRAYSIZE( featureLevels );
 
+	// Create device and swap Chain
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory( &sd, sizeof( sd ) );
 	sd.BufferCount = 1;
@@ -292,6 +297,11 @@ HRESULT InitDevice()
 		if( SUCCEEDED( hr ) )
 			break;
 	}
+	if( FAILED( hr ) )
+		return hr;
+
+	// Enable debug layer
+	hr = g_pd3dDevice->QueryInterface( IID_PPV_ARGS( &g_pDebug ) );
 	if( FAILED( hr ) )
 		return hr;
 
@@ -457,11 +467,6 @@ HRESULT InitDevice()
 	if( FAILED( hr ) )
 		return hr;
 
-	// Load the Sample Texture
-	//hr = CreateDDSTextureFromFile( g_pd3dDevice, L"Resources\\skull_960_800.dds", nullptr, &g_pTestTextureRV );
-	//if( FAILED( hr ) )
-	//	return hr;
-
 	// Create the sampler state
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory( &sampDesc, sizeof(sampDesc) );
@@ -512,33 +517,6 @@ HRESULT InitDevice()
 	g_pKeyboardDevice->Acquire();
 
 	return S_OK;
-}
-
-
-//--------------------------------------------------------------------------------------
-// Clean up the objects we've created
-//--------------------------------------------------------------------------------------
-void CleanupDevice()
-{
-	if( g_pImmediateContext ) g_pImmediateContext->ClearState();
-	if( g_pSamplerLinear ) g_pSamplerLinear->Release();
-	if( g_pTestTextureRV ) g_pTestTextureRV->Release();
-	if( g_pCBNeverChanges ) g_pCBNeverChanges->Release();
-	if( g_pCBChangeOnResize ) g_pCBChangeOnResize->Release();
-	if( g_pCBChangesEveryFrame ) g_pCBChangesEveryFrame->Release();
-	if( g_pVertexBuffer ) g_pVertexBuffer->Release();
-	if( g_pIndexBuffer ) g_pIndexBuffer->Release();
-	if( g_pVertexLayout ) g_pVertexLayout->Release();
-	if( g_pVertexShader ) g_pVertexShader->Release();
-	if( g_pPixelShader ) g_pPixelShader->Release();
-	if( g_pDepthStencil ) g_pDepthStencil->Release();
-	if( g_pDepthStencilView ) g_pDepthStencilView->Release();
-	if( g_pRenderTargetView ) g_pRenderTargetView->Release();
-	if( g_pSwapChain ) g_pSwapChain->Release();
-	if( g_pImmediateContext1 ) g_pImmediateContext1->Release();
-	if( g_pImmediateContext ) g_pImmediateContext->Release();
-	if( g_pd3dDevice1 ) g_pd3dDevice1->Release();
-	if( g_pd3dDevice ) g_pd3dDevice->Release();
 }
 
 
@@ -596,7 +574,7 @@ BOOLEAN Device_Read( IDirectInputDevice8* pDIDevice, LPVOID pBuffer, LONG lSize 
 //--------------------------------------------------------------------------------------
 // Initialize the game
 //--------------------------------------------------------------------------------------
-void Initialize()
+void InitGameplay()
 {
 
 	// Load resources
@@ -644,18 +622,18 @@ void Initialize()
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = 0;
 	descAnim.state = 0;
-	descAnim.timeToLive = 0;
+	descAnim.timeToLive = -1;
 	AEAnimation* anim = new AEAnimation(descAnim);
 
 	// Assign frames to animations
 	anim->addFrame(0, frame_0);
-	anim->addEndTime(0, 8);
+	anim->addEndTime(0, 15);
 	anim->addFrame(1, frame_1);
-	anim->addEndTime(1, 16);
+	anim->addEndTime(1, 30);
 	anim->addFrame(2, frame_2);
-	anim->addEndTime(2, 24);
+	anim->addEndTime(2, 45);
 	anim->addFrame(3, frame_3);
-	anim->addEndTime(3, 32);
+	anim->addEndTime(3, 60);
 
 	// Create objects
 	AERO_OBJECT_DESC descObj;
@@ -733,14 +711,23 @@ void Update()
 	else
 	{
 		static ULONGLONG timeStart = 0;
+		static ULONGLONG timeLast = 0;
 		ULONGLONG timeCur = GetTickCount64();
-		if( timeStart == 0 )
-		timeStart = timeCur;
-		t = ( timeCur - timeStart ) / 1000.0f;
+		if( timeStart == 0 ) {
+			timeStart = timeLast = timeCur;
+		}
+		else {
+			ULONGLONG timeElapsed = timeCur - timeLast;
+			LONGLONG timeSleep = 1000 / 60 - timeElapsed;
+			if ( timeSleep < 2 ) {
+				timeSleep = 2;
+			}
+			Sleep(timeSleep);
+			t = ( timeCur - timeStart ) / 1000.0f;
+			timeLast = timeCur;
+		}
 	}
 
-	// Rotate cube around the origin
-	// g_World = XMMatrixRotationY( t );
 }
 
 
@@ -764,7 +751,6 @@ void Render()
 	//
 	CBChangesEveryFrame cb;
 	cb.mWorld = XMMatrixTranspose( g_World );
-	cb.vMeshColor = g_vMeshColor;
 	g_pImmediateContext->UpdateSubresource( g_pCBChangesEveryFrame, 0, nullptr, &cb, 0, 0 );
 
 	//
@@ -788,6 +774,7 @@ void Render()
 			AEResource* res = resourceTable.getItem(i);
 			if (!res->isBufferEmpty()) {
 				res->render();
+				res->clearRenderBuffer();
 			}
 		}
 	}
