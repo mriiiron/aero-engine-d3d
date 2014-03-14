@@ -20,6 +20,10 @@ AEFrame::AEFrame(AERO_FRAME_DESC desc) {
 	}
 }
 
+AEFrame::~AEFrame() {
+	// TODO
+}
+
 VOID AEFrame::addOptionalByStrAt(std::string line) {
 
 }
@@ -35,6 +39,10 @@ AEAnimation::AEAnimation(AERO_ANIMATION_DESC desc) {
 		frameTable[i] = nullptr;
 		endTimeTable[i] = 0;
 	}
+}
+
+AEAnimation::~AEAnimation() {
+	// TODO
 }
 
 VOID AEAnimation::addEndTime(INT index, INT endTime) {

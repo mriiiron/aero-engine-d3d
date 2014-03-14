@@ -37,6 +37,7 @@ public:
 	static const INT MAX_ATTRIB_COUNT			= 20;
 	
 	AEFrame(AERO_FRAME_DESC desc);
+	~AEFrame();
 
 	INT getImgOffset() { return imgOffset; }
 	INT getImgCells() { return imgCells; }
@@ -89,6 +90,7 @@ public:
 	static const INT MAX_FRAME_COUNT			= 100;
 
 	AEAnimation(AERO_ANIMATION_DESC desc);
+	~AEAnimation();
 	
 	AEFrame* getFrame(INT index) { return frameTable[index]; }
 	INT getEndTime(INT index) { return endTimeTable[index]; }

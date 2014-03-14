@@ -21,6 +21,7 @@ IDXGISwapChain*								g_pSwapChain = nullptr;
 ID3D11RenderTargetView*						g_pRenderTargetView = nullptr;
 ID3D11Texture2D*							g_pDepthStencil = nullptr;
 ID3D11DepthStencilView*						g_pDepthStencilView = nullptr;
+ID3D11BlendState*							g_pBlendState = nullptr;
 ID3D11VertexShader*							g_pVertexShader = nullptr;
 ID3D11PixelShader*							g_pPixelShader = nullptr;
 ID3D11InputLayout*							g_pVertexLayout = nullptr;
@@ -64,6 +65,7 @@ void AENSCore::CleanupDevice() {
 	if (g_pVertexLayout) g_pVertexLayout->Release();
 	if (g_pVertexShader) g_pVertexShader->Release();
 	if (g_pPixelShader) g_pPixelShader->Release();
+	if (g_pBlendState) g_pBlendState->Release();
 	if (g_pDepthStencil) g_pDepthStencil->Release();
 	if (g_pDepthStencilView) g_pDepthStencilView->Release();
 	if (g_pRenderTargetView) g_pRenderTargetView->Release();

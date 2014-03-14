@@ -66,6 +66,7 @@ extern IDXGISwapChain*						g_pSwapChain;
 extern ID3D11RenderTargetView*				g_pRenderTargetView;
 extern ID3D11Texture2D*						g_pDepthStencil;
 extern ID3D11DepthStencilView*				g_pDepthStencilView;
+extern ID3D11BlendState*					g_pBlendState;
 extern ID3D11VertexShader*					g_pVertexShader;
 extern ID3D11PixelShader*					g_pPixelShader;
 extern ID3D11InputLayout*					g_pVertexLayout;
@@ -363,6 +364,21 @@ HRESULT InitDevice()
 	vp.TopLeftY = 0;
 	g_pImmediateContext->RSSetViewports( 1, &vp );
 
+	// Setup blend options
+	D3D11_BLEND_DESC descBlend;  
+	descBlend.AlphaToCoverageEnable = FALSE;
+	descBlend.IndependentBlendEnable = FALSE;
+	descBlend.RenderTarget[0].BlendEnable = TRUE;  
+	descBlend.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;  
+	descBlend.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;  
+	descBlend.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;  
+	descBlend.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;  
+	descBlend.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;  
+	descBlend.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;  
+	descBlend.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;  
+	g_pd3dDevice->CreateBlendState(&descBlend, &g_pBlendState);  
+	g_pImmediateContext->OMSetBlendState(g_pBlendState, nullptr, 0xFFFFFFFF);
+
 	// Compile the vertex shader
 	ID3DBlob* pVSBlob = nullptr;
 	hr = CompileShaderFromFile( L"AEroD3D.fx", "VS", "vs_4_0", &pVSBlob );
@@ -381,7 +397,7 @@ HRESULT InitDevice()
 		return hr;
 	}
 
-	// Define the input layout
+	// Define the vertex layout
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -389,14 +405,13 @@ HRESULT InitDevice()
 	};
 	UINT numElements = ARRAYSIZE( layout );
 
-	// Create the input layout
-	hr = g_pd3dDevice->CreateInputLayout( layout, numElements, pVSBlob->GetBufferPointer(),
-	  pVSBlob->GetBufferSize(), &g_pVertexLayout );
+	// Create the vertex layout
+	hr = g_pd3dDevice->CreateInputLayout( layout, numElements, pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), &g_pVertexLayout );
 	pVSBlob->Release();
 	if( FAILED( hr ) )
 		return hr;
 
-	// Set the input layout
+	// Set the vertex layout
 	g_pImmediateContext->IASetInputLayout( g_pVertexLayout );
 
 	// Compile the pixel shader
@@ -590,50 +605,113 @@ void InitGameplay()
 	AEResource* res = new AEResource(descRes);
 	resourceTable.addAt(descRes.rid, res);
 
-	// Create frames
-	// Frame 0
+	// Create Frame 00
 	AERO_FRAME_DESC descFrame;
 	descFrame.res = resourceTable.getItem(0);
 	descFrame.centerx = 40;
 	descFrame.centery = 10;
 	descFrame.dvx = 0;
 	descFrame.dvy = 0;
-	descFrame.imgOffset = 0;
+	descFrame.imgOffset = 7;
 	descFrame.imgCells = 1;
 	descFrame.shiftx = 0;
 	descFrame.shifty = 0;
-	AEFrame* frame_0 = new AEFrame(descFrame);
+	AEFrame* frame_00 = new AEFrame(descFrame);
 
-	// Frame 1
-	descFrame.imgOffset = 1;
-	AEFrame* frame_1 = new AEFrame(descFrame);
+	// Create Frame 01
+	descFrame.imgOffset = 8;
+	AEFrame* frame_01 = new AEFrame(descFrame);
 
-	// Frame 2
-	descFrame.imgOffset = 2;
-	AEFrame* frame_2 = new AEFrame(descFrame);
+	// Create Frame 02
+	descFrame.imgOffset = 9;
+	AEFrame* frame_02 = new AEFrame(descFrame);
 
-	// Frame 3
-	descFrame.imgOffset = 1;
-	AEFrame* frame_3 = new AEFrame(descFrame);
+	// Create Frame 03
+	descFrame.imgOffset = 8;
+	AEFrame* frame_03 = new AEFrame(descFrame);
 	
-	// Create animations
+	// Create animation 0
 	AERO_ANIMATION_DESC descAnim;
 	descAnim.frameCount = 4;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = 0;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
-	AEAnimation* anim = new AEAnimation(descAnim);
+	AEAnimation* anim_0 = new AEAnimation(descAnim);
 
-	// Assign frames to animations
-	anim->addFrame(0, frame_0);
-	anim->addEndTime(0, 15);
-	anim->addFrame(1, frame_1);
-	anim->addEndTime(1, 30);
-	anim->addFrame(2, frame_2);
-	anim->addEndTime(2, 45);
-	anim->addFrame(3, frame_3);
-	anim->addEndTime(3, 60);
+	// Assign frames to animation 0
+	anim_0->addFrame(0, frame_00);
+	anim_0->addEndTime(0, 15);
+	anim_0->addFrame(1, frame_01);
+	anim_0->addEndTime(1, 30);
+	anim_0->addFrame(2, frame_02);
+	anim_0->addEndTime(2, 45);
+	anim_0->addFrame(3, frame_03);
+	anim_0->addEndTime(3, 60);
+
+	// Create Frame 10
+	descFrame.imgOffset = 45;
+	AEFrame* frame_10 = new AEFrame(descFrame);
+
+	// Create Frame 11
+	descFrame.imgOffset = 46;
+	AEFrame* frame_11 = new AEFrame(descFrame);
+
+	// Create Frame 12
+	descFrame.imgOffset = 47;
+	AEFrame* frame_12 = new AEFrame(descFrame);
+
+	// Create Frame 13
+	descFrame.imgOffset = 48;
+	AEFrame* frame_13 = new AEFrame(descFrame);
+
+	// Create Frame 14
+	descFrame.imgOffset = 49;
+	AEFrame* frame_14 = new AEFrame(descFrame);
+
+	// Create Frame 15
+	descFrame.imgOffset = 48;
+	AEFrame* frame_15 = new AEFrame(descFrame);
+
+	// Create Frame 16
+	descFrame.imgOffset = 47;
+	AEFrame* frame_16 = new AEFrame(descFrame);
+
+	// Create Frame 17
+	descFrame.imgOffset = 46;
+	AEFrame* frame_17 = new AEFrame(descFrame);
+
+	// Create Frame 18
+	descFrame.imgOffset = 45;
+	AEFrame* frame_18 = new AEFrame(descFrame);
+
+	// Create animation 1
+	descAnim.frameCount = 9;
+	descAnim.isAnimLoop = FALSE;
+	descAnim.next = 0;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* anim_1 = new AEAnimation(descAnim);
+
+	// Assign frames to animation 1
+	anim_1->addFrame(0, frame_10);
+	anim_1->addEndTime(0, 5);
+	anim_1->addFrame(1, frame_11);
+	anim_1->addEndTime(1, 10);
+	anim_1->addFrame(2, frame_12);
+	anim_1->addEndTime(2, 15);
+	anim_1->addFrame(3, frame_13);
+	anim_1->addEndTime(3, 20);
+	anim_1->addFrame(4, frame_14);
+	anim_1->addEndTime(4, 80);
+	anim_1->addFrame(5, frame_15);
+	anim_1->addEndTime(5, 85);
+	anim_1->addFrame(6, frame_16);
+	anim_1->addEndTime(6, 90);
+	anim_1->addFrame(7, frame_17);
+	anim_1->addEndTime(7, 95);
+	anim_1->addFrame(8, frame_18);
+	anim_1->addEndTime(8, 100);
 
 	// Create objects
 	AERO_OBJECT_DESC descObj;
@@ -643,7 +721,8 @@ void InitGameplay()
 	AEObject* obj = new AEObject(descObj);
 
 	// Assign animations to objects
-	obj->addAnim(0, anim);
+	obj->addAnim(0, anim_0);
+	obj->addAnim(1, anim_1);
 
 	// Add objects to object table
 	objectTable.addAt(0, obj);
@@ -690,9 +769,9 @@ void Update()
 	// Get and process keyboard state
 	ZeroMemory( &g_pKeyStateBuffer, sizeof(g_pKeyStateBuffer) );
 	Device_Read( g_pKeyboardDevice, (LPVOID)g_pKeyStateBuffer, sizeof( g_pKeyStateBuffer ) );
-	if (g_pKeyStateBuffer[DIK_A] & 0x80)
-	{
-		MessageBox( nullptr, L"A Pressed.", L"Info", MB_OK );
+	if (g_pKeyStateBuffer[DIK_A] & 0x80) {
+		AESprite* pGedama = sceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
+		pGedama->changeAction(1);
 	}
 
 	// Update the scene
@@ -722,7 +801,7 @@ void Update()
 			if ( timeSleep < 2 ) {
 				timeSleep = 2;
 			}
-			Sleep(timeSleep);
+			Sleep((DWORD)timeSleep);
 			t = ( timeCur - timeStart ) / 1000.0f;
 			timeLast = timeCur;
 		}
