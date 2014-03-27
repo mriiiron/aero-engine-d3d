@@ -45,20 +45,13 @@ AEAnimation::~AEAnimation() {
 	// TODO
 }
 
-VOID AEAnimation::addEndTime(INT index, INT endTime) {
-	if (index < 0 || index >= frameCount) {
-		// Error
-		return;
-	}
-	endTimeTable[index] = endTime;
-}
-
-VOID AEAnimation::addFrame(INT index, AEFrame* frame) {
+VOID AEAnimation::addFrame(INT index, AEFrame* frame, INT endTime) {
 	if (index < 0 || index >= frameCount) {
 		// Error
 		return;
 	}
 	frameTable[index] = frame;
+	endTimeTable[index] = endTime;
 }
 
 VOID AEAnimation::cloneFrame(INT srcIndex, INT dstIndex) {

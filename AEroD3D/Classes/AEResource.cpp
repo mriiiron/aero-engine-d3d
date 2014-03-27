@@ -1,4 +1,5 @@
 #include <d3d11_1.h>
+#include <algorithm>
 #include "AEResource.h"
 
 extern ID3D11DeviceContext*					g_pImmediateContext;
@@ -13,7 +14,7 @@ AEResource::AEResource(AERO_RESOURCE_DESC desc) {
 	cellH = desc.cellH;
 }
 
-AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount) {
+AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse) {
 	FLOAT x1, x2, y1, y2;
 	switch (rtype) {
 	case RES_1x1:
@@ -47,27 +48,42 @@ AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount) {
 		y2 = y1 + 0.2f;
 		break;
 	default:
+		// Error
+		break;
+	}
+	switch (inverse) {
+	case TEXCLIP_INVERSE_X:
+		std::swap(x1, x2);
+		break;
+	case TEXCLIP_INVERSE_Y:
+		std::swap(y1, y2);
+		break;
+	case TEXCLIP_INVERSE_BOTH:
+		std::swap(x1, x2);
+		std::swap(y1, y2);
+		break;
+	default:
 		break;
 	}
 	return AERect(x1, y1, x2, y2);
 }
 
-VOID AEResource::addToRenderBuffer(AERect paintArea, AERect texClip) {
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y2, 0.0f), XMFLOAT2(texClip.x1, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, 0.0f), XMFLOAT2(texClip.x2, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, 0.0f), XMFLOAT2(texClip.x1, texClip.y2)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, 0.0f), XMFLOAT2(texClip.x1, texClip.y2)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, 0.0f), XMFLOAT2(texClip.x2, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y1, 0.0f), XMFLOAT2(texClip.x2, texClip.y2)));
+VOID AEResource::addToRenderBuffer(AERect paintArea, AERect texClip, FLOAT zValue) {
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y2, zValue), XMFLOAT2(texClip.x1, texClip.y1)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, zValue), XMFLOAT2(texClip.x2, texClip.y1)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, zValue), XMFLOAT2(texClip.x2, texClip.y1)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y1, zValue), XMFLOAT2(texClip.x2, texClip.y2)));
 }
 
-VOID AEResource::addToRenderBuffer(AEBiasRect paintArea, AERect texClip) {
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x4, paintArea.y4, 0.0f), XMFLOAT2(texClip.x1, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x3, paintArea.y3, 0.0f), XMFLOAT2(texClip.x2, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, 0.0f), XMFLOAT2(texClip.x1, texClip.y2)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, 0.0f), XMFLOAT2(texClip.x1, texClip.y2)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x3, paintArea.y3, 0.0f), XMFLOAT2(texClip.x2, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, 0.0f), XMFLOAT2(texClip.x2, texClip.y2)));
+VOID AEResource::addToRenderBuffer(AEBiasRect paintArea, AERect texClip, FLOAT zValue) {
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x4, paintArea.y4, zValue), XMFLOAT2(texClip.x1, texClip.y1)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x3, paintArea.y3, zValue), XMFLOAT2(texClip.x2, texClip.y1)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x3, paintArea.y3, zValue), XMFLOAT2(texClip.x2, texClip.y1)));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, zValue), XMFLOAT2(texClip.x2, texClip.y2)));
 }
 
 VOID AEResource::clearRenderBuffer() {

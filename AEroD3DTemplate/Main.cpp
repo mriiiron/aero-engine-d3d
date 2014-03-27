@@ -376,7 +376,13 @@ HRESULT InitDevice()
 	descBlend.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;  
 	descBlend.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;  
 	descBlend.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;  
-	g_pd3dDevice->CreateBlendState(&descBlend, &g_pBlendState);  
+	hr = g_pd3dDevice->CreateBlendState(&descBlend, &g_pBlendState);
+	if( FAILED( hr ) )
+	{
+		MessageBox( nullptr,
+		L"Cannot create blend state.", L"Error", MB_OK );
+		return hr;
+	}
 	g_pImmediateContext->OMSetBlendState(g_pBlendState, nullptr, 0xFFFFFFFF);
 
 	// Compile the vertex shader
@@ -592,7 +598,7 @@ BOOLEAN Device_Read( IDirectInputDevice8* pDIDevice, LPVOID pBuffer, LONG lSize 
 void InitGameplay()
 {
 
-	// Load resources
+	// Load sprite resources
 	AERO_RESOURCE_DESC descRes;
 	descRes.rid = 0;
 	descRes.rtype = RES_5x10;
@@ -602,8 +608,20 @@ void InitGameplay()
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
-	AEResource* res = new AEResource(descRes);
-	resourceTable.addAt(descRes.rid, res);
+	AEResource* res_1 = new AEResource(descRes);
+	resourceTable.addAt(descRes.rid, res_1);
+
+	// Load background resources
+	descRes.rid = 1;
+	descRes.rtype = RES_1x1;
+	descRes.cellW = 1000;
+	descRes.cellH = 771;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\starsky.dds", nullptr, &(descRes.tex) );
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	AEResource* res_2 = new AEResource(descRes);
+	resourceTable.addAt(descRes.rid, res_2);
 
 	// Create Frame 00
 	AERO_FRAME_DESC descFrame;
@@ -640,53 +658,25 @@ void InitGameplay()
 	AEAnimation* anim_0 = new AEAnimation(descAnim);
 
 	// Assign frames to animation 0
-	anim_0->addFrame(0, frame_00);
-	anim_0->addEndTime(0, 15);
-	anim_0->addFrame(1, frame_01);
-	anim_0->addEndTime(1, 30);
-	anim_0->addFrame(2, frame_02);
-	anim_0->addEndTime(2, 45);
-	anim_0->addFrame(3, frame_03);
-	anim_0->addEndTime(3, 60);
+	anim_0->addFrame(0, frame_00, 15);
+	anim_0->addFrame(1, frame_01, 30);
+	anim_0->addFrame(2, frame_02, 45);
+	anim_0->addFrame(3, frame_03, 60);
 
 	// Create Frame 10
-	descFrame.imgOffset = 45;
+	descFrame.imgOffset = 10;
 	AEFrame* frame_10 = new AEFrame(descFrame);
 
 	// Create Frame 11
-	descFrame.imgOffset = 46;
+	descFrame.imgOffset = 11;
 	AEFrame* frame_11 = new AEFrame(descFrame);
 
 	// Create Frame 12
-	descFrame.imgOffset = 47;
+	descFrame.imgOffset = 12;
 	AEFrame* frame_12 = new AEFrame(descFrame);
 
-	// Create Frame 13
-	descFrame.imgOffset = 48;
-	AEFrame* frame_13 = new AEFrame(descFrame);
-
-	// Create Frame 14
-	descFrame.imgOffset = 49;
-	AEFrame* frame_14 = new AEFrame(descFrame);
-
-	// Create Frame 15
-	descFrame.imgOffset = 48;
-	AEFrame* frame_15 = new AEFrame(descFrame);
-
-	// Create Frame 16
-	descFrame.imgOffset = 47;
-	AEFrame* frame_16 = new AEFrame(descFrame);
-
-	// Create Frame 17
-	descFrame.imgOffset = 46;
-	AEFrame* frame_17 = new AEFrame(descFrame);
-
-	// Create Frame 18
-	descFrame.imgOffset = 45;
-	AEFrame* frame_18 = new AEFrame(descFrame);
-
 	// Create animation 1
-	descAnim.frameCount = 9;
+	descAnim.frameCount = 3;
 	descAnim.isAnimLoop = FALSE;
 	descAnim.next = 0;
 	descAnim.state = 0;
@@ -694,24 +684,9 @@ void InitGameplay()
 	AEAnimation* anim_1 = new AEAnimation(descAnim);
 
 	// Assign frames to animation 1
-	anim_1->addFrame(0, frame_10);
-	anim_1->addEndTime(0, 5);
-	anim_1->addFrame(1, frame_11);
-	anim_1->addEndTime(1, 10);
-	anim_1->addFrame(2, frame_12);
-	anim_1->addEndTime(2, 15);
-	anim_1->addFrame(3, frame_13);
-	anim_1->addEndTime(3, 20);
-	anim_1->addFrame(4, frame_14);
-	anim_1->addEndTime(4, 80);
-	anim_1->addFrame(5, frame_15);
-	anim_1->addEndTime(5, 85);
-	anim_1->addFrame(6, frame_16);
-	anim_1->addEndTime(6, 90);
-	anim_1->addFrame(7, frame_17);
-	anim_1->addEndTime(7, 95);
-	anim_1->addFrame(8, frame_18);
-	anim_1->addEndTime(8, 100);
+	anim_1->addFrame(0, frame_10, 5);
+	anim_1->addFrame(1, frame_11, 10);
+	anim_1->addFrame(2, frame_12, 100);
 
 	// Create objects
 	AERO_OBJECT_DESC descObj;
@@ -727,13 +702,38 @@ void InitGameplay()
 	// Add objects to object table
 	objectTable.addAt(0, obj);
 
+	// Create BG layer animation. Only one frame (a static image) in this case
+	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(resourceTable.getItem(1), 0);
+	AERO_BGLAYERANIM_DESC descBGLayerAnim;
+	descBGLayerAnim.frameCount = 1;
+	AEBGLayerAnim* bgLayerAnim = new AEBGLayerAnim(descBGLayerAnim);
+	bgLayerAnim->addFrame(0, bgLayerFrame, 1000);
+
 	// Create BG
 	AERO_BACKGROUND_DESC descBG;
-	descBG.name = "Blank";
-	descBG.width = 640;
-	descBG.height = 480;
-	descBG.locX = descBG.locY = 0.0f;
+	descBG.name = "Starsky";
 	AEBackground* bg = new AEBackground(descBG);
+
+	// Add BG layer animation to BG
+	bg->addAnimAt(0, bgLayerAnim);
+
+	// Create BG layer
+	AERO_BGLAYER_DESC descBGLayer;
+	descBGLayer.depth = 0;
+	descBGLayer.locX = -500.0f;
+	descBGLayer.locY = -385.5f;
+	descBGLayer.width = 1000;
+	descBGLayer.height = 771;
+	AEBGLayer* bgLayer = new AEBGLayer(descBGLayer);
+	
+	// Add BG layer anim reference to layer
+	AEBGAnimRef* animRef = new AEBGAnimRef(0, 0, 0);
+	bgLayer->addAnimRef(animRef);
+
+	// Add BG layers to BG
+	bg->addLayer(bgLayer);
+
+	// Add BG to BG library
 	bgLib.add(bg);
 
 	// Create scene with sprite table, background and HUD
@@ -742,21 +742,36 @@ void InitGameplay()
 	TemplateScene* scene = new TemplateScene(bgLib.get(0), spriteTable, hud);
 	sceneManager.addSceneAt(0, scene);
 
-	// Create sprites
+	// Create a sprite
 	AERO_SPRITE_DESC descSpr;
-	descSpr.oid = 0;
+	descSpr.obj = objectTable.getItem(0);
 	descSpr.team = 0;
 	descSpr.action = 0;
 	descSpr.facing = 0;
 	descSpr.cx = 0.0f;
 	descSpr.cy = 0.0f;
-	AESprite* spr = new AESprite(descSpr);
+	AESprite* spr_1 = new AESprite(descSpr);
+	spr_1->rotateDeg(45);
+
+	// Create another sprite
+	descSpr.facing = 0;
+	descSpr.cx = 60.0f;
+	descSpr.cy = 20.0f;
+	AESprite* spr_2 = new AESprite(descSpr);
+
+	// Create another sprite
+	descSpr.facing = 0;
+	descSpr.cx = 80.0f;
+	descSpr.cy = 15.0f;
+	AESprite* spr_3 = new AESprite(descSpr);
 
 	// Run the scene
 	sceneManager.runScene(0);
 
 	// Add sprites to the scene
-	sceneManager.getActiveScene()->addSprite(spr);
+	sceneManager.getActiveScene()->addSprite(spr_1);
+	sceneManager.getActiveScene()->addSprite(spr_2);
+	sceneManager.getActiveScene()->addSprite(spr_3);
 
 }
 
@@ -833,7 +848,7 @@ void Render()
 	g_pImmediateContext->UpdateSubresource( g_pCBChangesEveryFrame, 0, nullptr, &cb, 0, 0 );
 
 	//
-	// Render the scene
+	// Draw the scene to buffers (vertex/index)
 	//
 	AEScene* activeScene = sceneManager.getActiveScene();
 	if ( activeScene == NULL ) {
@@ -841,6 +856,9 @@ void Render()
 	}
 	activeScene->paint();
 
+	//
+	// Render
+	//
 	g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
 	g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pCBNeverChanges );
 	g_pImmediateContext->VSSetConstantBuffers( 1, 1, &g_pCBChangeOnResize );
@@ -848,7 +866,8 @@ void Render()
 	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
 	g_pImmediateContext->PSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
 	g_pImmediateContext->PSSetSamplers( 0, 1, &g_pSamplerLinear );
-	for ( int i = 0; i < resourceTable.getMaxElemCount(); i++ ) {
+	// for ( int i = 0; i < resourceTable.getMaxElemCount(); i++ ) {
+	for ( int i = resourceTable.getMaxElemCount() - 1; i >= 0; i-- ) {
 		if ( resourceTable.isOccupied(i) ) {
 			AEResource* res = resourceTable.getItem(i);
 			if (!res->isBufferEmpty()) {

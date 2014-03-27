@@ -46,6 +46,7 @@ struct PS_INPUT
 PS_INPUT VS( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;
+	input.Pos.w = 1.0f;
     output.Pos = mul( input.Pos, World );
     output.Pos = mul( output.Pos, View );
     output.Pos = mul( output.Pos, Projection );
@@ -60,5 +61,8 @@ PS_INPUT VS( VS_INPUT input )
 //--------------------------------------------------------------------------------------
 float4 PS( PS_INPUT input) : SV_Target
 {
-    return txDiffuse.Sample( samLinear, input.Tex );
+	float4 finalColor;
+    finalColor = txDiffuse.Sample( samLinear, input.Tex );
+	clip(finalColor.a - 0.1f);
+	return finalColor;
 }

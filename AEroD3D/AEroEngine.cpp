@@ -1,7 +1,6 @@
 #include <d3d11_1.h>
 #include <directxmath.h>
 #include <d3d11sdklayers.h>
-#include <vector>
 #include "AEroEngine.h"
 
 using namespace DirectX;

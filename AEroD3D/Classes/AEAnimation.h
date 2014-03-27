@@ -100,8 +100,7 @@ public:
 	INT getTTL() { return timeToLive; }
 	INT getState() { return state; }
 
-	VOID addEndTime(INT index, INT endTime);
-	VOID addFrame(INT index, AEFrame* frame);
+	VOID addFrame(INT index, AEFrame* frame, INT endTime);
 	VOID cloneFrame(INT srcIndex, INT dstIndex);
 	VOID loadFrameOptional(INT index, INT _slot, std::string str);
 

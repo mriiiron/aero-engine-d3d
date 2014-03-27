@@ -20,7 +20,7 @@ class AEScene;
 
 struct AERO_SPRITE_DESC {
 
-	INT oid;
+	AEObject* obj;
 	INT team;
 	FLOAT cx;
 	FLOAT cy;
@@ -28,7 +28,8 @@ struct AERO_SPRITE_DESC {
 	INT facing;
 
 	AERO_SPRITE_DESC() {
-		oid = team = 0;
+		obj = nullptr;
+		team = 0;
 		cx = cy = 0.0f;
 		action = 0;
 		facing = 0;
@@ -60,7 +61,6 @@ public:
 	VOID setFacing(BYTE _facing) { facing = _facing; }
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
 	INT getIndex() { return index; }
-	INT getOid() { return oid; }
 	INT getAction() { return action; }
 	INT getFrameNum() { return frameNum; }
 	INT getState() { return state; }
@@ -79,6 +79,7 @@ public:
 	FLOAT getAx() { return ax; }
 	FLOAT getAy() { return ay; }
 	AEPoint getCenter();
+	AEObject* getObject() { return obj; }
 	std::string getObjName();
 
 	VOID rotateDeg(FLOAT degree) { angle += AENSMath::deg2rad(degree); }
@@ -107,7 +108,8 @@ public:
 
 protected:
 
-	INT index, oid, action, frameNum, time, timeToLive, timeToStiff;
+	AEObject* obj;
+	INT index, action, frameNum, time, timeToLive, timeToStiff;
 	FLOAT cx, cy, vx, vy, ax, ay, angle, vangle, gndSpeed;
 	INT state, team, keyState, drop, onLandform;
 	BYTE facing, atkJudgeLock;

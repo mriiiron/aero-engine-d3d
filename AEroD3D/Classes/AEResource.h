@@ -39,6 +39,11 @@ class AEResource {
 
 public:
 
+	static const INT TEXCLIP_INVERSE_NONE		= 0;
+	static const INT TEXCLIP_INVERSE_X			= 1;
+	static const INT TEXCLIP_INVERSE_Y			= 2;
+	static const INT TEXCLIP_INVERSE_BOTH		= 3;
+
 	AEResource(AERO_RESOURCE_DESC desc);
 
 	ID3D11ShaderResourceView* getTexture() { return tex; }
@@ -46,9 +51,9 @@ public:
 	INT getCellHeight() { return cellH; }
 	BOOLEAN isBufferEmpty() { return (vertexBuffer.size() == 0 ? TRUE : FALSE); }
 
-	AERect getTexClip(INT imgOffset, INT imgCellCount);
-	VOID addToRenderBuffer(AERect paintArea, AERect texClip);
-	VOID addToRenderBuffer(AEBiasRect paintArea, AERect texClip);
+	AERect getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse = TEXCLIP_INVERSE_NONE);
+	VOID addToRenderBuffer(AERect paintArea, AERect texClip, FLOAT zValue);
+	VOID addToRenderBuffer(AEBiasRect paintArea, AERect texClip, FLOAT zValue);
 	VOID clearRenderBuffer(); 
 	VOID render();
 	VOID releaseTexture();
