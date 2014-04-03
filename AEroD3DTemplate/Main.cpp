@@ -67,6 +67,7 @@ extern ID3D11RenderTargetView*				g_pRenderTargetView;
 extern ID3D11Texture2D*						g_pDepthStencil;
 extern ID3D11DepthStencilView*				g_pDepthStencilView;
 extern ID3D11BlendState*					g_pBlendState;
+extern ID3D11RasterizerState*				g_pRasterizerState;
 extern ID3D11VertexShader*					g_pVertexShader;
 extern ID3D11PixelShader*					g_pPixelShader;
 extern ID3D11InputLayout*					g_pVertexLayout;
@@ -376,7 +377,7 @@ HRESULT InitDevice()
 	descBlend.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;  
 	descBlend.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;  
 	descBlend.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;  
-	hr = g_pd3dDevice->CreateBlendState(&descBlend, &g_pBlendState);
+	hr = g_pd3dDevice->CreateBlendState( &descBlend, &g_pBlendState );
 	if( FAILED( hr ) )
 	{
 		MessageBox( nullptr,
@@ -384,6 +385,27 @@ HRESULT InitDevice()
 		return hr;
 	}
 	g_pImmediateContext->OMSetBlendState(g_pBlendState, nullptr, 0xFFFFFFFF);
+
+	// Setup rasterizer options
+	D3D11_RASTERIZER_DESC descRasterizer;
+	descRasterizer.FillMode = D3D11_FILL_SOLID;
+	descRasterizer.CullMode = D3D11_CULL_BACK;
+	descRasterizer.FrontCounterClockwise = FALSE;
+	descRasterizer.DepthBias = 1;
+	descRasterizer.DepthBiasClamp = 1.0f;
+	descRasterizer.SlopeScaledDepthBias = 0.0f;
+	descRasterizer.DepthClipEnable = TRUE;
+	descRasterizer.ScissorEnable = FALSE;
+	descRasterizer.MultisampleEnable = FALSE;
+	descRasterizer.AntialiasedLineEnable = FALSE;
+	hr = g_pd3dDevice->CreateRasterizerState( &descRasterizer, &g_pRasterizerState );
+	if( FAILED( hr ) )
+	{
+		MessageBox( nullptr,
+		L"Cannot create rasterizer state.", L"Error", MB_OK );
+		return hr;
+	}
+	g_pImmediateContext->RSSetState( g_pRasterizerState );
 
 	// Compile the vertex shader
 	ID3DBlob* pVSBlob = nullptr;
