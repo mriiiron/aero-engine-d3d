@@ -41,7 +41,7 @@ XMFLOAT4									g_vMeshColor( 1.0f, 1.0f, 1.0f, 1.0f );
 //--------------------------------------------------------------------------------------
 // AE Global Variables
 //--------------------------------------------------------------------------------------
-AEConstantTable<AEResource>					resourceTable(100);
+AEResourceTable								resourceTable(100);
 AEConstantTable<AEObject>					objectTable(100);
 AEHashedTable<AEAI>							aiTable(100);
 AEHashedTable<AEParticleEmitter>			particleTable(1000);
@@ -66,6 +66,7 @@ void AENSCore::CleanupDevice() {
 	if (g_pVertexShader) g_pVertexShader->Release();
 	if (g_pPixelShader) g_pPixelShader->Release();
 	if (g_pBlendState) g_pBlendState->Release();
+	if (g_pRasterizerState) g_pRasterizerState->Release();
 	if (g_pDepthStencil) g_pDepthStencil->Release();
 	if (g_pDepthStencilView) g_pDepthStencilView->Release();
 	if (g_pRenderTargetView) g_pRenderTargetView->Release();

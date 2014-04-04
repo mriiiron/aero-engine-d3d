@@ -29,7 +29,7 @@ public:
 
 	VOID addSprite(AESprite* sprite);
 	virtual VOID update();
-	virtual VOID paint();
+	virtual VOID render();
 	virtual VOID processInput(CHAR* pKeyStateBuffer);
 
 protected:

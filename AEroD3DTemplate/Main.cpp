@@ -92,7 +92,7 @@ extern std::vector<INT>						indices;
 //--------------------------------------------------------------------------------------
 // AE Global Variables
 //--------------------------------------------------------------------------------------
-extern AEConstantTable<AEResource>			resourceTable;
+extern AEResourceTable						resourceTable;
 extern AEConstantTable<AEObject>			objectTable;
 extern AEHashedTable<AEAI>					aiTable;
 extern AEHashedTable<AEParticleEmitter>		particleTable;
@@ -391,8 +391,8 @@ HRESULT InitDevice()
 	descRasterizer.FillMode = D3D11_FILL_SOLID;
 	descRasterizer.CullMode = D3D11_CULL_BACK;
 	descRasterizer.FrontCounterClockwise = FALSE;
-	descRasterizer.DepthBias = 1;
-	descRasterizer.DepthBiasClamp = 1.0f;
+	descRasterizer.DepthBias = 0;
+	descRasterizer.DepthBiasClamp = 0.0f;
 	descRasterizer.SlopeScaledDepthBias = 0.0f;
 	descRasterizer.DepthClipEnable = TRUE;
 	descRasterizer.ScissorEnable = FALSE;
@@ -777,7 +777,7 @@ void InitGameplay()
 
 	// Create another sprite
 	descSpr.facing = 0;
-	descSpr.cx = 60.0f;
+	descSpr.cx = 62.5f;
 	descSpr.cy = 20.0f;
 	AESprite* spr_2 = new AESprite(descSpr);
 
@@ -852,35 +852,18 @@ void Update()
 //--------------------------------------------------------------------------------------
 void Render()
 {
-	//
 	// Clear the back buffer
-	//
 	g_pImmediateContext->ClearRenderTargetView( g_pRenderTargetView, Colors::Black );
 
-	//
 	// Clear the depth buffer to 1.0 (max depth)
-	//
 	g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 
-	//
 	// Update variables that change once per frame
-	//
 	CBChangesEveryFrame cb;
 	cb.mWorld = XMMatrixTranspose( g_World );
 	g_pImmediateContext->UpdateSubresource( g_pCBChangesEveryFrame, 0, nullptr, &cb, 0, 0 );
 
-	//
-	// Draw the scene to buffers (vertex/index)
-	//
-	AEScene* activeScene = sceneManager.getActiveScene();
-	if ( activeScene == NULL ) {
-		AENSGameControl::exitGame("On gameplay: No active scene.");
-	}
-	activeScene->paint();
-
-	//
-	// Render
-	//
+	// Render the scene
 	g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
 	g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pCBNeverChanges );
 	g_pImmediateContext->VSSetConstantBuffers( 1, 1, &g_pCBChangeOnResize );
@@ -888,19 +871,12 @@ void Render()
 	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
 	g_pImmediateContext->PSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
 	g_pImmediateContext->PSSetSamplers( 0, 1, &g_pSamplerLinear );
-	// for ( int i = 0; i < resourceTable.getMaxElemCount(); i++ ) {
-	for ( int i = resourceTable.getMaxElemCount() - 1; i >= 0; i-- ) {
-		if ( resourceTable.isOccupied(i) ) {
-			AEResource* res = resourceTable.getItem(i);
-			if (!res->isBufferEmpty()) {
-				res->render();
-				res->clearRenderBuffer();
-			}
-		}
+	AEScene* activeScene = sceneManager.getActiveScene();
+	if ( activeScene == NULL ) {
+		AENSGameControl::exitGame("On gameplay: No active scene.");
 	}
+	activeScene->render();
 
-	//
 	// Present our back buffer to our front buffer
-	//
 	g_pSwapChain->Present( 0, 0 );
 }

@@ -3,12 +3,11 @@
 #include <cmath>
 #include "AEMath.h"
 #include "AEPhysics.h"
-#include "AEResource.h"
 #include "AETable.h"
+#include "AEResource.h"
 #include "AEBackground.h"
 #include "AESprite.h"
 
-extern AEConstantTable<AEResource>				resourceTable;
 extern AEConstantTable<AEObject>				objectTable;
 
 AESprite::AESprite(AERO_SPRITE_DESC desc) {
@@ -154,16 +153,16 @@ VOID AESprite::update() {
 	}
 }
 
-VOID AESprite::addToRenderBuffer() {
+VOID AESprite::addToRenderBuffer(FLOAT zValue) {
 	AEFrame* f = obj->getAnim(action)->getFrame(frameNum);
 	AEResource* res = f->getResource();
 	AERect texClip = res->getTexClip(f->getImgOffset(), f->getImgCells(), facing);
 	if (angle == 0.0f) {
 		AERect paintArea = calcRect(cx, cy, f, facing);
-		res->addToRenderBuffer(paintArea, texClip, 0.0f);
+		res->addToRenderBuffer(paintArea, texClip, zValue);
 	}
 	else {
 		AEBiasRect paintArea = calcRotatedRect(cx, cy, f, angle, facing);
-		res->addToRenderBuffer(paintArea, texClip, 0.0f);
+		res->addToRenderBuffer(paintArea, texClip, zValue);
 	}
 }

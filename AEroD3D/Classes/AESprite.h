@@ -104,7 +104,7 @@ public:
 
 	virtual VOID applyControl();
 	virtual VOID update();
-	virtual VOID addToRenderBuffer();
+	virtual VOID addToRenderBuffer(FLOAT zValue = 0.0f);
 
 protected:
 

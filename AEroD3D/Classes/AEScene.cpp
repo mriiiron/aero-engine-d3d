@@ -8,7 +8,8 @@
 #include "AECamera.h"
 #include "AEScene.h"
 
-extern AECamera camera;
+extern AECamera									camera;
+extern AEResourceTable							resourceTable;
 
 AEScene::AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud) {
 	bg = _bg;
@@ -34,12 +35,17 @@ VOID AEScene::update() {
 	hud->update();
 }
 
-VOID AEScene::paint() {
+VOID AEScene::render() {
 	bg->addToRenderBuffer(camera.getFocus());
+	resourceTable.renderAndClear();
+	FLOAT zBias = 0.0f;
 	for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
-		spriteTable->getItemByHash(iHash)->addToRenderBuffer();
+		spriteTable->getItemByHash(iHash)->addToRenderBuffer(zBias);
+		zBias -= 0.065f;
 	}
+	resourceTable.renderAndClear();
 	hud->addToRenderBuffer();
+	resourceTable.renderAndClear();
 }
 
 VOID AEScene::processInput(CHAR* pKeyStateBuffer) {

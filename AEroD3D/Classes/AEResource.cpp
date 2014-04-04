@@ -1,5 +1,6 @@
 #include <d3d11_1.h>
 #include <algorithm>
+#include <string>
 #include "AEResource.h"
 
 extern ID3D11DeviceContext*					g_pImmediateContext;
@@ -103,4 +104,21 @@ VOID AEResource::render() {
 
 VOID AEResource::releaseTexture() {
 	if (tex) tex->Release();
+}
+
+
+AEResourceTable::AEResourceTable(INT _maxElemCount) : AEConstantTable<AEResource>(_maxElemCount) {
+	
+}
+
+VOID AEResourceTable::renderAndClear() {
+	for (int i = 0; i < maxElemCount; i++) {
+		if (occupied[i]) {
+			AEResource* res = table[i];
+			if (!res->isBufferEmpty()) {
+				res->render();
+				res->clearRenderBuffer();
+			}
+		}
+	}
 }

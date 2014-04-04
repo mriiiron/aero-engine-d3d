@@ -11,6 +11,7 @@
 
 #include <vector>
 #include "AEMath.h"
+#include "AETable.h"
 
 
 typedef enum AEResType {
@@ -67,5 +68,16 @@ private:
 
 	std::vector<SimpleVertex> vertexBuffer;
 	// std::vector<INT> indexBuffer;
+
+};
+
+
+class AEResourceTable: public AEConstantTable<AEResource> {
+
+public:
+
+	AEResourceTable(INT _maxElemCount);
+
+	VOID renderAndClear();
 
 };

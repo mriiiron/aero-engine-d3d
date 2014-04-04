@@ -5,8 +5,6 @@
 #include "AETable.h"
 #include "AEBackground.h"
 
-extern AEConstantTable<AEResource>			resourceTable;
-
 AEBGLayerAnim::AEBGLayerAnim(AERO_BGLAYERANIM_DESC desc) {
 	frameCount = desc.frameCount;
 	for (INT i = 0; i < MAX_FRAME_COUNT; i++) {
