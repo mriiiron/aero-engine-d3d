@@ -8,13 +8,14 @@
 #include "AEBackground.h"
 #include "AESprite.h"
 
-extern AEConstantTable<AEObject>				objectTable;
+extern AEConstantTable<AEObject>				ae_ObjectTable;
 
 AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	state = 0;
 	index = 0;
 	obj = desc.obj;  action = desc.action;  team = desc.team;  cx = desc.cx;  cy = desc.cy;
 	vx = vy = ax = ay = angle = vangle = gndSpeed = 0.0f;
+	alpha = 1.0f;
 	frameNum = time = facing = timeToStiff = keyState = atkJudgeLock = 0;
 	onLandform = 0;
 	hpValue = hpMax = 100;
@@ -159,10 +160,10 @@ VOID AESprite::addToRenderBuffer(FLOAT zValue) {
 	AERect texClip = res->getTexClip(f->getImgOffset(), f->getImgCells(), facing);
 	if (angle == 0.0f) {
 		AERect paintArea = calcRect(cx, cy, f, facing);
-		res->addToRenderBuffer(paintArea, texClip, zValue);
+		res->addToRenderBuffer(paintArea, texClip, alpha, zValue);
 	}
 	else {
 		AEBiasRect paintArea = calcRotatedRect(cx, cy, f, angle, facing);
-		res->addToRenderBuffer(paintArea, texClip, zValue);
+		res->addToRenderBuffer(paintArea, texClip, alpha, zValue);
 	}
 }

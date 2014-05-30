@@ -1,6 +1,7 @@
 #include <d3d11_1.h>
 #include <directxmath.h>
 #include <d3d11sdklayers.h>
+
 #include "AEroEngine.h"
 
 using namespace DirectX;
@@ -32,7 +33,6 @@ ID3D11Buffer*								g_pCBChangeOnResize = nullptr;
 ID3D11Buffer*								g_pCBChangesEveryFrame = nullptr;
 ID3D11SamplerState*							g_pSamplerLinear = nullptr;
 ID3D11Debug*								g_pDebug = nullptr;
-CHAR										g_pKeyStateBuffer[256] = { 0 };
 XMMATRIX									g_World;
 XMMATRIX									g_View;
 XMMATRIX									g_Projection;
@@ -41,13 +41,13 @@ XMFLOAT4									g_vMeshColor( 1.0f, 1.0f, 1.0f, 1.0f );
 //--------------------------------------------------------------------------------------
 // AE Global Variables
 //--------------------------------------------------------------------------------------
-AEResourceTable								resourceTable(100);
-AEConstantTable<AEObject>					objectTable(100);
-AEHashedTable<AEAI>							aiTable(100);
-AEHashedTable<AEParticleEmitter>			particleTable(1000);
-AEBackgroundLibrary							bgLib;
-AESceneManager								sceneManager;
-AECamera									camera;
+AEResourceTable								ae_ResourceTable(100);
+AEConstantTable<AEObject>					ae_ObjectTable(100);
+AEHashedTable<AEAI>							ae_AITable(100);
+AEHashedTable<AEParticleEmitter>			ae_ParticleTable(1000);
+AEBackgroundLibrary							ae_BGLibrary;
+AESceneManager								ae_SceneManager;
+AECamera									ae_Camera;
 
 
 //--------------------------------------------------------------------------------------

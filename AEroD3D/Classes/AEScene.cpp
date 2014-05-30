@@ -8,19 +8,22 @@
 #include "AECamera.h"
 #include "AEScene.h"
 
-extern AECamera									camera;
-extern AEResourceTable							resourceTable;
+extern AECamera									ae_Camera;
+extern AEResourceTable							ae_ResourceTable;
 
 AEScene::AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud) {
 	bg = _bg;
 	spriteTable = _spriteTable;
 	hud = _hud;
+	for (INT i = 0; i < 256; i++) {
+		keyStateBuffer[i] = 0;
+	}
 }
 
 AEScene::~AEScene() {
-	delete bg;
-	delete spriteTable;
-	delete hud;
+	if (bg) delete bg;
+	if (spriteTable) delete spriteTable;
+	if (hud) delete hud;
 }
 
 VOID AEScene::addSprite(AESprite* sprite) {
@@ -28,27 +31,40 @@ VOID AEScene::addSprite(AESprite* sprite) {
 }
 
 VOID AEScene::update() {
-	bg->update();
-	for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
-		spriteTable->getItemByHash(iHash)->update();
+	processInput();
+	if (bg) {
+		bg->update();
 	}
-	hud->update();
+	if (spriteTable) {
+		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+			spriteTable->getItemByHash(iHash)->update();
+		}
+	}
+	if (hud) {
+		hud->update();
+	}
 }
 
 VOID AEScene::render() {
-	bg->addToRenderBuffer(camera.getFocus());
-	resourceTable.renderAndClear();
-	FLOAT zBias = 0.0f;
-	for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
-		spriteTable->getItemByHash(iHash)->addToRenderBuffer(zBias);
-		zBias -= 0.065f;
+	if (bg) {
+		bg->addToRenderBuffer(ae_Camera.getFocus());
+		ae_ResourceTable.renderAndClear();
 	}
-	resourceTable.renderAndClear();
-	hud->addToRenderBuffer();
-	resourceTable.renderAndClear();
+	if (spriteTable) {
+		FLOAT zBias = 0.0f;
+		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+			spriteTable->getItemByHash(iHash)->addToRenderBuffer(zBias);
+			zBias -= 0.065f;
+		}
+		ae_ResourceTable.renderAndClear();
+	}
+	if (hud) {
+		hud->addToRenderBuffer();
+		ae_ResourceTable.renderAndClear();
+	}
 }
 
-VOID AEScene::processInput(CHAR* pKeyStateBuffer) {
+VOID AEScene::processInput() {
 	// TODO
 }
 

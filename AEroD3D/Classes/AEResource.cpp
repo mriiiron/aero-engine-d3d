@@ -69,22 +69,24 @@ AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse) {
 	return AERect(x1, y1, x2, y2);
 }
 
-VOID AEResource::addToRenderBuffer(AERect paintArea, AERect texClip, FLOAT zValue) {
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y2, zValue), XMFLOAT2(texClip.x1, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, zValue), XMFLOAT2(texClip.x2, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, zValue), XMFLOAT2(texClip.x2, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y1, zValue), XMFLOAT2(texClip.x2, texClip.y2)));
+VOID AEResource::addToRenderBuffer(AERect paintArea, AERect texClip, FLOAT alpha, FLOAT zValue) {
+	XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, alpha);
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y2, zValue), XMFLOAT2(texClip.x1, texClip.y1), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, zValue), XMFLOAT2(texClip.x2, texClip.y1), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, zValue), XMFLOAT2(texClip.x2, texClip.y1), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y1, zValue), XMFLOAT2(texClip.x2, texClip.y2), color));
 }
 
-VOID AEResource::addToRenderBuffer(AEBiasRect paintArea, AERect texClip, FLOAT zValue) {
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x4, paintArea.y4, zValue), XMFLOAT2(texClip.x1, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x3, paintArea.y3, zValue), XMFLOAT2(texClip.x2, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x3, paintArea.y3, zValue), XMFLOAT2(texClip.x2, texClip.y1)));
-	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, zValue), XMFLOAT2(texClip.x2, texClip.y2)));
+VOID AEResource::addToRenderBuffer(AEBiasRect paintArea, AERect texClip, FLOAT alpha, FLOAT zValue) {
+	XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, alpha);
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x4, paintArea.y4, zValue), XMFLOAT2(texClip.x1, texClip.y1), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x3, paintArea.y3, zValue), XMFLOAT2(texClip.x2, texClip.y1), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x1, paintArea.y1, zValue), XMFLOAT2(texClip.x1, texClip.y2), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x3, paintArea.y3, zValue), XMFLOAT2(texClip.x2, texClip.y1), color));
+	vertexBuffer.push_back(SimpleVertex(XMFLOAT3(paintArea.x2, paintArea.y2, zValue), XMFLOAT2(texClip.x2, texClip.y2), color));
 }
 
 VOID AEResource::clearRenderBuffer() {

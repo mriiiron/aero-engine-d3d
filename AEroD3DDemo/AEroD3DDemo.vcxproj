@@ -27,8 +27,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>AEroD3D Template</ProjectName>
-    <ProjectGuid>{D29C6982-A589-4081-89B1-91E78D7C41E2}</ProjectGuid>
+    <ProjectName>AEroD3D Demo</ProjectName>
+    <ProjectGuid>{19E85523-848E-4E55-AAF0-E0C6F83741F6}</ProjectGuid>
     <RootNamespace>Tutorial07</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>

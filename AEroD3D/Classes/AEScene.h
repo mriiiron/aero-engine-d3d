@@ -23,6 +23,8 @@ public:
 	AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
 	~AEScene();
 
+	CHAR keyStateBuffer[256];
+
 	AEBackground* getBackground() { return bg; }
 	AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
 	AEHeadUpDisplay* getHUD() { return hud; }
@@ -30,7 +32,7 @@ public:
 	VOID addSprite(AESprite* sprite);
 	virtual VOID update();
 	virtual VOID render();
-	virtual VOID processInput(CHAR* pKeyStateBuffer);
+	virtual VOID processInput();
 
 protected:
 

@@ -1,5 +1,6 @@
 #pragma once
 
+// Modify this template to create your own scenes
 class TemplateScene: public AEScene {
 
 public:

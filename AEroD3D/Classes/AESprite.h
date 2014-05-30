@@ -42,12 +42,12 @@ class AESprite {
 
 public:
 
-	static const INT CAST_INVERSE				= 1;
-	static const INT FACING_RIGHT				= 0;
-	static const INT FACING_LEFT				= 1;
+	static const INT CAST_INVERSE = 1;
+	static const INT FACING_RIGHT = 0;
+	static const INT FACING_LEFT = 1;
 
 	AESprite(AERO_SPRITE_DESC desc);
-	
+
 	// Get'n'set
 	VOID setIndex(INT _index) { index = _index; }
 	VOID setState(INT _state) { state = _state; }
@@ -60,6 +60,8 @@ public:
 	VOID setAngle(FLOAT _angle) { angle = _angle; }
 	VOID setFacing(BYTE _facing) { facing = _facing; }
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
+	VOID setAlpha(FLOAT _alpha) { alpha = _alpha; }
+	VOID adjustAlpha(FLOAT dAlpha) { alpha += dAlpha;  if (alpha < 0.0f) alpha = 0.0f;  if (alpha > 1.0f) alpha = 1.0f; }
 	INT getIndex() { return index; }
 	INT getAction() { return action; }
 	INT getFrameNum() { return frameNum; }
@@ -78,6 +80,7 @@ public:
 	FLOAT getVAngle() { return vangle; }
 	FLOAT getAx() { return ax; }
 	FLOAT getAy() { return ay; }
+	FLOAT getAlpha() { return alpha; }
 	AEPoint getCenter();
 	AEObject* getObject() { return obj; }
 	std::string getObjName();
@@ -110,7 +113,7 @@ protected:
 
 	AEObject* obj;
 	INT index, action, frameNum, time, timeToLive, timeToStiff;
-	FLOAT cx, cy, vx, vy, ax, ay, angle, vangle, gndSpeed;
+	FLOAT cx, cy, vx, vy, ax, ay, alpha, angle, vangle, gndSpeed;
 	INT state, team, keyState, drop, onLandform;
 	BYTE facing, atkJudgeLock;
 	INT hpValue, hpMax;

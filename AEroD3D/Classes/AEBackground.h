@@ -165,7 +165,7 @@ public:
 	VOID addAnimAt(INT index, AEBGLayerAnim* layerAnim);
 
 	VOID update();
-	VOID addToRenderBuffer(AEPoint cameraCenter);
+	VOID addToRenderBuffer(AEPoint ae_CameraCenter);
 
 private:
 

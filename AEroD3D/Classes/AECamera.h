@@ -1,6 +1,6 @@
 /**
  * @file	AECamera.h
- * @brief	Defining the control of camera.
+ * @brief	Defining the control of ae_Camera.
  *
  * @author	CaiyZ (Mr.IroN)
  * @version	0.1

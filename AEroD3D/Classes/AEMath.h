@@ -66,15 +66,18 @@ struct SimpleVertex {
 
 	XMFLOAT3 Pos;
 	XMFLOAT2 Tex;
+	XMFLOAT4 Clr;
 
 	SimpleVertex() {
 		Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 		Tex = XMFLOAT2(0.0f, 0.0f);
+		Clr = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
-	SimpleVertex(XMFLOAT3 _Pos, XMFLOAT2 _Tex) {
+	SimpleVertex(XMFLOAT3 _Pos, XMFLOAT2 _Tex, XMFLOAT4 _Clr) {
 		Pos = _Pos;
 		Tex = _Tex;
+		Clr = _Clr;
 	}
 
 };

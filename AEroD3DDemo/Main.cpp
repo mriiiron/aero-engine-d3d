@@ -79,13 +79,12 @@ extern ID3D11Buffer*						g_pCBChangesEveryFrame;
 extern ID3D11SamplerState*					g_pSamplerLinear;
 extern ID3D11Debug*							g_pDebug;
 
-LPDIRECTINPUT8								g_pDirectInput;
-LPDIRECTINPUTDEVICE8						g_pKeyboardDevice;
-
-extern CHAR									g_pKeyStateBuffer[256];
 extern XMMATRIX								g_World;
 extern XMMATRIX								g_View;
 extern XMMATRIX								g_Projection;
+
+LPDIRECTINPUT8								g_pDirectInput;
+LPDIRECTINPUTDEVICE8						g_pKeyboardDevice;
 
 //--------------------------------------------------------------------------------------
 // AE Global Variables
@@ -193,6 +192,29 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 	ShowWindow( g_hWnd, nCmdShow );
 
 	return S_OK;
+}
+
+
+//--------------------------------------------------------------------------------------
+// Read DirectInput device state
+// Code by zhmxy555
+// http://blog.csdn.net/zhmxy555/article/details/8547531
+//--------------------------------------------------------------------------------------
+VOID ReadInputDevice(IDirectInputDevice8* pDIDevice, LPVOID pBuffer, LONG lSize) {
+	HRESULT hr;
+	while (true) {
+		pDIDevice->Poll();
+		pDIDevice->Acquire();
+		if (SUCCEEDED(hr = pDIDevice->GetDeviceState(lSize, pBuffer))) {
+			break;
+		}
+		if (hr != DIERR_INPUTLOST || hr != DIERR_NOTACQUIRED) {
+			AENSGameControl::exitGame("Failed when processing input.");
+		}
+		if (FAILED(pDIDevice->Acquire())) {
+			AENSGameControl::exitGame("Failed when processing input.");
+		}
+	}
 }
 
 
@@ -428,6 +450,7 @@ HRESULT InitDevice()
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = ARRAYSIZE( layout );
 
@@ -588,45 +611,171 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 }
 
 
-
-//--------------------------------------------------------------------------------------
-// Read DirectInput device state
-// Code by zhmxy555
-// http://blog.csdn.net/zhmxy555/article/details/8547531
-//--------------------------------------------------------------------------------------
-BOOLEAN Device_Read( IDirectInputDevice8* pDIDevice, LPVOID pBuffer, LONG lSize )  
-{  
-	HRESULT hr;  
-	while( true )  
-	{  
-		pDIDevice->Poll();
-		pDIDevice->Acquire();
-		if( SUCCEEDED( hr = pDIDevice->GetDeviceState(lSize, pBuffer) ) )
-			break;  
-		if( hr != DIERR_INPUTLOST || hr != DIERR_NOTACQUIRED )
-			return FALSE;  
-		if( FAILED( pDIDevice->Acquire() ) )
-			return FALSE;  
-	}  
-	return TRUE;  
-}
-
-
 //--------------------------------------------------------------------------------------
 // Initialize the game
-// Create your world here!
 //--------------------------------------------------------------------------------------
 void InitGameplay()
 {
 
-	// Create a template scene with sprite table, background and HUD
+	// Load sprite resources
+	AERO_RESOURCE_DESC descRes;
+	descRes.rid = 0;
+	descRes.rtype = RES_5x10;
+	descRes.cellW = 80;
+	descRes.cellH = 70;
+	HRESULT hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\gedama_0.dds", nullptr, &(descRes.tex) );
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	AEResource* res_1 = new AEResource(descRes);
+	ae_ResourceTable.addAt(descRes.rid, res_1);
+
+	// Load background resources
+	descRes.rid = 1;
+	descRes.rtype = RES_1x1;
+	descRes.cellW = 1000;
+	descRes.cellH = 771;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\starsky.dds", nullptr, &(descRes.tex) );
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	AEResource* res_2 = new AEResource(descRes);
+	ae_ResourceTable.addAt(descRes.rid, res_2);
+
+	// Create Frame 00
+	AERO_FRAME_DESC descFrame;
+	descFrame.res = ae_ResourceTable.getItem(0);
+	descFrame.centerx = 40;
+	descFrame.centery = 10;
+	descFrame.dvx = 0;
+	descFrame.dvy = 0;
+	descFrame.imgOffset = 0;
+	descFrame.imgCells = 1;
+	descFrame.shiftx = 0;
+	descFrame.shifty = 0;
+	AEFrame* frame_00 = new AEFrame(descFrame);
+
+	// Create Frame 01
+	descFrame.imgOffset = 1;
+	AEFrame* frame_01 = new AEFrame(descFrame);
+
+	// Create Frame 02
+	descFrame.imgOffset = 2;
+	AEFrame* frame_02 = new AEFrame(descFrame);
+
+	// Create Frame 03
+	descFrame.imgOffset = 1;
+	AEFrame* frame_03 = new AEFrame(descFrame);
+	
+	// Create animation 0
+	AERO_ANIMATION_DESC descAnim;
+	descAnim.frameCount = 4;
+	descAnim.isAnimLoop = TRUE;
+	descAnim.next = 0;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* anim_0 = new AEAnimation(descAnim);
+
+	// Assign frames to animation 0
+	anim_0->addFrame(0, frame_00, 15);
+	anim_0->addFrame(1, frame_01, 30);
+	anim_0->addFrame(2, frame_02, 45);
+	anim_0->addFrame(3, frame_03, 60);
+
+	// Create Frame 10
+	descFrame.imgOffset = 10;
+	AEFrame* frame_10 = new AEFrame(descFrame);
+
+	// Create Frame 11
+	descFrame.imgOffset = 11;
+	AEFrame* frame_11 = new AEFrame(descFrame);
+
+	// Create Frame 12
+	descFrame.imgOffset = 12;
+	AEFrame* frame_12 = new AEFrame(descFrame);
+
+	// Create animation 1
+	descAnim.frameCount = 3;
+	descAnim.isAnimLoop = FALSE;
+	descAnim.next = 0;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* anim_1 = new AEAnimation(descAnim);
+
+	// Assign frames to animation 1
+	anim_1->addFrame(0, frame_10, 5);
+	anim_1->addFrame(1, frame_11, 10);
+	anim_1->addFrame(2, frame_12, 100);
+
+	// Create objects
+	AERO_OBJECT_DESC descObj;
+	descObj.oid = 0;
+	descObj.name = "Gedama";
+	descObj.otype = OBJ_CHARACTER;
+	AEObject* obj = new AEObject(descObj);
+
+	// Assign animations to objects
+	obj->addAnim(0, anim_0);
+	obj->addAnim(1, anim_1);
+
+	// Add objects to object table
+	ae_ObjectTable.addAt(0, obj);
+
+	// Create BG layer animation. Only one frame (a static image) in this case
+	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(1), 0);
+	AERO_BGLAYERANIM_DESC descBGLayerAnim;
+	descBGLayerAnim.frameCount = 1;
+	AEBGLayerAnim* bgLayerAnim = new AEBGLayerAnim(descBGLayerAnim);
+	bgLayerAnim->addFrame(0, bgLayerFrame, 1000);
+
+	// Create BG
+	AERO_BACKGROUND_DESC descBG;
+	descBG.name = "Starsky";
+	AEBackground* bg = new AEBackground(descBG);
+
+	// Add BG layer animation to BG
+	bg->addAnimAt(0, bgLayerAnim);
+
+	// Create BG layer
+	AERO_BGLAYER_DESC descBGLayer;
+	descBGLayer.depth = 0;
+	descBGLayer.locX = -500.0f;
+	descBGLayer.locY = -385.5f;
+	descBGLayer.width = 1000;
+	descBGLayer.height = 771;
+	AEBGLayer* bgLayer = new AEBGLayer(descBGLayer);
+	
+	// Add BG layer anim reference to layer
+	AEBGAnimRef* animRef = new AEBGAnimRef(0, 0, 0);
+	bgLayer->addAnimRef(animRef);
+
+	// Add BG layers to BG
+	bg->addLayer(bgLayer);
+
+	// Add BG to BG library
+	ae_BGLibrary.add(bg);
+
+	// Create scene with sprite table, background and HUD
 	AEHashedTable<AESprite>* spriteTable = new AEHashedTable<AESprite>(100);
 	AEHeadUpDisplay* hud = new AEHeadUpDisplay();
-	TemplateScene* scene = new TemplateScene(nullptr, spriteTable, hud);
-	ae_SceneManager.addSceneAt(0, scene);
+	GeneralScene* generalScene = new GeneralScene(ae_BGLibrary.get(0), spriteTable, hud);
+	ae_SceneManager.addSceneAt(0, generalScene);
+
+	// Create a sprite
+	AERO_SPRITE_DESC descSpr;
+	descSpr.obj = ae_ObjectTable.getItem(0);
+	descSpr.team = 0;
+	descSpr.action = 0;
+	descSpr.facing = 0;
+	descSpr.cx = 0.0f;
+	descSpr.cy = 0.0f;
+	AESprite* spr_demo = new AESprite(descSpr);
 
 	// Run the scene
 	ae_SceneManager.runScene(0);
+
+	// Add sprites to the scene
+	ae_SceneManager.getActiveScene()->addSprite(spr_demo);
 
 }
 
@@ -636,19 +785,14 @@ void InitGameplay()
 //--------------------------------------------------------------------------------------
 void Update()
 {
-	// Get and process keyboard state
-	ZeroMemory( &g_pKeyStateBuffer, sizeof(g_pKeyStateBuffer) );
-	Device_Read( g_pKeyboardDevice, (LPVOID)g_pKeyStateBuffer, sizeof( g_pKeyStateBuffer ) );
-	if (g_pKeyStateBuffer[DIK_A] & 0x80) {
-		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
-		pGedama->changeAction(1);
-	}
 
-	// Update the scene
+	// Get input and update the scene
 	AEScene* activeScene = ae_SceneManager.getActiveScene();
-	if ( activeScene == NULL ) {
+	if (activeScene == NULL) {
 		AENSGameControl::exitGame("On gameplay: No active scene.");
 	}
+	ReadInputDevice(g_pKeyboardDevice, (LPVOID)(activeScene->keyStateBuffer), sizeof(activeScene->keyStateBuffer));
+	activeScene->processInput();
 	activeScene->update();
 
 	// Update our time

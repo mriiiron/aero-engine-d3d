@@ -102,9 +102,9 @@ VOID AEBackground::update() {
 	}
 }
 
-VOID AEBackground::addToRenderBuffer(AEPoint cameraCenter) {
+VOID AEBackground::addToRenderBuffer(AEPoint ae_CameraCenter) {
 	for (INT i = layerCount - 1; i >= 0; i--) {
-		FLOAT dx = cameraCenter.x;
+		FLOAT dx = ae_CameraCenter.x;
 		FLOAT depth = FLOAT(layerTable[i]->getDepth());
 		FLOAT correction = dx * depth / 100.0f;
 		for (INT j = 0; j < layerTable[i]->getAnimCount(); j++) {
@@ -122,7 +122,7 @@ VOID AEBackground::addToRenderBuffer(AEPoint cameraCenter) {
 			y2 = y1 + height;
 			AERect animRect(x1, y1, x2, y2);
 			AERect texClip = lf->res->getTexClip(lf->imgOffset, 1);
-			lf->res->addToRenderBuffer(animRect, texClip, 100.0f);
+			lf->res->addToRenderBuffer(animRect, texClip, 1.0f, 100.0f);
 		}
 	}
 }

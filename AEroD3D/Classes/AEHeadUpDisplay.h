@@ -2,7 +2,7 @@
  * @file	AEHud.h
  * @brief	Defining the elements used by head-up displays.
  *
- * The HUDs is included in Scenes. Elements of HUD will not move along with camera movement.
+ * The HUDs is included in Scenes. Elements of HUD will not move along with ae_Camera movement.
  * You may create a relatively static scene only using HUD. For example, your game title screen.
  *
  * @author	CaiyZ (Mr.IroN)
