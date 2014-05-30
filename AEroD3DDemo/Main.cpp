@@ -23,6 +23,7 @@
 #include <dinput.h>
 #include <d3d11sdklayers.h>
 #include <vector>
+
 #include "DDSTextureLoader.h"
 #include "resource.h"
 #include "AEroEngine.h"
@@ -566,18 +567,20 @@ HRESULT InitDevice()
 	g_pImmediateContext->UpdateSubresource( g_pCBChangeOnResize, 0, nullptr, &cbChangesOnResize, 0, 0 );
 
 	// Initialize DirectInput device
-	if( FAILED( DirectInput8Create( g_hInst, 0x0800, IID_IDirectInput8, (LPVOID*)&g_pDirectInput, NULL ) ) )
+	hr = DirectInput8Create(g_hInst, 0x0800, IID_IDirectInput8, (LPVOID*)&g_pDirectInput, NULL);
+	if( FAILED( hr ) )
 		return E_FAIL;
 
 	// Initialize the keyboard
-	if( FAILED( g_pDirectInput->CreateDevice( GUID_SysKeyboard, &g_pKeyboardDevice, NULL ) ) )  
+	hr = g_pDirectInput->CreateDevice(GUID_SysKeyboard, &g_pKeyboardDevice, NULL);
+	if( FAILED( hr ) )  
 		return E_FAIL;
 	g_pKeyboardDevice->SetDataFormat( &c_dfDIKeyboard );
 
 	// Set the cooperate level of our keyboard
 	g_pKeyboardDevice->SetCooperativeLevel( g_hWnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE | DISCL_NOWINKEY );
 
-	// Let the keyboard
+	// Let the keyboard get authority
 	g_pKeyboardDevice->Acquire();
 
 	return S_OK;

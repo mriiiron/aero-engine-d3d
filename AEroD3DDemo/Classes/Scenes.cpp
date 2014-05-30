@@ -22,7 +22,7 @@ VOID GeneralScene::processInput() {
 		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
 		pGedama->adjustAlpha(-0.005f);
 	}
-	else if (keyStateBuffer[DIK_S] & 0x80) {
+	if (keyStateBuffer[DIK_S] & 0x80) {
 		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
 		pGedama->adjustAlpha(0.005f);
 	}
