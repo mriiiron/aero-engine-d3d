@@ -620,6 +620,8 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 void InitGameplay()
 {
 
+	// *** Scene 0 - General Scene ***
+
 	// Load sprite resources
 	AERO_RESOURCE_DESC descRes;
 	descRes.rid = 0;
@@ -630,8 +632,8 @@ void InitGameplay()
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
-	AEResource* res_1 = new AEResource(descRes);
-	ae_ResourceTable.addAt(descRes.rid, res_1);
+	AEResource* res_0 = new AEResource(descRes);
+	ae_ResourceTable.addAt(descRes.rid, res_0);
 
 	// Load background resources
 	descRes.rid = 1;
@@ -642,8 +644,8 @@ void InitGameplay()
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
-	AEResource* res_2 = new AEResource(descRes);
-	ae_ResourceTable.addAt(descRes.rid, res_2);
+	AEResource* res_1 = new AEResource(descRes);
+	ae_ResourceTable.addAt(descRes.rid, res_1);
 
 	// Create Frame 00
 	AERO_FRAME_DESC descFrame;
@@ -656,19 +658,19 @@ void InitGameplay()
 	descFrame.imgCells = 1;
 	descFrame.shiftx = 0;
 	descFrame.shifty = 0;
-	AEFrame* frame_00 = new AEFrame(descFrame);
+	AEFrame* gedama_frame_00 = new AEFrame(descFrame);
 
 	// Create Frame 01
 	descFrame.imgOffset = 1;
-	AEFrame* frame_01 = new AEFrame(descFrame);
+	AEFrame* gedama_frame_01 = new AEFrame(descFrame);
 
 	// Create Frame 02
 	descFrame.imgOffset = 2;
-	AEFrame* frame_02 = new AEFrame(descFrame);
+	AEFrame* gedama_frame_02 = new AEFrame(descFrame);
 
 	// Create Frame 03
 	descFrame.imgOffset = 1;
-	AEFrame* frame_03 = new AEFrame(descFrame);
+	AEFrame* gedama_frame_03 = new AEFrame(descFrame);
 	
 	// Create animation 0
 	AERO_ANIMATION_DESC descAnim;
@@ -677,25 +679,25 @@ void InitGameplay()
 	descAnim.next = 0;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
-	AEAnimation* anim_0 = new AEAnimation(descAnim);
+	AEAnimation* gedama_anim_0 = new AEAnimation(descAnim);
 
 	// Assign frames to animation 0
-	anim_0->addFrame(0, frame_00, 15);
-	anim_0->addFrame(1, frame_01, 30);
-	anim_0->addFrame(2, frame_02, 45);
-	anim_0->addFrame(3, frame_03, 60);
+	gedama_anim_0->addFrame(0, gedama_frame_00, 15);
+	gedama_anim_0->addFrame(1, gedama_frame_01, 30);
+	gedama_anim_0->addFrame(2, gedama_frame_02, 45);
+	gedama_anim_0->addFrame(3, gedama_frame_03, 60);
 
 	// Create Frame 10
 	descFrame.imgOffset = 10;
-	AEFrame* frame_10 = new AEFrame(descFrame);
+	AEFrame* gedama_frame_10 = new AEFrame(descFrame);
 
 	// Create Frame 11
 	descFrame.imgOffset = 11;
-	AEFrame* frame_11 = new AEFrame(descFrame);
+	AEFrame* gedama_frame_11 = new AEFrame(descFrame);
 
 	// Create Frame 12
 	descFrame.imgOffset = 12;
-	AEFrame* frame_12 = new AEFrame(descFrame);
+	AEFrame* gedama_frame_12 = new AEFrame(descFrame);
 
 	// Create animation 1
 	descAnim.frameCount = 3;
@@ -703,26 +705,26 @@ void InitGameplay()
 	descAnim.next = 0;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
-	AEAnimation* anim_1 = new AEAnimation(descAnim);
+	AEAnimation* gedama_anim_1 = new AEAnimation(descAnim);
 
 	// Assign frames to animation 1
-	anim_1->addFrame(0, frame_10, 5);
-	anim_1->addFrame(1, frame_11, 10);
-	anim_1->addFrame(2, frame_12, 100);
+	gedama_anim_1->addFrame(0, gedama_frame_10, 5);
+	gedama_anim_1->addFrame(1, gedama_frame_11, 10);
+	gedama_anim_1->addFrame(2, gedama_frame_12, 100);
 
 	// Create objects
 	AERO_OBJECT_DESC descObj;
 	descObj.oid = 0;
 	descObj.name = "Gedama";
 	descObj.otype = OBJ_CHARACTER;
-	AEObject* obj = new AEObject(descObj);
+	AEObject* gedama_obj = new AEObject(descObj);
 
 	// Assign animations to objects
-	obj->addAnim(0, anim_0);
-	obj->addAnim(1, anim_1);
+	gedama_obj->addAnim(0, gedama_anim_0);
+	gedama_obj->addAnim(1, gedama_anim_1);
 
 	// Add objects to object table
-	ae_ObjectTable.addAt(0, obj);
+	ae_ObjectTable.addAt(0, gedama_obj);
 
 	// Create BG layer animation. Only one frame (a static image) in this case
 	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(1), 0);
@@ -759,9 +761,9 @@ void InitGameplay()
 	ae_BGLibrary.add(bg);
 
 	// Create scene with sprite table, background and HUD
-	AEHashedTable<AESprite>* spriteTable = new AEHashedTable<AESprite>(100);
-	AEHeadUpDisplay* hud = new AEHeadUpDisplay();
-	GeneralScene* generalScene = new GeneralScene(ae_BGLibrary.get(0), spriteTable, hud);
+	AEHashedTable<AESprite>* spriteTable_0 = new AEHashedTable<AESprite>(100);
+	AEHeadUpDisplay* hud_0 = new AEHeadUpDisplay();
+	GeneralScene* generalScene = new GeneralScene(ae_BGLibrary.get(0), spriteTable_0, hud_0);
 	ae_SceneManager.addSceneAt(0, generalScene);
 
 	// Create a sprite
@@ -772,13 +774,105 @@ void InitGameplay()
 	descSpr.facing = 0;
 	descSpr.cx = 0.0f;
 	descSpr.cy = 0.0f;
-	AESprite* spr_demo = new AESprite(descSpr);
+	AESprite* spr_gedama = new AESprite(descSpr);
+
+
+	// *** Scene 1 - Vertical Scroller Scene ***
+
+	// Load sprite resources
+	descRes.rid = 2;
+	descRes.rtype = RES_1x5;
+	descRes.cellW = 50;
+	descRes.cellH = 50;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\jfighter_0.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	AEResource* res_2 = new AEResource(descRes);
+	ae_ResourceTable.addAt(descRes.rid, res_2);
+
+	// Load background resources
+
+	// Create Frame 00
+	descFrame.res = ae_ResourceTable.getItem(2);
+	descFrame.centerx = 25;
+	descFrame.centery = 25;
+	descFrame.dvx = 0;
+	descFrame.dvy = 0;
+	descFrame.imgOffset = 0;
+	descFrame.imgCells = 1;
+	descFrame.shiftx = 0;
+	descFrame.shifty = 0;
+	AEFrame* jf_frame_00 = new AEFrame(descFrame);
+
+	// Create Frame 01
+	descFrame.imgOffset = 1;
+	AEFrame* jf_frame_01 = new AEFrame(descFrame);
+
+	// Create Frame 02
+	descFrame.imgOffset = 2;
+	AEFrame* jf_frame_02 = new AEFrame(descFrame);
+
+	// Create animation 0
+	descAnim.frameCount = 3;
+	descAnim.isAnimLoop = TRUE;
+	descAnim.next = 0;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* jf_anim_0 = new AEAnimation(descAnim);
+
+	// Assign frames to animation 0
+	jf_anim_0->addFrame(0, jf_frame_00, 5);
+	jf_anim_0->addFrame(1, jf_frame_01, 10);
+	jf_anim_0->addFrame(2, jf_frame_02, 15);
+
+	// Create objects
+	descObj.oid = 0;
+	descObj.name = "Japanese Fighter";
+	descObj.otype = OBJ_CHARACTER;
+	AEObject* jf_obj = new AEObject(descObj);
+
+	// Assign animations to objects
+	jf_obj->addAnim(0, jf_anim_0);
+
+	// Add objects to object table
+	ae_ObjectTable.addAt(1, jf_obj);
+
+	// Create BG layer animation
+
+	// Create BG
+
+	// Add BG layer animation to BG
+
+	// Create BG layer
+
+	// Add BG layer anim reference to layer
+
+	// Add BG layers to BG
+
+	// Add BG to BG library
+
+	// Create scene with sprite table, background and HUD
+	AEHashedTable<AESprite>* spriteTable_1 = new AEHashedTable<AESprite>(100);
+	AEHeadUpDisplay* hud_1 = new AEHeadUpDisplay();
+	VerticalScrollerScene* verticalScrollerScene = new VerticalScrollerScene(nullptr, spriteTable_1, hud_1);
+	ae_SceneManager.addSceneAt(1, verticalScrollerScene);
+
+	// Create a sprite
+	descSpr.obj = ae_ObjectTable.getItem(1);
+	descSpr.team = 0;
+	descSpr.action = 0;
+	descSpr.facing = 0;
+	descSpr.cx = 0.0f;
+	descSpr.cy = -150.0f;
+	AESprite* spr_jfighter = new AESprite(descSpr);
 
 	// Run the scene
-	ae_SceneManager.runScene(0);
+	ae_SceneManager.runScene(1);
 
-	// Add sprites to the scene
-	ae_SceneManager.getActiveScene()->addSprite(spr_demo);
+	// Add sprites to scenes
+	generalScene->addSprite(spr_gedama);
+	verticalScrollerScene->addSprite(spr_jfighter);
 
 }
 
