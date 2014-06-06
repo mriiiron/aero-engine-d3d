@@ -13,6 +13,7 @@
 #pragma once
 
 #include "AEObject.h"
+#include "AEAI.h"
 
 
 class AEScene;
@@ -62,6 +63,9 @@ public:
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
 	VOID setAlpha(FLOAT _alpha) { alpha = _alpha; }
 	VOID adjustAlpha(FLOAT dAlpha) { alpha += dAlpha;  if (alpha < 0.0f) alpha = 0.0f;  if (alpha > 1.0f) alpha = 1.0f; }
+	VOID move(FLOAT dx, FLOAT dy) { cx += dx;  cy += dy; }
+	VOID setAI(AEAI* _ai) { ai = _ai; }
+	VOID setScene(AEScene* _scene) { scene = _scene; }
 	INT getIndex() { return index; }
 	INT getAction() { return action; }
 	INT getFrameNum() { return frameNum; }
@@ -81,9 +85,9 @@ public:
 	FLOAT getAx() { return ax; }
 	FLOAT getAy() { return ay; }
 	FLOAT getAlpha() { return alpha; }
-	AEPoint getCenter();
+	AEPoint getCenter() { return AEPoint(cx, cy); }
 	AEObject* getObject() { return obj; }
-	std::string getObjName();
+	std::string getObjName() { return obj->getName(); }
 
 	VOID rotateDeg(FLOAT degree) { angle += AENSMath::deg2rad(degree); }
 	VOID rotateRad(FLOAT rad) { angle += rad; }
@@ -112,6 +116,10 @@ public:
 protected:
 
 	AEObject* obj;
+	AEScene* scene;
+	AEAI* ai;
+	//TODO: AEHashedTable<AESprite*> attatchments;
+
 	INT index, action, frameNum, time, timeToLive, timeToStiff;
 	FLOAT cx, cy, vx, vy, ax, ay, alpha, angle, vangle, gndSpeed;
 	INT state, team, keyState, drop, onLandform;

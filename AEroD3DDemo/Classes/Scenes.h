@@ -26,12 +26,15 @@ public:
 
 	VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
 
+	VOID initialize();
 	VOID update();
 	VOID render();
 	VOID processInput();
 
+	VOID clipOutFarSprites();
+
 private:
 
-
+	JFighterSprite* player;
 
 };

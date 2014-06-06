@@ -24,14 +24,8 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 		changeAction(desc.action);
 	}
 	deadFlag = FALSE;
-}
-
-AEPoint AESprite::getCenter() {
-	return AEPoint(cx, cy);
-}
-
-std::string AESprite::getObjName() {
-	return obj->getName();
+	ai = nullptr;
+	scene = nullptr;
 }
 
 AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing) {
@@ -122,6 +116,9 @@ VOID AESprite::applyControl() {
 }
 
 VOID AESprite::update() {
+	if (ai) {
+		ai->execute();
+	}
 	AEAnimation* anim = obj->getAnim(action);
 	if (timeToLive == 0) {
 		changeAction(anim->getNext());

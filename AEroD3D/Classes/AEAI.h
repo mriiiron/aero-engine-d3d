@@ -20,28 +20,27 @@
 #pragma once
 
 
+// Forward Declartion
+class AESprite;
+
+
 class AEAI {
 
 public:
 
 	static const INT EXEC_INTERVAL			= 3;
 
-	AEAI(AESprite* _self);
-	VOID releaseAllKeys();
-	VOID setTarget(AESprite* _target) { target = _target; }
+	AEAI(AESprite* _host);
 	VOID enable() { enabled = TRUE; }
 	VOID disable() { enabled = FALSE; }
 	VOID setIndex(INT _index) { index = _index; }
 	BOOLEAN isEnabled() { return (enabled ? 1 : 0); }
-	INT checkdistXWith(AESprite* sp) { return INT(fabs(self->getCx() - sp->getCx())); }
-	INT checkdistYWith(AESprite* sp) { return INT(fabs(self->getCy() - sp->getCy())); }
 
 	virtual VOID execute() = 0;
 
 protected:
 
-	AESprite* self;
-	AESprite* target;
+	AESprite* host;
 	BOOLEAN enabled;
 	INT index;
 

@@ -1,12 +1,13 @@
 #include <dinput.h>
 
 #include "AEroEngine.h"
+#include "Sprites.h"
 #include "Scenes.h"
 
 extern AESceneManager						ae_SceneManager;
 
 GeneralScene::GeneralScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud) : AEScene(_bg, _spriteTable, _hud) {
-	// ^^
+
 }
 
 VOID GeneralScene::update() {
@@ -44,7 +45,11 @@ VOID GeneralScene::processInput() {
 
 
 VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud) : AEScene(_bg, _spriteTable, _hud) {
-	// ^^
+	
+}
+
+VOID VerticalScrollerScene::initialize() {
+	player = (JFighterSprite*)(spriteTable->getItemByHash(0));
 }
 
 VOID VerticalScrollerScene::update() {
@@ -61,4 +66,30 @@ VOID VerticalScrollerScene::processInput() {
 		ae_SceneManager.runScene(0);
 	}
 
+	if (keyStateBuffer[DIK_A] & 0x80) {
+		player->move(-0.7f, 0.0f);
+	}
+	if (keyStateBuffer[DIK_D] & 0x80) {
+		player->move(0.7f, 0.0f);
+	}
+	if (keyStateBuffer[DIK_W] & 0x80) {
+		player->move(0.0f, 0.7f);
+	}
+	if (keyStateBuffer[DIK_S] & 0x80) {
+		player->move(0.0f, -0.7f);
+	}
+	if (keyStateBuffer[DIK_J] & 0x80) {
+		if (!player->isFireKeyPressed) {
+			player->isFireKeyPressed = TRUE;
+			player->shoot();
+		}
+	}
+	else {
+		player->isFireKeyPressed = FALSE;
+	}
+
+}
+
+VOID VerticalScrollerScene::clipOutFarSprites() {
+	// TODO
 }

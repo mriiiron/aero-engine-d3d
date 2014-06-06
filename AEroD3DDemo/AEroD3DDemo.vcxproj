@@ -401,18 +401,19 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Classes\AI.cpp" />
     <ClCompile Include="Classes\Scenes.cpp" />
+    <ClCompile Include="Classes\Sprites.cpp" />
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Classes\AI.h" />
     <ClInclude Include="Classes\Scenes.h" />
+    <ClInclude Include="Classes\Sprites.h" />
     <ClInclude Include="DDSTextureLoader.h" />
     <CLInclude Include="resource.h" />
     <ResourceCompile Include="AEroD3D.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="seafloor.dds" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

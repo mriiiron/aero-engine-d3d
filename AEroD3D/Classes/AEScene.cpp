@@ -27,6 +27,7 @@ AEScene::~AEScene() {
 }
 
 VOID AEScene::addSprite(AESprite* sprite) {
+	sprite->setScene(this);
 	spriteTable->add(sprite);
 }
 
