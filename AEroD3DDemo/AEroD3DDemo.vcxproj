@@ -133,7 +133,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>AEroD3D.lib;DirectXTK\DirectXTK.lib;d3d11.lib;d3dcompiler.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AEroD3D.lib;d3d11.lib;d3dcompiler.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
@@ -404,12 +404,14 @@
     <ClCompile Include="Classes\AI.cpp" />
     <ClCompile Include="Classes\Scenes.cpp" />
     <ClCompile Include="Classes\Sprites.cpp" />
+    <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\AI.h" />
     <ClInclude Include="Classes\Scenes.h" />
     <ClInclude Include="Classes\Sprites.h" />
+    <ClInclude Include="DDSTextureLoader.h" />
     <CLInclude Include="resource.h" />
     <ResourceCompile Include="AEroD3D.rc" />
   </ItemGroup>

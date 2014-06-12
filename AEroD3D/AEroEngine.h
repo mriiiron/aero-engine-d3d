@@ -1,15 +1,5 @@
 #pragma once
 
-// DirectXTK Classes
-
-#include "Classes\XTK\DDSTextureLoader.h"
-#include "Classes\XTK\SpriteBatch.h"
-#include "Classes\XTK\SpriteFont.h"
-#include "Classes\XTK\CommonStates.h"
-
-
-// AEro Engine Classes
-
 #include "Classes\AEMath.h"
 #include "Classes\AEPhysics.h"
 
@@ -28,9 +18,6 @@
 
 #include "Classes\AEScene.h"
 #include "Classes\AEAI.h"
-
-
-// Core Namespace
 
 namespace AENSCore {
 

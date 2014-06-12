@@ -41,10 +41,6 @@ VOID GeneralScene::processInput() {
 		pGedama->rotateDeg(-1.0);
 	}
 
-	if (keyStateBuffer[DIK_L] & 0x80) {
-		textDebug = textDebug;
-	}
-
 }
 
 
@@ -77,10 +73,10 @@ VOID VerticalScrollerScene::processInput() {
 		player->move(0.7f, 0.0f);
 	}
 	if (keyStateBuffer[DIK_W] & 0x80) {
-		player->move(0.0f, -0.7f);
+		player->move(0.0f, 0.7f);
 	}
 	if (keyStateBuffer[DIK_S] & 0x80) {
-		player->move(0.0f, 0.7f);
+		player->move(0.0f, -0.7f);
 	}
 	if (keyStateBuffer[DIK_J] & 0x80) {
 		if (!player->isFireKeyPressed) {
@@ -90,18 +86,6 @@ VOID VerticalScrollerScene::processInput() {
 	}
 	else {
 		player->isFireKeyPressed = FALSE;
-	}
-
-
-	if (keyStateBuffer[DIK_K] & 0x80) {
-		textDebug = TRUE;
-	}
-	else {
-		textDebug = FALSE;
-	}
-
-	if (keyStateBuffer[DIK_L] & 0x80) {
-		textDebug = textDebug;
 	}
 
 }

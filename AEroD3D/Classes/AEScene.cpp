@@ -8,8 +8,8 @@
 #include "AECamera.h"
 #include "AEScene.h"
 
-extern AECamera								ae_Camera;
-extern AEResourceTable						ae_ResourceTable;
+extern AECamera									ae_Camera;
+extern AEResourceTable							ae_ResourceTable;
 
 AEScene::AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud) {
 	bg = _bg;
@@ -48,25 +48,25 @@ VOID AEScene::update() {
 
 VOID AEScene::render() {
 	if (bg) {
-		bg->render(ae_Camera.getFocus());
-		//ae_ResourceTable.renderAndClear();
+		bg->addToRenderBuffer(ae_Camera.getFocus());
+		ae_ResourceTable.renderAndClear();
 	}
 	if (spriteTable) {
 		FLOAT zBias = 0.0f;
 		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
-			spriteTable->getItemByHash(iHash)->render(zBias);
-			//zBias -= 0.065f;
+			spriteTable->getItemByHash(iHash)->addToRenderBuffer(zBias);
+			zBias -= 0.065f;
 		}
-		//ae_ResourceTable.renderAndClear();
+		ae_ResourceTable.renderAndClear();
 	}
 	if (hud) {
 		hud->addToRenderBuffer();
-		//ae_ResourceTable.renderAndClear();
+		ae_ResourceTable.renderAndClear();
 	}
 }
 
 VOID AEScene::processInput() {
-	// To be inherited
+	// TODO
 }
 
 

@@ -15,8 +15,6 @@
 #include "AEObject.h"
 #include "AEAI.h"
 
-#include "XTK\SpriteBatch.h"
-
 
 class AEScene;
 
@@ -28,14 +26,14 @@ struct AERO_SPRITE_DESC {
 	FLOAT cx;
 	FLOAT cy;
 	INT action;
-	SpriteEffects facing;
+	INT facing;
 
 	AERO_SPRITE_DESC() {
 		obj = nullptr;
 		team = 0;
 		cx = cy = 0.0f;
 		action = 0;
-		facing = SpriteEffects_None;
+		facing = 0;
 	}
 
 };
@@ -61,7 +59,7 @@ public:
 	VOID setVAngle(FLOAT _vangle) { vangle = _vangle; }
 	VOID setGroundSpeed(FLOAT _speed) { gndSpeed = _speed; }
 	VOID setAngle(FLOAT _angle) { angle = _angle; }
-	VOID setFacing(SpriteEffects _facing) { facing = _facing; }
+	VOID setFacing(BYTE _facing) { facing = _facing; }
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
 	VOID setAlpha(FLOAT _alpha) { alpha = _alpha; }
 	VOID adjustAlpha(FLOAT dAlpha) { alpha += dAlpha;  if (alpha < 0.0f) alpha = 0.0f;  if (alpha > 1.0f) alpha = 1.0f; }
@@ -76,7 +74,7 @@ public:
 	INT getStiffTime() { return timeToStiff; }
 	INT getKeyState() { return keyState; }
 	INT getHP() { return hpValue; }
-	SpriteEffects getFacing() { return facing; }
+	BYTE getFacing() { return facing; }
 	FLOAT getGroundSpeed() { return gndSpeed; }
 	FLOAT getCx() { return cx; }
 	FLOAT getCy() { return cy; }
@@ -93,7 +91,7 @@ public:
 
 	VOID rotateDeg(FLOAT degree) { angle += AENSMath::deg2rad(degree); }
 	VOID rotateRad(FLOAT rad) { angle += rad; }
-	VOID turnOver() { facing = (facing == SpriteEffects_None ? SpriteEffects_FlipHorizontally : SpriteEffects_None); }
+	VOID turnOver() { facing = 1 - facing; }
 	VOID resetKeyState() { keyState = 0; }
 	VOID stiffen(INT _time) { timeToStiff = _time; }
 	VOID lockAtkJudge() { atkJudgeLock = 1; }
@@ -107,17 +105,13 @@ public:
 	VOID changeAction(INT _action);
 	VOID toNextFrame(AEAnimation anim);
 
-	/* THESE FUNCTIONS ARE TOTALLY USELESS */
 	AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
-	AERect calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing);
-	RECT calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing);
-	XMFLOAT2 calcSpriteDrawingPosition(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing);
-	AEBiasRect calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
-	/* I'M NOT KIDDING */
+	AERect calcRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing);
+	AEBiasRect calcRotatedRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
 
 	virtual VOID applyControl();
 	virtual VOID update();
-	virtual VOID render(FLOAT zValue = 0.0f);
+	virtual VOID addToRenderBuffer(FLOAT zValue = 0.0f);
 
 protected:
 
@@ -129,8 +123,7 @@ protected:
 	INT index, action, frameNum, time, timeToLive, timeToStiff;
 	FLOAT cx, cy, vx, vy, ax, ay, alpha, angle, vangle, gndSpeed;
 	INT state, team, keyState, drop, onLandform;
-	BOOLEAN atkJudgeLock;
-	SpriteEffects facing;
+	BYTE facing, atkJudgeLock;
 	INT hpValue, hpMax;
 	BOOLEAN deadFlag;
 

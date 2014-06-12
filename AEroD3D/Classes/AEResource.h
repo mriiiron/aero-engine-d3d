@@ -53,7 +53,6 @@ public:
 	BOOLEAN isBufferEmpty() { return (vertexBuffer.size() == 0 ? TRUE : FALSE); }
 
 	AERect getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse = TEXCLIP_INVERSE_NONE);
-	RECT getTexClipInTexel(INT imgOffset, INT imgCellCount, BYTE inverse = TEXCLIP_INVERSE_NONE);
 	VOID addToRenderBuffer(AERect paintArea, AERect texClip, FLOAT alpha, FLOAT zValue);
 	VOID addToRenderBuffer(AEBiasRect paintArea, AERect texClip, FLOAT alpha, FLOAT zValue);
 	VOID clearRenderBuffer(); 

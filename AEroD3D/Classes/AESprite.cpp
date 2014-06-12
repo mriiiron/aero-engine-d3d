@@ -1,5 +1,4 @@
 #include <d3d11_1.h>
-#include <DirectXColors.h>
 #include <string>
 #include <cmath>
 #include "AEMath.h"
@@ -9,8 +8,7 @@
 #include "AEBackground.h"
 #include "AESprite.h"
 
-extern AEConstantTable<AEObject>			ae_ObjectTable;
-extern SpriteBatch*							xtk_SpriteBatch;
+extern AEConstantTable<AEObject>				ae_ObjectTable;
 
 AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	state = 0;
@@ -18,7 +16,7 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	obj = desc.obj;  action = desc.action;  team = desc.team;  cx = desc.cx;  cy = desc.cy;
 	vx = vy = ax = ay = angle = vangle = gndSpeed = 0.0f;
 	alpha = 1.0f;
-	frameNum = time = timeToStiff = keyState = atkJudgeLock = 0;
+	frameNum = time = facing = timeToStiff = keyState = atkJudgeLock = 0;
 	onLandform = 0;
 	hpValue = hpMax = 100;
 	facing = desc.facing;
@@ -44,7 +42,7 @@ AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f
 	return AEPoint(x, y);
 }
 
-AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing) {
+AERect AESprite::calcRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing) {
 	INT centerx = f->getCenterx(), centery = f->getCentery();
 	INT width = f->getWidth(), height = f->getHeight();
 	FLOAT x1, y1, x2, y2;
@@ -63,26 +61,7 @@ AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing) {
 	return AERect(x1, y1, x2, y2);
 }
 
-RECT AESprite::calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing) {
-	INT centerx = f->getCenterx(), centery = f->getCentery();
-	INT width = f->getWidth(), height = f->getHeight();
-	FLOAT x1, y1, x2, y2;
-	if (facing == FACING_RIGHT) {
-		x1 = cx - centerx;
-		y1 = cy - centery;
-		x2 = x1 + width;
-		y2 = y1 + height;
-	}
-	else {
-		x2 = cx + centerx;
-		y1 = cy - centery;
-		x1 = x2 - width;
-		y2 = y1 + height;
-	}
-	return RECT{ (LONG)x1, (LONG)y1, (LONG)x2, (LONG)y2 };
-}
-
-AEBiasRect AESprite::calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing) {
+AEBiasRect AESprite::calcRotatedRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing) {
 	FLOAT cosA = cos(angle), sinA = sin(angle);
 	INT centerx = f->getCenterx(), centery = f->getCentery();
 	INT width = f->getWidth(), height = f->getHeight();
@@ -172,32 +151,16 @@ VOID AESprite::update() {
 	}
 }
 
-VOID AESprite::render(FLOAT zValue) {
+VOID AESprite::addToRenderBuffer(FLOAT zValue) {
 	AEFrame* f = obj->getAnim(action)->getFrame(frameNum);
 	AEResource* res = f->getResource();
-	RECT texClipInTexel = res->getTexClipInTexel(f->getImgOffset(), f->getImgCells(), facing);
-	xtk_SpriteBatch->Draw(
-		res->getTexture(), // Texture
-		XMFLOAT2(cx, cy), // Drawing Position (top-left corner)
-		&texClipInTexel, // Texture Clip Rectangle
-		DirectX::Colors::White, // Tilting Color
-		angle, // Rotation
-		XMFLOAT2((FLOAT)(f->getCenterx()), (FLOAT)(f->getCentery())), // Rotation Origin
-		1.0f, // Scale
-		facing, // Facing (left, right)
-		zValue // Z Value
-	);
-	
-	// Old drawing method not using SpriteBatch
-	/*
 	AERect texClip = res->getTexClip(f->getImgOffset(), f->getImgCells(), facing);
 	if (angle == 0.0f) {
-		AERect paintArea = calcSpriteRect(cx, cy, f, facing);
+		AERect paintArea = calcRect(cx, cy, f, facing);
 		res->addToRenderBuffer(paintArea, texClip, alpha, zValue);
 	}
 	else {
-		AEBiasRect paintArea = calcRotatedSpriteRect(cx, cy, f, angle, facing);
+		AEBiasRect paintArea = calcRotatedRect(cx, cy, f, angle, facing);
 		res->addToRenderBuffer(paintArea, texClip, alpha, zValue);
 	}
-	*/
 }
