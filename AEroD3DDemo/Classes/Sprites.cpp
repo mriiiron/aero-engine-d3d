@@ -33,7 +33,7 @@ VOID JFighterSprite::shoot() {
 	descSpr.obj = ae_ObjectTable.getItem(2);
 	descSpr.team = 0;
 	descSpr.action = 0;
-	descSpr.facing = 0;
+	descSpr.facing = SpriteEffects_None;
 	descSpr.cx = cx + rocketSlotOffset[currentRocketSlotIndex];
 	descSpr.cy = cy;
 	AESprite* rocket = new AESprite(descSpr);

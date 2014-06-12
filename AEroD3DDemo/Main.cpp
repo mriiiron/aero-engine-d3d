@@ -24,7 +24,6 @@
 #include <d3d11sdklayers.h>
 #include <vector>
 
-#include "DDSTextureLoader.h"
 #include "resource.h"
 #include "AEroEngine.h"
 
@@ -32,25 +31,6 @@
 #include "Classes\Scenes.h"
 
 using namespace DirectX;
-
-//--------------------------------------------------------------------------------------
-// Structures
-//--------------------------------------------------------------------------------------
-
-struct CBNeverChanges
-{
-	XMMATRIX mView;
-};
-
-struct CBChangeOnResize
-{
-	XMMATRIX mProjection;
-};
-
-struct CBChangesEveryFrame
-{
-	XMMATRIX mWorld;
-};
 
 
 //--------------------------------------------------------------------------------------
@@ -81,9 +61,10 @@ extern ID3D11Buffer*						g_pCBChangesEveryFrame;
 extern ID3D11SamplerState*					g_pSamplerLinear;
 extern ID3D11Debug*							g_pDebug;
 
-extern XMMATRIX								g_World;
-extern XMMATRIX								g_View;
-extern XMMATRIX								g_Projection;
+extern XMMATRIX								gm_World;
+extern XMMATRIX								gm_View;
+extern XMMATRIX								gm_Projection;
+extern XMMATRIX								gm_Transform;
 
 LPDIRECTINPUT8								g_pDirectInput;
 LPDIRECTINPUTDEVICE8						g_pKeyboardDevice;
@@ -99,6 +80,12 @@ extern AEBackgroundLibrary					ae_BGLibrary;
 extern AESceneManager						ae_SceneManager;
 extern AECamera								ae_Camera;
 
+//--------------------------------------------------------------------------------------
+// DirectXTK Global Variables
+//--------------------------------------------------------------------------------------
+extern SpriteBatch*							xtk_SpriteBatch;
+extern SpriteFont*							xtk_SpriteFont;
+
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -109,7 +96,6 @@ LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
 void InitGameplay();
 void Update();
 void Render();
-
 
 //--------------------------------------------------------------------------------------
 // Entry point to the program. Initializes everything and goes into a message processing 
@@ -185,7 +171,7 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 	g_hInst = hInstance;
 	RECT rc = { 0, 0, 640, 480 };
 	AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
-	g_hWnd = CreateWindow( L"AEroWindowClass", L"AEro Engine for Direct 3D", WS_OVERLAPPEDWINDOW,
+	g_hWnd = CreateWindow( L"AEroWindowClass", L"AEro Engine for Direct3D", WS_OVERLAPPEDWINDOW,
 	   CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
 	   nullptr );
 	if( !g_hWnd )
@@ -511,25 +497,6 @@ HRESULT InitDevice()
 	// Set primitive topology
 	g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	// Create the constant buffers
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(CBNeverChanges);
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = 0;
-	hr = g_pd3dDevice->CreateBuffer( &bd, nullptr, &g_pCBNeverChanges );
-	if( FAILED( hr ) )
-		return hr;
-
-	bd.ByteWidth = sizeof(CBChangeOnResize);
-	hr = g_pd3dDevice->CreateBuffer( &bd, nullptr, &g_pCBChangeOnResize );
-	if( FAILED( hr ) )
-		return hr;
-
-	bd.ByteWidth = sizeof(CBChangesEveryFrame);
-	hr = g_pd3dDevice->CreateBuffer( &bd, nullptr, &g_pCBChangesEveryFrame );
-	if( FAILED( hr ) )
-		return hr;
-
 	// Create the sampler state
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory( &sampDesc, sizeof(sampDesc) );
@@ -545,24 +512,17 @@ HRESULT InitDevice()
 		return hr;
 
 	// Initialize the world matrix
-	g_World = XMMatrixIdentity();
+	gm_World = XMMatrixIdentity();
 
 	// Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet( 0.0f, 0.0f, - (FLOAT)height / 2.0f, 0.0f );
-	XMVECTOR At = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
-	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
-	g_View = XMMatrixLookAtLH( Eye, At, Up );
-
-	CBNeverChanges cbNeverChanges;
-	cbNeverChanges.mView = XMMatrixTranspose( g_View );
-	g_pImmediateContext->UpdateSubresource( g_pCBNeverChanges, 0, nullptr, &cbNeverChanges, 0, 0 );
+	XMVECTOR Eye = XMVectorSet(-(width / 2.0f), -(height / 2.0f), 0.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(-(width / 2.0f), -(height / 2.0f), 100.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	gm_View = XMMatrixLookAtLH(Eye, At, Up);
+	//gm_View = XMMatrixIdentity();
 
 	// Initialize the projection matrix
-	g_Projection = XMMatrixPerspectiveFovLH( XM_PIDIV2, width / (FLOAT)height, 0.01f, 1000.0f );
-
-	CBChangeOnResize cbChangesOnResize;
-	cbChangesOnResize.mProjection = XMMatrixTranspose( g_Projection );
-	g_pImmediateContext->UpdateSubresource( g_pCBChangeOnResize, 0, nullptr, &cbChangesOnResize, 0, 0 );
+	gm_Projection = XMMatrixIdentity();
 
 	// Initialize DirectInput device
 	hr = DirectInput8Create(g_hInst, 0x0800, IID_IDirectInput8, (LPVOID*)&g_pDirectInput, NULL);
@@ -576,10 +536,13 @@ HRESULT InitDevice()
 	g_pKeyboardDevice->SetDataFormat( &c_dfDIKeyboard );
 
 	// Set the cooperate level of our keyboard
-	g_pKeyboardDevice->SetCooperativeLevel( g_hWnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE | DISCL_NOWINKEY );
+	g_pKeyboardDevice->SetCooperativeLevel( g_hWnd, DISCL_BACKGROUND | DISCL_EXCLUSIVE | DISCL_NOWINKEY );
 
 	// Let the keyboard get authority
 	g_pKeyboardDevice->Acquire();
+
+	xtk_SpriteBatch = new SpriteBatch(g_pImmediateContext);
+	xtk_SpriteFont = new SpriteFont(g_pd3dDevice, L"Resources\\arial.spritefont");
 
 	return S_OK;
 }
@@ -649,7 +612,7 @@ void InitGameplay()
 	AERO_FRAME_DESC descFrame;
 	descFrame.res = ae_ResourceTable.getItem(0);
 	descFrame.centerx = 40;
-	descFrame.centery = 10;
+	descFrame.centery = 60;
 	descFrame.dvx = 0;
 	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
@@ -761,7 +724,7 @@ void InitGameplay()
 	descSpr.obj = ae_ObjectTable.getItem(0);
 	descSpr.team = 0;
 	descSpr.action = 0;
-	descSpr.facing = 0;
+	descSpr.facing = SpriteEffects_None;
 	descSpr.cx = 0.0f;
 	descSpr.cy = 0.0f;
 	AESprite* spr_gedama = new AESprite(descSpr);
@@ -890,9 +853,9 @@ void InitGameplay()
 	descSpr.obj = ae_ObjectTable.getItem(1);
 	descSpr.team = 0;
 	descSpr.action = 0;
-	descSpr.facing = 0;
+	descSpr.facing = SpriteEffects_None;
 	descSpr.cx = 0.0f;
-	descSpr.cy = -150.0f;
+	descSpr.cy = 150.0f;
 	AESprite* spr_jfighter = new JFighterSprite(descSpr);
 
 	// Run the scene
@@ -957,30 +920,37 @@ void Update()
 //--------------------------------------------------------------------------------------
 void Render()
 {
+
 	// Clear the back buffer
 	g_pImmediateContext->ClearRenderTargetView( g_pRenderTargetView, Colors::Black );
 
 	// Clear the depth buffer to 1.0 (max depth)
 	g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 
-	// Update variables that change once per frame
-	CBChangesEveryFrame cb;
-	cb.mWorld = XMMatrixTranspose( g_World );
-	g_pImmediateContext->UpdateSubresource( g_pCBChangesEveryFrame, 0, nullptr, &cb, 0, 0 );
+	// Calculate the overall transform matrix
+	gm_Transform = gm_World * gm_View * gm_Projection;
 
-	// Render the scene
-	g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
-	g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pCBNeverChanges );
-	g_pImmediateContext->VSSetConstantBuffers( 1, 1, &g_pCBChangeOnResize );
-	g_pImmediateContext->VSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
-	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
-	g_pImmediateContext->PSSetConstantBuffers( 2, 1, &g_pCBChangesEveryFrame );
-	g_pImmediateContext->PSSetSamplers( 0, 1, &g_pSamplerLinear );
+	// Begin rendering
+	xtk_SpriteBatch->Begin(
+		SpriteSortMode_Deferred,
+		g_pBlendState,
+		g_pSamplerLinear,
+		nullptr,
+		g_pRasterizerState,
+		nullptr, // TODO: Apply shaders
+		gm_Transform
+	);
+
 	AEScene* activeScene = ae_SceneManager.getActiveScene();
-	if ( activeScene == NULL ) {
+	if ( activeScene == nullptr ) {
 		AENSGameControl::exitGame("On gameplay: No active scene.");
 	}
 	activeScene->render();
+
+	LPTSTR strSpriteCount = new TCHAR[1024];
+	wsprintf(strSpriteCount, L"Sprite Count: %d", activeScene->getSpriteTable()->getHashCount());
+	xtk_SpriteFont->DrawString(xtk_SpriteBatch, strSpriteCount, XMFLOAT2(-320.0f, -240.0f));
+	xtk_SpriteBatch->End();
 
 	// Present our back buffer to our front buffer
 	g_pSwapChain->Present( 0, 0 );
