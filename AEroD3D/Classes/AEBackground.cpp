@@ -4,6 +4,9 @@
 #include "AEResource.h"
 #include "AETable.h"
 #include "AEBackground.h"
+#include "XTK\SpriteBatch.h"
+
+extern SpriteBatch*							xtk_SpriteBatch;
 
 AEBGLayerAnim::AEBGLayerAnim(AERO_BGLAYERANIM_DESC desc) {
 	frameCount = desc.frameCount;
@@ -102,27 +105,46 @@ VOID AEBackground::update() {
 	}
 }
 
-VOID AEBackground::addToRenderBuffer(AEPoint ae_CameraCenter) {
+VOID AEBackground::render(AEPoint ae_CameraCenter) {
 	for (INT i = layerCount - 1; i >= 0; i--) {
 		FLOAT dx = ae_CameraCenter.x;
 		FLOAT depth = FLOAT(layerTable[i]->getDepth());
 		FLOAT correction = dx * depth / 100.0f;
 		for (INT j = 0; j < layerTable[i]->getAnimCount(); j++) {
-			AEBGAnimRef* pRef = layerTable[i]->getAnimRef(j);
-			AEBGLayerAnim* pLAnim = animTable[pRef->animIndex];
-			AEBGLayerFrame* lf = pLAnim->getFrame(pRef->frame);
-			AEResource* pRes = lf->res;
-			INT width = pRes->getCellWidth();
-			INT height = pRes->getCellHeight();
-			FLOAT x1, x2, y1, y2;
+			AEBGAnimRef* ref = layerTable[i]->getAnimRef(j);
+			AEBGLayerAnim* pLAnim = animTable[ref->animIndex];
+			AEBGLayerFrame* lf = pLAnim->getFrame(ref->frame);
+			AEResource* res = lf->res;
+			INT width = res->getCellWidth();
+			INT height = res->getCellHeight();	
 			AEPoint layerPos = layerTable[i]->getLocation();
-			x1 = layerPos.x + pRef->x + correction;
+			FLOAT x1, y1;
+			x1 = layerPos.x + ref->x + correction;
+			y1 = layerPos.y + ref->y;
+			RECT texClipInTexel = res->getTexClipInTexel(lf->imgOffset, 1);
+			xtk_SpriteBatch->Draw(
+				res->getTexture(), // Texture
+				XMFLOAT2(x1, y1), // Drawing Position (top-left corner)
+				&texClipInTexel, // Texture Clip Rectangle
+				DirectX::Colors::White, // Tilting Color
+				AENSMath::deg2rad(0), // Rotation
+				XMFLOAT2(0.0f, 0.0f), // Rotation Origin
+				1.0f, // Scale
+				SpriteEffects_None, // Facing (left, right)
+				0.0f // Z Value
+			);
+
+			// Old drawing method not using SpriteBatch
+			/*
+			FLOAT x1, x2, y1, y2;
+			x1 = layerPos.x + ref->x + correction;
 			x2 = x1 + width;
-			y1 = layerPos.y + pRef->y;
+			y1 = layerPos.y + ref->y;
 			y2 = y1 + height;
 			AERect animRect(x1, y1, x2, y2);
 			AERect texClip = lf->res->getTexClip(lf->imgOffset, 1);
 			lf->res->addToRenderBuffer(animRect, texClip, 1.0f, 100.0f);
+			*/
 		}
 	}
 }

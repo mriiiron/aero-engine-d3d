@@ -7,7 +7,7 @@
 using namespace DirectX;
 
 //--------------------------------------------------------------------------------------
-// Global Variables
+// D3D11 Global Variables
 //--------------------------------------------------------------------------------------
 HINSTANCE									g_hInst = nullptr;
 HWND										g_hWnd = nullptr;
@@ -33,10 +33,11 @@ ID3D11Buffer*								g_pCBChangeOnResize = nullptr;
 ID3D11Buffer*								g_pCBChangesEveryFrame = nullptr;
 ID3D11SamplerState*							g_pSamplerLinear = nullptr;
 ID3D11Debug*								g_pDebug = nullptr;
-XMMATRIX									g_World;
-XMMATRIX									g_View;
-XMMATRIX									g_Projection;
-XMFLOAT4									g_vMeshColor( 1.0f, 1.0f, 1.0f, 1.0f );
+
+XMMATRIX									gm_World;
+XMMATRIX									gm_View;
+XMMATRIX									gm_Projection;
+XMMATRIX									gm_Transform;
 
 //--------------------------------------------------------------------------------------
 // AE Global Variables
@@ -49,12 +50,19 @@ AEBackgroundLibrary							ae_BGLibrary;
 AESceneManager								ae_SceneManager;
 AECamera									ae_Camera;
 
+//--------------------------------------------------------------------------------------
+// DirectXTK Global Variables
+//--------------------------------------------------------------------------------------
+SpriteBatch*								xtk_SpriteBatch;
+SpriteFont*									xtk_SpriteFont;
 
 //--------------------------------------------------------------------------------------
 // Clean up the objects we've created
 //--------------------------------------------------------------------------------------
 void AENSCore::CleanupDevice() {
 
+	if (xtk_SpriteFont) delete xtk_SpriteFont;
+	if (xtk_SpriteBatch) delete xtk_SpriteBatch;
 	if (g_pImmediateContext) g_pImmediateContext->ClearState();
 	if (g_pSamplerLinear) g_pSamplerLinear->Release();
 	if (g_pCBNeverChanges) g_pCBNeverChanges->Release();

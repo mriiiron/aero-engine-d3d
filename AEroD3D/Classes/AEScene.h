@@ -34,6 +34,8 @@ public:
 	virtual VOID render();
 	virtual VOID processInput();
 
+	BOOLEAN textDebug;
+
 protected:
 
 	AEBackground* bg;
