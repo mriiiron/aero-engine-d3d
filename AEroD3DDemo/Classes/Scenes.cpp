@@ -57,6 +57,7 @@ VOID VerticalScrollerScene::initialize() {
 }
 
 VOID VerticalScrollerScene::update() {
+	clipOutFarSprites();
 	AEScene::update();
 }
 
@@ -107,5 +108,10 @@ VOID VerticalScrollerScene::processInput() {
 }
 
 VOID VerticalScrollerScene::clipOutFarSprites() {
-	// TODO
+	for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+		AEPoint center = spriteTable->getItemByHash(iHash)->getCenter();
+		if (center.x < -320.0f || center.x > 320.0f || center.y < -240.0f || center.y > 240.0f) {
+			spriteTable->remove(spriteTable->getHash(iHash));
+		}
+	}
 }

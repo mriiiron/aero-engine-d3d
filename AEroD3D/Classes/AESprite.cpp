@@ -180,7 +180,7 @@ VOID AESprite::render(FLOAT zValue) {
 		res->getTexture(), // Texture
 		XMFLOAT2(cx, cy), // Drawing Position (top-left corner)
 		&texClipInTexel, // Texture Clip Rectangle
-		DirectX::Colors::White, // Tilting Color
+		XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
 		angle, // Rotation
 		XMFLOAT2((FLOAT)(f->getCenterx()), (FLOAT)(f->getCentery())), // Rotation Origin
 		1.0f, // Scale
