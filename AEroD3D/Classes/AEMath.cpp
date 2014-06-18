@@ -41,6 +41,12 @@ FLOAT AENSMath::randomClampf() {
 	return rand() / FLOAT(RAND_MAX);
 }
 
+XMFLOAT2 AENSMath::randomPointWithinCircle(FLOAT radius) {
+	FLOAT dist = randomClampf() * radius;
+	FLOAT angle = randomClampf() * 2.0f * PI;
+	return XMFLOAT2(dist * cosf(angle), dist * sinf(angle));
+}
+
 FLOAT AENSMath::deg2rad(FLOAT deg) {
 	return deg / 180.0f * 3.14159f;
 }

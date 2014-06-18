@@ -2,12 +2,13 @@
 
 
 // General
-class GeneralScene: public AEScene {
+class GeneralSampleScene: public AEScene {
 
 public:
 
-	GeneralScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
+	GeneralSampleScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
 
+	VOID initialize();
 	VOID update();
 	VOID render();
 	VOID processInput();

@@ -11,4 +11,6 @@ public:
 
 private:
 
+	INT smokeCooldown = 0;
+
 };

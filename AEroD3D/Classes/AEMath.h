@@ -114,6 +114,7 @@ namespace AENSMath {
 	INT randomIntBetween(INT start, INT end);
 	
 	FLOAT randomClampf();
+	XMFLOAT2 randomPointWithinCircle(FLOAT radius);
 
 	FLOAT deg2rad(FLOAT deg);
 	FLOAT rad2deg(FLOAT rad);

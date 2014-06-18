@@ -21,6 +21,7 @@ class AEScene {
 public:
 
 	AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
+	AEScene(INT spriteTableSize);
 	~AEScene();
 
 	CHAR keyStateBuffer[256];
@@ -28,8 +29,11 @@ public:
 	AEBackground* getBackground() { return bg; }
 	AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
 	AEHeadUpDisplay* getHUD() { return hud; }
+	VOID setBackground(AEBackground* _bg) { bg = _bg; }
+	VOID setHUD(AEHeadUpDisplay* _hud) { hud = _hud; }
 
 	VOID addSprite(AESprite* sprite);
+
 	virtual VOID update();
 	virtual VOID render();
 	virtual VOID processInput();

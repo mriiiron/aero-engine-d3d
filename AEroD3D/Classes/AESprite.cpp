@@ -111,7 +111,7 @@ AEBiasRect AESprite::calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT
 }
 
 VOID AESprite::changeAction(INT _action) {
-	if (_action == 1000) {
+	if (_action == ACTION_NUM_DEAD) {
 		deadFlag = TRUE;
 		return;
 	}

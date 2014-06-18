@@ -20,6 +20,15 @@ AEScene::AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHea
 	}
 }
 
+AEScene::AEScene(INT spriteTableSize) {
+	bg = nullptr;
+	spriteTable = new AEHashedTable<AESprite>(spriteTableSize);
+	hud = nullptr;
+	for (INT i = 0; i < 256; i++) {
+		keyStateBuffer[i] = 0;
+	}
+}
+
 AEScene::~AEScene() {
 	if (bg) delete bg;
 	if (spriteTable) delete spriteTable;
@@ -38,7 +47,13 @@ VOID AEScene::update() {
 	}
 	if (spriteTable) {
 		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
-			spriteTable->getItemByHash(iHash)->update();
+			AESprite* sprite = spriteTable->getItemByHash(iHash);
+			if (sprite->isDead()) {
+				spriteTable->remove(spriteTable->getHash(iHash));
+			}
+			else {
+				sprite->update();
+			}
 		}
 	}
 	if (hud) {
@@ -54,8 +69,11 @@ VOID AEScene::render() {
 	if (spriteTable) {
 		FLOAT zBias = 0.0f;
 		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
-			spriteTable->getItemByHash(iHash)->render(zBias);
-			//zBias -= 0.065f;
+			AESprite* sprite = spriteTable->getItemByHash(iHash);
+			if (!(sprite->isDead())) {
+				sprite->render(zBias);
+				//zBias -= 0.065f;
+			}
 		}
 		//ae_ResourceTable.renderAndClear();
 	}

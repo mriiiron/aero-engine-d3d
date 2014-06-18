@@ -49,6 +49,8 @@ public:
 	static const INT FACING_RIGHT = 0;
 	static const INT FACING_LEFT = 1;
 
+	static const INT ACTION_NUM_DEAD = 1000;
+
 	AESprite(AERO_SPRITE_DESC desc);
 
 	// Get'n'set
@@ -90,6 +92,7 @@ public:
 	AEPoint getCenter() { return AEPoint(cx, cy); }
 	AEObject* getObject() { return obj; }
 	std::string getObjName() { return obj->getName(); }
+	AEScene* getScene() { return scene; }
 
 	VOID rotateDeg(FLOAT degree) { angle += AENSMath::deg2rad(degree); }
 	VOID rotateRad(FLOAT rad) { angle += rad; }
@@ -101,8 +104,10 @@ public:
 	VOID keyDown(INT _key) { keyState = keyState | _key; }
 	VOID keyUp(INT _key) { keyState = keyState & ~_key; }
 	VOID takeDamage(INT damage) { hpValue -= damage; }
+	VOID kill() { deadFlag = TRUE; }
 	BOOLEAN isAtkJudgeLocked() { return atkJudgeLock; }
 	BOOLEAN isKeyDown(INT _key) { return (BOOLEAN)(_key & keyState); }
+	BOOLEAN isDead() { return deadFlag; }
 
 	VOID changeAction(INT _action);
 	VOID toNextFrame(AEAnimation anim);
