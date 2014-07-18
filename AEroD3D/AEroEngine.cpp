@@ -1,6 +1,7 @@
 #include <d3d11_1.h>
-#include <directxmath.h>
+#include <DirectXMath.h>
 #include <d3d11sdklayers.h>
+#include <time.h>
 
 #include "AEroEngine.h"
 
@@ -42,10 +43,9 @@ XMMATRIX									gm_Transform;
 //--------------------------------------------------------------------------------------
 // AE Global Variables
 //--------------------------------------------------------------------------------------
-AEResourceTable								ae_ResourceTable(100);
+AEConstantTable<AEResource>					ae_ResourceTable(100);
 AEConstantTable<AEObject>					ae_ObjectTable(100);
-AEHashedTable<AEAI>							ae_AITable(100);
-AEHashedTable<AEParticleEmitter>			ae_ParticleTable(1000);
+//AEHashedTable<AEParticleEmitter>			ae_ParticleTable(1000);
 AEBackgroundLibrary							ae_BGLibrary;
 AESceneManager								ae_SceneManager;
 AECamera									ae_Camera;
@@ -57,9 +57,16 @@ SpriteBatch*								xtk_SpriteBatch;
 SpriteFont*									xtk_SpriteFont;
 
 //--------------------------------------------------------------------------------------
+// Initialize
+//--------------------------------------------------------------------------------------
+VOID AENSCore::AEInitialize() {
+	srand(time(nullptr));
+}
+
+//--------------------------------------------------------------------------------------
 // Clean up the objects we've created
 //--------------------------------------------------------------------------------------
-void AENSCore::CleanupDevice() {
+VOID AENSCore::CleanupDevice() {
 
 	if (xtk_SpriteFont) delete xtk_SpriteFont;
 	if (xtk_SpriteBatch) delete xtk_SpriteBatch;

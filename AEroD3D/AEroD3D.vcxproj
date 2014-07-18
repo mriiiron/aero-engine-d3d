@@ -68,8 +68,10 @@
     <ClCompile Include="Classes\AEAnimation.cpp" />
     <ClCompile Include="Classes\AEBackground.cpp" />
     <ClCompile Include="Classes\AECamera.cpp" />
+    <ClCompile Include="Classes\AECollision.cpp" />
     <ClCompile Include="Classes\AEGameControl.cpp" />
     <ClCompile Include="Classes\AEHeadUpDisplay.cpp" />
+    <ClCompile Include="Classes\AEPlatform.cpp" />
     <ClCompile Include="Classes\AEMath.cpp" />
     <ClCompile Include="Classes\AEObject.cpp" />
     <ClCompile Include="Classes\AEParticleSystem.cpp" />
@@ -84,8 +86,10 @@
     <ClInclude Include="Classes\AEAnimation.h" />
     <ClInclude Include="Classes\AEBackground.h" />
     <ClInclude Include="Classes\AECamera.h" />
+    <ClInclude Include="Classes\AECollision.h" />
     <ClInclude Include="Classes\AEGameControl.h" />
     <ClInclude Include="Classes\AEHeadUpDisplay.h" />
+    <ClInclude Include="Classes\AEPlatform.h" />
     <ClInclude Include="Classes\AEMath.h" />
     <ClInclude Include="Classes\AEObject.h" />
     <ClInclude Include="Classes\AEParticleSystem.h" />

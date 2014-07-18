@@ -12,12 +12,14 @@
 
 #include "Classes\AEMath.h"
 #include "Classes\AEPhysics.h"
+#include "Classes\AECollision.h"
 
 #include "Classes\AEGameControl.h"
 
 #include "Classes\AETable.h"
 #include "Classes\AEResource.h"
 #include "Classes\AEBackground.h"
+#include "Classes\AEPlatform.h"
 #include "Classes\AEParticleSystem.h"
 
 #include "Classes\AEObject.h"
@@ -34,6 +36,7 @@
 
 namespace AENSCore {
 
-	void CleanupDevice();
+	VOID AEInitialize();
+	VOID CleanupDevice();
 
 }

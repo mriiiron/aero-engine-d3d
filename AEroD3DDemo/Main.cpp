@@ -72,7 +72,7 @@ LPDIRECTINPUTDEVICE8						g_pKeyboardDevice;
 //--------------------------------------------------------------------------------------
 // AE Global Variables
 //--------------------------------------------------------------------------------------
-extern AEResourceTable						ae_ResourceTable;
+extern AEConstantTable<AEResource>			ae_ResourceTable;
 extern AEConstantTable<AEObject>			ae_ObjectTable;
 extern AEHashedTable<AEAI>					ae_AITable;
 extern AEHashedTable<AEParticleEmitter>		ae_ParticleTable;
@@ -592,8 +592,7 @@ void LoadGameResources() {
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
-	AEResource* res_0 = new AEResource(descRes);
-	ae_ResourceTable.addAt(descRes.rid, res_0);
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
 	// Starsky Background (Sample Scene 0)
 	descRes.rid = 1;
@@ -604,8 +603,7 @@ void LoadGameResources() {
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
-	AEResource* res_1 = new AEResource(descRes);
-	ae_ResourceTable.addAt(descRes.rid, res_1);
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
 	// Japanese Fighter Sprite (Sample Scene 1)
 	descRes.rid = 2;
@@ -616,32 +614,62 @@ void LoadGameResources() {
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
-	AEResource* res_2 = new AEResource(descRes);
-	ae_ResourceTable.addAt(descRes.rid, res_2);
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Rocket Sprite (Sample Scene 1)
+	// Bullets Sprite (Sample Scene 1)
 	descRes.rid = 3;
-	descRes.rtype = RES_1x1;
-	descRes.cellW = 7;
+	descRes.rtype = RES_1x5;
+	descRes.cellW = 17;
 	descRes.cellH = 17;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\rocket_0.dds", nullptr, &(descRes.tex));
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\bullet_0.dds", nullptr, &(descRes.tex));
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
-	AEResource* res_3 = new AEResource(descRes);
-	ae_ResourceTable.addAt(descRes.rid, res_3);
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
 	// Rocket Smoke Effect (Sample Scene 1)
 	descRes.rid = 4;
 	descRes.rtype = RES_1x10;
 	descRes.cellW = 20;
 	descRes.cellH = 20;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\rocket_smoke.dds", nullptr, &(descRes.tex));
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\bullet_smoke.dds", nullptr, &(descRes.tex));
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
-	AEResource* res_4 = new AEResource(descRes);
-	ae_ResourceTable.addAt(descRes.rid, res_4);
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
+	// Enemy Turret (Sample Scene 1)
+	descRes.rid = 5;
+	descRes.rtype = RES_1x5;
+	descRes.cellW = 63;
+	descRes.cellH = 63;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\turret_0.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
+	// Helicopter Sprite (Sample Scene 2)
+	descRes.rid = 6;
+	descRes.rtype = RES_1x5;
+	descRes.cellW = 50;
+	descRes.cellH = 20;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\heli_0.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
+	// Platform background
+	descRes.rid = 7;
+	descRes.rtype = RES_1x1;
+	descRes.cellW = 640;
+	descRes.cellH = 480;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\platform_bg.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
 }
 
@@ -650,24 +678,27 @@ void LoadGameResources() {
 //--------------------------------------------------------------------------------------
 void InitGameplay() {
 
+	AENSCore::AEInitialize();
+
 	// Scene 0 - General Sample Scene
-	AEHashedTable<AESprite>* spriteTable_0 = new AEHashedTable<AESprite>(100);
-	AEHeadUpDisplay* hud_0 = new AEHeadUpDisplay();
-	GeneralSampleScene* generalSampleScene = new GeneralSampleScene(ae_BGLibrary.get(0), spriteTable_0, hud_0);
+	GeneralSampleScene* generalSampleScene = new GeneralSampleScene(nullptr, nullptr, new AEHashedTable<AESprite>(100), nullptr);
 	ae_SceneManager.addSceneAt(0, generalSampleScene);
 
 	// Scene 1 - Vertical Scroller Scene
-	AEHashedTable<AESprite>* spriteTable_1 = new AEHashedTable<AESprite>(1000);
-	AEHeadUpDisplay* hud_1 = new AEHeadUpDisplay();
-	VerticalScrollerScene* verticalScrollerScene = new VerticalScrollerScene(nullptr, spriteTable_1, hud_1);
+	VerticalScrollerScene* verticalScrollerScene = new VerticalScrollerScene(nullptr, nullptr, new AEHashedTable<AESprite>(1000), nullptr);
 	ae_SceneManager.addSceneAt(1, verticalScrollerScene);
+
+	// Scene 2 - Side Scroller Scene with Platform
+	SideScrollerPlatformScene* sideScrollerPlatformScene = new SideScrollerPlatformScene(nullptr, nullptr, new AEHashedTable<AESprite>(1000), nullptr);
+	ae_SceneManager.addSceneAt(2, sideScrollerPlatformScene);
 
 	// Initialize scenes
 	generalSampleScene->initialize();
 	verticalScrollerScene->initialize();
+	sideScrollerPlatformScene->initialize();
 
 	// Run a scene
-	ae_SceneManager.runScene(1);
+	ae_SceneManager.runScene(0);
 
 }
 

@@ -10,7 +10,7 @@
 #pragma once
 
 #include <d3d11_1.h>
-#include <directxmath.h>
+#include <DirectXMath.h>
 #include <cmath>
 #include <string>
 
@@ -34,14 +34,14 @@ struct AEPoint {
 
 struct AERect {
 
-	FLOAT x1, y1, x2, y2;
+	FLOAT x1, x2, y1, y2;
 
 	AERect() {
-		x1 = y1 = x2 = y2 = 0.0f;
+		x1 = x2 = y1 = y2 = 0.0f;
 	}
 
-	AERect(FLOAT _x1, FLOAT _y1, FLOAT _x2, FLOAT _y2) {
-		x1 = _x1;  y1 = _y1;  x2 = _x2;  y2 = _y2;
+	AERect(FLOAT _x1, FLOAT _x2, FLOAT _y1, FLOAT _y2) {
+		x1 = _x1;  x2 = _x2;  y1 = _y1;  y2 = _y2;
 	}
 
 };
@@ -112,19 +112,26 @@ namespace AENSMath {
 	};
 
 	INT randomIntBetween(INT start, INT end);
-	
 	FLOAT randomClampf();
 	XMFLOAT2 randomPointWithinCircle(FLOAT radius);
 
 	FLOAT deg2rad(FLOAT deg);
 	FLOAT rad2deg(FLOAT rad);
 	
-	FLOAT euclideanDistance(AEPoint p1, AEPoint p2);
+	FLOAT euclideanDistance(XMFLOAT2 p1, XMFLOAT2 p2);
+
+	BOOLEAN floatEqual(FLOAT f1, FLOAT f2, FLOAT threshold = 0.001f);
+
+	XMFLOAT2 rotatePoint(XMFLOAT2 p, XMFLOAT2 origin, FLOAT angle);
 
 	INT log2(INT x);
 	
 	AERect flipRect(AERect rect, AEFlipDirection direction);
 	AEBiasRect flipRect(AEBiasRect rect, AEFlipDirection direction);
+
+	XMFLOAT2 lineIntersect(XMFLOAT2 A, XMFLOAT2 B, XMFLOAT2 C, XMFLOAT2 D);
+	BOOLEAN pointEqual(XMFLOAT2 A, XMFLOAT2 B);
+	BOOLEAN pointOnSegment(XMFLOAT2 P, XMFLOAT2 A, XMFLOAT2 B);
 
 };
 

@@ -15,6 +15,7 @@ public:
 	T* getItemByHash(INT hashIndex) { return table[hash[hashIndex]]; }
 	INT getHash(INT hashIndex) { return hash[hashIndex]; }
 	INT getHashCount() { return pHash; }
+	INT getSize() { return maxElemCount; }
 	VOID add(T* t);
 	VOID addAt(INT index, T* t);
 	VOID remove(INT index);

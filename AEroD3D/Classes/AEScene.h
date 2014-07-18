@@ -20,16 +20,19 @@ class AEScene {
 
 public:
 
-	AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
+	AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
 	AEScene(INT spriteTableSize);
 	~AEScene();
 
 	CHAR keyStateBuffer[256];
 
 	AEBackground* getBackground() { return bg; }
+	AEHashedTable<AEPlatform>* getplatformTable() { return platformTable; }
 	AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
 	AEHeadUpDisplay* getHUD() { return hud; }
 	VOID setBackground(AEBackground* _bg) { bg = _bg; }
+	VOID setPlatformTable(AEHashedTable<AEPlatform>* _platformTable) { platformTable = _platformTable; }
+	VOID setSpriteTable(AEHashedTable<AESprite>* _spriteTable) { spriteTable = _spriteTable; }
 	VOID setHUD(AEHeadUpDisplay* _hud) { hud = _hud; }
 
 	VOID addSprite(AESprite* sprite);
@@ -38,11 +41,10 @@ public:
 	virtual VOID render();
 	virtual VOID processInput();
 
-	BOOLEAN textDebug;
-
 protected:
 
 	AEBackground* bg;
+	AEHashedTable<AEPlatform>* platformTable;
 	AEHashedTable<AESprite>* spriteTable;
 	AEHeadUpDisplay* hud;
 

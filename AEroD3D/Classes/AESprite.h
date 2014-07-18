@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include "AECollision.h"
 #include "AEObject.h"
 #include "AEAI.h"
 
@@ -51,11 +52,19 @@ public:
 
 	static const INT ACTION_NUM_DEAD = 1000;
 
+	static const INT TIME_TO_LIVE_UNLIMITED = -1;
+
+	static const INT ROTATE_BOTH = 0;
+	static const INT ROTATE_DIRECTION_ONLY = 1;
+	static const INT ROTATE_DISPLAY_ONLY = 2;
+
 	AESprite(AERO_SPRITE_DESC desc);
 
 	// Get'n'set
 	VOID setIndex(INT _index) { index = _index; }
 	VOID setState(INT _state) { state = _state; }
+	VOID setCx(FLOAT _cx) { cx = _cx; }
+	VOID setCy(FLOAT _cy) { cy = _cy; }
 	VOID setAx(FLOAT _ax) { ax = _ax; }
 	VOID setAy(FLOAT _ay) { ay = _ay; }
 	VOID setVx(FLOAT _vx) { vx = _vx; }
@@ -63,6 +72,7 @@ public:
 	VOID setVAngle(FLOAT _vangle) { vangle = _vangle; }
 	VOID setGroundSpeed(FLOAT _speed) { gndSpeed = _speed; }
 	VOID setAngle(FLOAT _angle) { angle = _angle; }
+	VOID setAngleDisplay(FLOAT _angleDisplay) { angleDisplay = _angleDisplay; }
 	VOID setFacing(SpriteEffects _facing) { facing = _facing; }
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
 	VOID setAlpha(FLOAT _alpha) { alpha = _alpha; }
@@ -83,6 +93,7 @@ public:
 	FLOAT getCx() { return cx; }
 	FLOAT getCy() { return cy; }
 	FLOAT getAngle() { return angle; }
+	FLOAT getAngleDisplay() { return angleDisplay; }
 	FLOAT getVx() { return vx; }
 	FLOAT getVy() { return vy; }
 	FLOAT getVAngle() { return vangle; }
@@ -92,10 +103,9 @@ public:
 	AEPoint getCenter() { return AEPoint(cx, cy); }
 	AEObject* getObject() { return obj; }
 	std::string getObjName() { return obj->getName(); }
+	AEAI* getAI() { return ai; }
 	AEScene* getScene() { return scene; }
 
-	VOID rotateDeg(FLOAT degree) { angle += AENSMath::deg2rad(degree); }
-	VOID rotateRad(FLOAT rad) { angle += rad; }
 	VOID turnOver() { facing = (facing == SpriteEffects_None ? SpriteEffects_FlipHorizontally : SpriteEffects_None); }
 	VOID resetKeyState() { keyState = 0; }
 	VOID stiffen(INT _time) { timeToStiff = _time; }
@@ -109,6 +119,12 @@ public:
 	BOOLEAN isKeyDown(INT _key) { return (BOOLEAN)(_key & keyState); }
 	BOOLEAN isDead() { return deadFlag; }
 
+	VOID rotateRad(FLOAT rad, INT rotateOption = ROTATE_BOTH);
+	VOID rotateDeg(FLOAT degree, INT rotateOption = ROTATE_BOTH);
+
+	VOID createAttachmentTable(INT size);
+	VOID addAttachment(INT slot, AESprite* attachment);
+
 	VOID changeAction(INT _action);
 	VOID toNextFrame(AEAnimation anim);
 
@@ -120,23 +136,37 @@ public:
 	AEBiasRect calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
 	/* I'M NOT KIDDING */
 
+	XMVECTOR getFacingVector();
+	XMVECTOR getVelocityVector();
+
+	VOID platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<AEPlatform>* platformTable);
+
 	virtual VOID applyControl();
-	virtual VOID update();
+	virtual VOID platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult);
+	virtual VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
 	virtual VOID render(FLOAT zValue = 0.0f);
 
 protected:
 
 	AEObject* obj;
-	AEScene* scene;
-	AEAI* ai;
-	//TODO: AEHashedTable<AESprite*> attatchments;
+	AEScene* scene = nullptr;
+	AEAI* ai = nullptr;
+	AEHashedTable<AESprite>* attachments = nullptr;
 
-	INT index, action, frameNum, time, timeToLive, timeToStiff;
-	FLOAT cx, cy, vx, vy, ax, ay, alpha, angle, vangle, gndSpeed;
-	INT state, team, keyState, drop, onLandform;
-	BOOLEAN atkJudgeLock;
+	INT action, team;
+	FLOAT cx, cy;
 	SpriteEffects facing;
-	INT hpValue, hpMax;
 	BOOLEAN deadFlag;
+	INT timeToLive;
+
+	INT index = 0, frameNum = 0, time = 0, timeToStiff = 0;
+	FLOAT vx = 0.0f, vy = 0.0f, ax = 0.0f, ay = 0.0f, alpha = 1.0f, angle = 0.0f, angleDisplay = 0.0f, vangle = 0.0f, gndSpeed = 0.0f;
+	INT state = 0, keyState = 0, drop, onLandform = 0;
+	BOOLEAN atkJudgeLock = FALSE;
+	INT hpValue = 100, hpMax = 100;
+	INT attachmentTableSize = 0;
+
+	VOID updateAttachments(FLOAT hostdx, FLOAT hostdy);
+	VOID renderAttachments();
 
 };

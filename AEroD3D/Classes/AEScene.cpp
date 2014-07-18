@@ -4,6 +4,7 @@
 #include "AEResource.h"
 #include "AEBackground.h"
 #include "AEHeadUpDisplay.h"
+#include "AEPlatform.h"
 #include "AESprite.h"
 #include "AECamera.h"
 #include "AEScene.h"
@@ -11,8 +12,9 @@
 extern AECamera								ae_Camera;
 extern AEResourceTable						ae_ResourceTable;
 
-AEScene::AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud) {
+AEScene::AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud) {
 	bg = _bg;
+	platformTable = _platformTable;
 	spriteTable = _spriteTable;
 	hud = _hud;
 	for (INT i = 0; i < 256; i++) {
@@ -22,6 +24,7 @@ AEScene::AEScene(AEBackground* _bg, AEHashedTable<AESprite>* _spriteTable, AEHea
 
 AEScene::AEScene(INT spriteTableSize) {
 	bg = nullptr;
+	platformTable = nullptr;
 	spriteTable = new AEHashedTable<AESprite>(spriteTableSize);
 	hud = nullptr;
 	for (INT i = 0; i < 256; i++) {
@@ -41,7 +44,6 @@ VOID AEScene::addSprite(AESprite* sprite) {
 }
 
 VOID AEScene::update() {
-	processInput();
 	if (bg) {
 		bg->update();
 	}
@@ -52,7 +54,7 @@ VOID AEScene::update() {
 				spriteTable->remove(spriteTable->getHash(iHash));
 			}
 			else {
-				sprite->update();
+				sprite->update(platformTable);
 			}
 		}
 	}
