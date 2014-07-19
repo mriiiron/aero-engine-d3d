@@ -396,7 +396,7 @@ HRESULT InitDevice()
 	// Setup rasterizer options
 	D3D11_RASTERIZER_DESC descRasterizer;
 	descRasterizer.FillMode = D3D11_FILL_SOLID;
-	descRasterizer.CullMode = D3D11_CULL_BACK;
+	descRasterizer.CullMode = D3D11_CULL_NONE;
 	descRasterizer.FrontCounterClockwise = FALSE;
 	descRasterizer.DepthBias = 0;
 	descRasterizer.DepthBiasClamp = 0.0f;
@@ -671,6 +671,17 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
+	// Flak Cannon Sprite (Sample Scene 3)
+	descRes.rid = 8;
+	descRes.rtype = RES_1x5;
+	descRes.cellW = 50;
+	descRes.cellH = 35;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\flak_0.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
 }
 
 //--------------------------------------------------------------------------------------
@@ -764,7 +775,7 @@ void Render()
 
 	// Begin rendering
 	xtk_SpriteBatch->Begin(
-		SpriteSortMode_Deferred,
+		SpriteSortMode_BackToFront,
 		g_pBlendState,
 		g_pSamplerLinear,
 		nullptr,

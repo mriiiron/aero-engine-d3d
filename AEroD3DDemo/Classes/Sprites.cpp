@@ -36,6 +36,7 @@ VOID JFighterSprite::shoot() {
 	descSpr.facing = SpriteEffects_None;
 	descSpr.cx = cx + rocketSlotOffset[currentRocketSlotIndex];
 	descSpr.cy = cy;
+	descSpr.layerDepth = 0.5f;
 	Bullet* rocket = new Bullet(descSpr);
 	rocket->rotateDeg(-90.0f);
 	rocket->setAI(new RocketAI(rocket));
@@ -61,6 +62,7 @@ VOID Turret::shootRocket() {
 	XMFLOAT2 muzzle = AENSMath::rotatePoint(XMFLOAT2(cx + 15.0f, cy + (FLOAT)firingSlot * 10.0f), XMFLOAT2(cx, cy), angleDisplay);
 	descSpr.cx = muzzle.x;
 	descSpr.cy = muzzle.y;
+	descSpr.layerDepth = 0.5f;
 	Bullet* rocket = new Bullet(descSpr);
 	rocket->rotateRad(angleDisplay);
 	rocket->setAI(new RocketAI(rocket));
@@ -77,6 +79,7 @@ VOID Turret::shootHomingBullets() {
 	XMFLOAT2 muzzleRight = AENSMath::rotatePoint(XMFLOAT2(cx - 12.0f, cy + 10.0f), XMFLOAT2(cx, cy), angleDisplay);
 	descSpr.cx = muzzleRight.x;
 	descSpr.cy = muzzleRight.y;
+	descSpr.layerDepth = 0.5f;
 
 	FLOAT baseSpeed = 5.0f;
 
@@ -115,24 +118,30 @@ Helicopter::Helicopter(AERO_SPRITE_DESC desc) : AESprite(desc) {
 	isFireKeyPressed = FALSE;
 	isRocketCoolingDown = FALSE;
 	coolingDownTimer = 0;
+	pitchAngleBalanced = AENSMath::deg2rad(10.0f);
+	pitchAngleMax = AENSMath::deg2rad(20.0f);
+	pitchAngleMin = AENSMath::deg2rad(-15.0f);
+	pitchAngleRestoreSpeed = AENSMath::deg2rad(0.2f);
 }
 
 VOID Helicopter::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult) {
 	AESprite::platformCollision(platformTable, collisionResult);
-	//AERO_SPRITE_DESC descSpr;
-	//descSpr.obj = ae_ObjectTable.getItem(3);
-	//descSpr.team = 0;
-	//descSpr.action = 0;
-	//descSpr.facing = SpriteEffects_None;
-	//descSpr.cx = collisionResult.point.x;
-	//descSpr.cy = collisionResult.point.y;
-	//AESprite* spr_smoke = new AESprite(descSpr);
-	//scene->addSprite(spr_smoke);
 }
 
 VOID Helicopter::update(AEHashedTable<AEPlatform>* platformTable) {
 	AESprite::update(platformTable);
-
+	if (angleDisplay > pitchAngleMax) {
+		angleDisplay = pitchAngleMax;
+	}	
+	if (angleDisplay < pitchAngleMin) {
+		angleDisplay = pitchAngleMin;
+	}
+	if (angleDisplay > pitchAngleBalanced) {
+		angleDisplay = (angleDisplay - pitchAngleRestoreSpeed < pitchAngleBalanced) ? pitchAngleBalanced : angleDisplay - pitchAngleRestoreSpeed;
+	}
+	else if (angleDisplay < pitchAngleBalanced) {
+		angleDisplay = (angleDisplay + pitchAngleRestoreSpeed > pitchAngleBalanced) ? pitchAngleBalanced : angleDisplay + pitchAngleRestoreSpeed;
+	}
 }
 
 VOID Helicopter::shoot() {

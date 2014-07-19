@@ -19,6 +19,7 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	team = desc.team;
 	cx = desc.cx;
 	cy = desc.cy;
+	layerDepth = desc.layerDepth;
 	facing = desc.facing;
 	if (action > 0) {
 		changeAction(desc.action);
@@ -198,9 +199,12 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 	if (platformTable != nullptr) {
 		platformCollisionCheck(cx_old, cy_old, platformTable);
 	}
-	angle += vangle;
-	if (angle < -AENSMath::PI) angle += 2 * AENSMath::PI;
-	if (angle > AENSMath::PI) angle -= 2 * AENSMath::PI;
+	angle += (fac * vangle);
+	if (angle < -AENSMath::PI) angle += 2.0f * AENSMath::PI;
+	if (angle > AENSMath::PI) angle -= 2.0f * AENSMath::PI;
+	angleDisplay += (fac * vangleDisplay);
+	if (angleDisplay < -AENSMath::PI) angleDisplay += 2.0f * AENSMath::PI;
+	if (angleDisplay > AENSMath::PI) angleDisplay -= 2.0f * AENSMath::PI;
 	time++;
 	if (time >= anim->getEndTime(frameNum)) {
 		cx += (fac * anim->getFrame(frameNum)->getShiftx());
@@ -222,20 +226,20 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 	}
 }
 
-VOID AESprite::render(FLOAT zValue) {
+VOID AESprite::render() {
 	AEFrame* f = obj->getAnim(action)->getFrame(frameNum);
 	AEResource* res = f->getResource();
-	RECT texClipInTexel = res->getTexClipInTexel(f->getImgOffset(), f->getImgCells(), facing);
+	RECT texClipInTexel = res->getTexClipInTexel(f->getImgOffset(), f->getImgCells());
 	xtk_SpriteBatch->Draw(
 		res->getTexture(), // Texture
-		XMFLOAT2(cx, cy), // Drawing Position (top-left corner)
+		XMFLOAT2(cx, cy), // Drawing Position (Origin Point)
 		&texClipInTexel, // Texture Clip Rectangle
 		XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
 		angleDisplay, // Rotation
 		XMFLOAT2((FLOAT)(f->getCenterx()), (FLOAT)(f->getCentery())), // Rotation Origin / Drawing Center
 		1.0f, // Scale
-		facing, // Facing (left, right)
-		zValue // Z Value
+		facing, // Sprite Effects
+		layerDepth // Z Value
 	);
 	if (attachments) {
 		renderAttachments();
@@ -299,7 +303,7 @@ VOID AESprite::renderAttachments() {
 	for (INT iHash = 0; iHash < attachments->getHashCount(); iHash++) {
 		AESprite* sprite = attachments->getItemByHash(iHash);
 		if (!(sprite->isDead())) {
-			sprite->render(0.0f);
+			sprite->render();
 		}
 	}
 }

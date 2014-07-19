@@ -131,7 +131,7 @@ VOID AEBackground::render(AEPoint ae_CameraCenter) {
 				XMFLOAT2(0.0f, 0.0f), // Rotation Origin
 				1.0f, // Scale
 				SpriteEffects_None, // Facing (left, right)
-				0.0f // Z Value
+				1.0f // Z Value
 			);
 
 			// Old drawing method not using SpriteBatch

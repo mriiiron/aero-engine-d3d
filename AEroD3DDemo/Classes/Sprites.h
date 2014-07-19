@@ -55,6 +55,8 @@ private:
 
 	INT coolingDownTimer;
 
+	FLOAT pitchAngleBalanced, pitchAngleMax, pitchAngleMin, pitchAngleRestoreSpeed;
+
 };
 
 

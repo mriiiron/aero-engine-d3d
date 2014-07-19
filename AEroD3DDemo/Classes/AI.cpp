@@ -22,6 +22,7 @@ VOID BulletAI::leaveSmoke() {
 	descSpr.facing = SpriteEffects_None;
 	descSpr.cx = host->getCx();
 	descSpr.cy = host->getCy();
+	descSpr.layerDepth = 0.5f;
 	AESprite* spr_smoke = new AESprite(descSpr);
 	XMFLOAT2 randomSpeed = AENSMath::randomPointWithinCircle(2.0f);
 	spr_smoke->setVx(randomSpeed.x);
@@ -69,17 +70,6 @@ VOID HomingAI::execute() {
 
 TurretBaseAI::TurretBaseAI(AESprite* _host) : AEAI(_host) {
 	host->rotateDeg((FLOAT)AENSMath::randomIntBetween(0, 360));
-	host->createAttachmentTable(1);
-	AERO_SPRITE_DESC descSpr;
-	descSpr.obj = ae_ObjectTable.getItem(5);
-	descSpr.team = 1;
-	descSpr.action = 0;
-	descSpr.facing = SpriteEffects_None;
-	descSpr.cx = host->getCx();
-	descSpr.cy = host->getCy();
-	Turret* spr_turret = new Turret(descSpr);
-	spr_turret->setAI(new TurretAI(spr_turret));
-	host->addAttachment(0, spr_turret);
 }
 
 VOID TurretBaseAI::execute() {

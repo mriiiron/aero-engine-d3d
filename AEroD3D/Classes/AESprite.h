@@ -28,6 +28,7 @@ struct AERO_SPRITE_DESC {
 	INT team;
 	FLOAT cx;
 	FLOAT cy;
+	FLOAT layerDepth;
 	INT action;
 	SpriteEffects facing;
 
@@ -35,6 +36,7 @@ struct AERO_SPRITE_DESC {
 		obj = nullptr;
 		team = 0;
 		cx = cy = 0.0f;
+		layerDepth = 0.0f;
 		action = 0;
 		facing = SpriteEffects_None;
 	}
@@ -70,12 +72,14 @@ public:
 	VOID setVx(FLOAT _vx) { vx = _vx; }
 	VOID setVy(FLOAT _vy) { vy = _vy; }
 	VOID setVAngle(FLOAT _vangle) { vangle = _vangle; }
+	VOID setVAngleDisplay(FLOAT _vangleDisplay) { vangleDisplay = _vangleDisplay; }
 	VOID setGroundSpeed(FLOAT _speed) { gndSpeed = _speed; }
 	VOID setAngle(FLOAT _angle) { angle = _angle; }
 	VOID setAngleDisplay(FLOAT _angleDisplay) { angleDisplay = _angleDisplay; }
 	VOID setFacing(SpriteEffects _facing) { facing = _facing; }
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
 	VOID setAlpha(FLOAT _alpha) { alpha = _alpha; }
+	VOID setLayerDepth(FLOAT _layerDepth) { layerDepth = _layerDepth; }
 	VOID adjustAlpha(FLOAT dAlpha) { alpha += dAlpha;  if (alpha < 0.0f) alpha = 0.0f;  if (alpha > 1.0f) alpha = 1.0f; }
 	VOID move(FLOAT dx, FLOAT dy) { cx += dx;  cy += dy; }
 	VOID setAI(AEAI* _ai) { ai = _ai; }
@@ -88,7 +92,7 @@ public:
 	INT getStiffTime() { return timeToStiff; }
 	INT getKeyState() { return keyState; }
 	INT getHP() { return hpValue; }
-	SpriteEffects getFacing() { return facing; }
+	INT getFacing() { return facing; }
 	FLOAT getGroundSpeed() { return gndSpeed; }
 	FLOAT getCx() { return cx; }
 	FLOAT getCy() { return cy; }
@@ -97,16 +101,17 @@ public:
 	FLOAT getVx() { return vx; }
 	FLOAT getVy() { return vy; }
 	FLOAT getVAngle() { return vangle; }
+	FLOAT getVAngleDisplay() { return vangleDisplay; }
 	FLOAT getAx() { return ax; }
 	FLOAT getAy() { return ay; }
 	FLOAT getAlpha() { return alpha; }
+	FLOAT getLayerDepth() { return layerDepth; }
 	AEPoint getCenter() { return AEPoint(cx, cy); }
 	AEObject* getObject() { return obj; }
 	std::string getObjName() { return obj->getName(); }
 	AEAI* getAI() { return ai; }
 	AEScene* getScene() { return scene; }
 
-	VOID turnOver() { facing = (facing == SpriteEffects_None ? SpriteEffects_FlipHorizontally : SpriteEffects_None); }
 	VOID resetKeyState() { keyState = 0; }
 	VOID stiffen(INT _time) { timeToStiff = _time; }
 	VOID lockAtkJudge() { atkJudgeLock = 1; }
@@ -118,6 +123,8 @@ public:
 	BOOLEAN isAtkJudgeLocked() { return atkJudgeLock; }
 	BOOLEAN isKeyDown(INT _key) { return (BOOLEAN)(_key & keyState); }
 	BOOLEAN isDead() { return deadFlag; }
+
+	VOID turnOverHorizontally() { if (facing == SpriteEffects_None) facing = SpriteEffects_FlipHorizontally; else if (facing == SpriteEffects_FlipHorizontally) facing = SpriteEffects_None; }
 
 	VOID rotateRad(FLOAT rad, INT rotateOption = ROTATE_BOTH);
 	VOID rotateDeg(FLOAT degree, INT rotateOption = ROTATE_BOTH);
@@ -144,7 +151,7 @@ public:
 	virtual VOID applyControl();
 	virtual VOID platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult);
 	virtual VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
-	virtual VOID render(FLOAT zValue = 0.0f);
+	virtual VOID render();
 
 protected:
 
@@ -160,7 +167,8 @@ protected:
 	INT timeToLive;
 
 	INT index = 0, frameNum = 0, time = 0, timeToStiff = 0;
-	FLOAT vx = 0.0f, vy = 0.0f, ax = 0.0f, ay = 0.0f, alpha = 1.0f, angle = 0.0f, angleDisplay = 0.0f, vangle = 0.0f, gndSpeed = 0.0f;
+	FLOAT vx = 0.0f, vy = 0.0f, ax = 0.0f, ay = 0.0f, alpha = 1.0f, angle = 0.0f, angleDisplay = 0.0f, vangle = 0.0f, vangleDisplay = 0.0f, gndSpeed = 0.0f;
+	FLOAT layerDepth = 0.0f;
 	INT state = 0, keyState = 0, drop, onLandform = 0;
 	BOOLEAN atkJudgeLock = FALSE;
 	INT hpValue = 100, hpMax = 100;

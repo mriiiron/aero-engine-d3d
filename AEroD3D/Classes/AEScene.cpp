@@ -69,12 +69,10 @@ VOID AEScene::render() {
 		//ae_ResourceTable.renderAndClear();
 	}
 	if (spriteTable) {
-		FLOAT zBias = 0.0f;
 		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
 			AESprite* sprite = spriteTable->getItemByHash(iHash);
 			if (!(sprite->isDead())) {
-				sprite->render(zBias);
-				//zBias -= 0.065f;
+				sprite->render();
 			}
 		}
 		//ae_ResourceTable.renderAndClear();

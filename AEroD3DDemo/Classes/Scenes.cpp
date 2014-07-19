@@ -152,11 +152,15 @@ VOID GeneralSampleScene::processInput() {
 	}
 	if (keyStateBuffer[DIK_Q] & 0x80) {
 		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
-		pGedama->rotateDeg(1.0);
+		pGedama->rotateDeg(-1.0);
 	}
 	if (keyStateBuffer[DIK_W] & 0x80) {
 		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
-		pGedama->rotateDeg(-1.0);
+		pGedama->rotateDeg(1.0);
+	}
+	if (keyStateBuffer[DIK_E] & 0x80) {
+		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
+		pGedama->turnOverHorizontally();
 	}
 
 	if (keyStateBuffer[DIK_L] & 0x80) {
@@ -393,19 +397,36 @@ VOID VerticalScrollerScene::initialize() {
 	descSpr.facing = SpriteEffects_None;
 	descSpr.cx = 0.0f;
 	descSpr.cy = 150.0f;
+	descSpr.layerDepth = 0.0f;
 	AESprite* jfighter = new JFighterSprite(descSpr);
 	addSprite(jfighter);
 
-	// Create a Turret
+	// Create a Turret Base
 	descSpr.obj = ae_ObjectTable.getItem(4);
 	descSpr.team = 1;
 	descSpr.action = 0;
 	descSpr.facing = SpriteEffects_None;
 	descSpr.cx = 0.0f;
 	descSpr.cy = -150.0f;
+	descSpr.layerDepth = 1.0f;
 	AESprite* turretbase = new AESprite(descSpr);
 	addSprite(turretbase);
 	turretbase->setAI(new TurretBaseAI(turretbase));
+
+	// Create a Turret
+	turretbase->createAttachmentTable(1);
+	descSpr.obj = ae_ObjectTable.getItem(5);
+	descSpr.team = 1;
+	descSpr.action = 0;
+	descSpr.facing = SpriteEffects_None;
+	descSpr.cx = turretbase->getCx();
+	descSpr.cy = turretbase->getCy();
+	descSpr.layerDepth = 0.99f;
+	Turret* spr_turret = new Turret(descSpr);
+	spr_turret->setAI(new TurretAI(spr_turret));
+
+	// Attach Turret to its Base
+	turretbase->addAttachment(0, spr_turret);
 
 	// Set player
 	player = (JFighterSprite*)jfighter;
@@ -433,16 +454,16 @@ VOID VerticalScrollerScene::processInput() {
 	}
 
 	if (keyStateBuffer[DIK_A] & 0x80) {
-		player->move(-0.8f, 0.0f);
+		player->move(-1.6f, 0.0f);
 	}
 	if (keyStateBuffer[DIK_D] & 0x80) {
-		player->move(0.8f, 0.0f);
+		player->move(1.6f, 0.0f);
 	}
 	if (keyStateBuffer[DIK_W] & 0x80) {
-		player->move(0.0f, -0.6f);
+		player->move(0.0f, -1.2f);
 	}
 	if (keyStateBuffer[DIK_S] & 0x80) {
-		player->move(0.0f, 0.6f);
+		player->move(0.0f, 1.2f);
 	}
 	if (keyStateBuffer[DIK_J] & 0x80) {
 		if (!player->isFireKeyPressed) {
@@ -506,6 +527,24 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descFrame.imgOffset = 2;
 	AEFrame* heli_frame_02 = new AEFrame(descFrame);
 
+	// Frames for Flak Base
+	descFrame.res = ae_ResourceTable.getItem(8);
+	descFrame.centerx = 25;
+	descFrame.centery = 27;
+	descFrame.dvx = 0;
+	descFrame.dvy = 0;
+	descFrame.imgOffset = 0;
+	descFrame.imgCells = 1;
+	descFrame.shiftx = 0;
+	descFrame.shifty = 0;
+	AEFrame* flakbase_frame_00 = new AEFrame(descFrame);
+	
+	// Frames for Flak Cannon
+	descFrame.centerx = 25;
+	descFrame.centery = 10;
+	descFrame.imgOffset = 1;
+	AEFrame* flakcannon_frame_00 = new AEFrame(descFrame);
+
 	// Animation for Helicopter
 	AERO_ANIMATION_DESC descAnim;
 	descAnim.frameCount = 3;
@@ -518,6 +557,24 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	heli_anim_0->addFrame(1, heli_frame_01, 10);
 	heli_anim_0->addFrame(2, heli_frame_02, 15);
 
+	// Animation for Flak Base
+	descAnim.frameCount = 1;
+	descAnim.isAnimLoop = TRUE;
+	descAnim.next = 0;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* flakbase_anim_0 = new AEAnimation(descAnim);
+	flakbase_anim_0->addFrame(0, flakbase_frame_00, 100);
+
+	// Animation for Flak Cannon
+	descAnim.frameCount = 1;
+	descAnim.isAnimLoop = TRUE;
+	descAnim.next = 0;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* flakcannon_anim_0 = new AEAnimation(descAnim);
+	flakcannon_anim_0->addFrame(0, flakcannon_frame_00, 100);
+
 	// Create Helicopter object
 	AERO_OBJECT_DESC descObj;
 	descObj.oid = 7;
@@ -526,6 +583,22 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	AEObject* heli_obj = new AEObject(descObj);
 	heli_obj->addAnim(0, heli_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, heli_obj);
+
+	// Create Flak Base object
+	descObj.oid = 8;
+	descObj.name = "Flak Base";
+	descObj.otype = OBJ_CHARACTER;
+	AEObject* flakbase_obj = new AEObject(descObj);
+	flakbase_obj->addAnim(0, flakbase_anim_0);
+	ae_ObjectTable.addAt(descObj.oid, flakbase_obj);
+
+	// Create Flak Cannon object
+	descObj.oid = 9;
+	descObj.name = "Flak Cannon";
+	descObj.otype = OBJ_CHARACTER;
+	AEObject* flakcannon_obj = new AEObject(descObj);
+	flakcannon_obj->addAnim(0, flakcannon_anim_0);
+	ae_ObjectTable.addAt(descObj.oid, flakcannon_obj);
 
 	// Create BG layer animation. Only one frame (a static image) in this scene
 	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(7), 0);
@@ -605,9 +678,35 @@ VOID SideScrollerPlatformScene::initialize() {
 	descSpr.action = 0;
 	descSpr.facing = SpriteEffects_None;
 	descSpr.cx = -200.0f;
-	descSpr.cy = -200.0f;
-	AESprite* heli = new Helicopter(descSpr);
+	descSpr.cy = -100.0f;
+	descSpr.layerDepth = 0.0f;
+	Helicopter* heli = new Helicopter(descSpr);
 	addSprite(heli);
+
+	// Create Flak Base
+	descSpr.obj = ae_ObjectTable.getItem(8);
+	descSpr.team = 1;
+	descSpr.action = 0;
+	descSpr.facing = SpriteEffects_FlipHorizontally;
+	descSpr.cx = 105.0f;
+	descSpr.cy = 87.0f;
+	descSpr.layerDepth = 0.1f;
+	AESprite* flakBase = new AESprite(descSpr);
+	addSprite(flakBase);
+
+	// Create Flak Cannon
+	descSpr.obj = ae_ObjectTable.getItem(9);
+	descSpr.team = 1;
+	descSpr.action = 0;
+	descSpr.facing = SpriteEffects_FlipHorizontally;
+	descSpr.cx = 105.0f;
+	descSpr.cy = 70.0f;
+	descSpr.layerDepth = 0.2f;
+	AESprite* flakCannon = new AESprite(descSpr);
+
+	// Attach Flak Cannon to Flak Base
+	flakBase->createAttachmentTable(1);
+	flakBase->addAttachment(0, flakCannon);
 
 	// Set player
 	player = (Helicopter*)heli;
@@ -625,6 +724,7 @@ VOID SideScrollerPlatformScene::render() {
 VOID SideScrollerPlatformScene::processInput() {
 
 	FLOAT lift = 0.0f, thrust = 0.0f, weight = 0.0f, drag = 0.0f;
+	FLOAT pitch_down_hor = 0.0f, pitch_up_hor = 0.0f, pitch_down_ver = 0.0f, pitch_up_ver = 0.0f;
 	if (keyStateBuffer[DIK_1] & 0x80) {
 		ae_SceneManager.runScene(0);
 	}
@@ -633,31 +733,40 @@ VOID SideScrollerPlatformScene::processInput() {
 	}
 
 	if (keyStateBuffer[DIK_A] & 0x80) {
-		drag = -1.0f;
+		drag = 1.0f;
+		pitch_up_hor = 0.8f;
 	}
 	else {
 		drag = 0.0f;
+		pitch_up_hor = 0.0f;
 	}
 	if (keyStateBuffer[DIK_D] & 0x80) {
 		thrust = 1.5f;
+		pitch_down_hor = 1.0f;
 	}
 	else {
 		thrust = 0.0f;
+		pitch_down_hor = 0.0f;
 	}
 	if (keyStateBuffer[DIK_W] & 0x80) {
-		lift = -0.8f;
+		lift = 0.8f;
+		pitch_up_ver = 0.6f;
 	}
 	else {
 		lift = 0.0f;
+		pitch_up_ver = 0.0f;
 	}
 	if (keyStateBuffer[DIK_S] & 0x80) {
 		weight = 1.2f;
+		pitch_down_ver = 1.0f;
 	}
 	else {
 		weight = 0.0f;
+		pitch_down_ver = 0.0f;
 	}
-	player->setVx(drag + thrust);
-	player->setVy(lift + weight);
+	player->setVx(thrust - drag);
+	player->setVy(weight - lift);
+	player->setVAngleDisplay(AENSMath::deg2rad(pitch_down_hor + pitch_down_ver - pitch_up_hor - pitch_up_ver));
 
 	if (keyStateBuffer[DIK_J] & 0x80) {
 		if (!player->isFireKeyPressed) {
