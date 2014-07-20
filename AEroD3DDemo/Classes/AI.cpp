@@ -5,35 +5,15 @@
 
 extern AEConstantTable<AEObject>			ae_ObjectTable;
 
-BulletAI::BulletAI(AESprite* _host) : AEAI(_host) {
-
-}
-
-RocketAI::RocketAI(AESprite* _host) : BulletAI(_host) {
+RocketAI::RocketAI(AESprite* _host) : AEAI(_host) {
 	smokeCooldown = 0;
-	((Bullet*)host)->setFacingSpeed(5.0f);
-}
-
-VOID BulletAI::leaveSmoke() {
-	AERO_SPRITE_DESC descSpr;
-	descSpr.obj = ae_ObjectTable.getItem(3);
-	descSpr.team = 0;
-	descSpr.action = 0;
-	descSpr.facing = SpriteEffects_None;
-	descSpr.cx = host->getCx();
-	descSpr.cy = host->getCy();
-	descSpr.layerDepth = 0.5f;
-	AESprite* spr_smoke = new AESprite(descSpr);
-	XMFLOAT2 randomSpeed = AENSMath::randomPointWithinCircle(2.0f);
-	spr_smoke->setVx(randomSpeed.x);
-	spr_smoke->setVy(randomSpeed.y);
-	host->getScene()->addSprite(spr_smoke);
+	((Bullet*)host)->setSpeed(5.0f);
 }
 
 VOID RocketAI::execute() {
 	if (smokeCooldown <= 0) {
-		((Bullet*)host)->setFacingSpeed(10.0f);
-		leaveSmoke();
+		((Bullet*)host)->setSpeed(10.0f);
+		((Bullet*)host)->leaveSmoke();
 		smokeCooldown = 0;
 	}
 	else {
@@ -41,31 +21,31 @@ VOID RocketAI::execute() {
 	}
 }
 
-HomingAI::HomingAI(AESprite* _host, AESprite* _target) : BulletAI(_host) {
+HomingAI::HomingAI(AESprite* _host, AESprite* _target) : AEAI(_host) {
 	target = _target;
 }
 
 VOID HomingAI::execute() {
-	FLOAT facingSpeed = ((Bullet*)host)->getFacingSpeed();
-	if (facingSpeed < 8.0 && !isLocked) {
-		XMVECTOR facingVec = host->getFacingVector();
+	FLOAT flipSpeed = ((Bullet*)host)->getSpeed();
+	if (flipSpeed < 8.0 && !isLocked) {
+		XMVECTOR flipVec = host->getFacingVector();
 		XMFLOAT2 toTargetVecF = { target->getCx() - host->getCx(), target->getCy() - host->getCy() };
 		XMVECTOR toTargetVec = XMLoadFloat2(&toTargetVecF);
-		FLOAT angleBetween = XMVectorGetX(XMVector2AngleBetweenVectors(facingVec, toTargetVec));
+		FLOAT angleBetween = XMVectorGetX(XMVector2AngleBetweenVectors(flipVec, toTargetVec));
 		if (angleBetween > AENSMath::deg2rad(1.0f)) {
-			FLOAT crossProduct = XMVectorGetZ(XMVector2Cross(facingVec, toTargetVec));
+			FLOAT crossProduct = XMVectorGetZ(XMVector2Cross(flipVec, toTargetVec));
 			host->rotateDeg(crossProduct > 0 ? 5.0f : -5.0f);
 		}
 		else {
 			isLocked = TRUE;
 		}
-		((Bullet*)host)->setFacingSpeed(facingSpeed + 0.05f);
+		((Bullet*)host)->setSpeed(flipSpeed + 0.05f);
 	}
 	else {
-		((Bullet*)host)->setFacingSpeed(10.0f);
+		((Bullet*)host)->setSpeed(10.0f);
 	}
-	host->rotateDeg(10.0f, AESprite::ROTATE_DISPLAY_ONLY);
-	leaveSmoke();
+	host->rotateDeg(10.0f, AESprite::ANGLE_DISPLAY);
+	((Bullet*)host)->leaveSmoke();
 }
 
 TurretBaseAI::TurretBaseAI(AESprite* _host) : AEAI(_host) {
@@ -86,12 +66,12 @@ VOID TurretAI::execute() {
 
 		// Chasing player
 		if (host->getAction() == 0) {
-			XMVECTOR facingVec = host->getFacingVector();
+			XMVECTOR flipVec = host->getFacingVector();
 			XMFLOAT2 toTargetVecF = { target->getCx() - host->getCx(), target->getCy() - host->getCy() };
 			XMVECTOR toTargetVec = XMLoadFloat2(&toTargetVecF);
-			FLOAT angleBetween = XMVectorGetX(XMVector2AngleBetweenVectors(facingVec, toTargetVec));
+			FLOAT angleBetween = XMVectorGetX(XMVector2AngleBetweenVectors(flipVec, toTargetVec));
 			if (angleBetween > AENSMath::deg2rad(1.0f)) {
-				FLOAT crossProduct = XMVectorGetZ(XMVector3Cross(facingVec, toTargetVec));
+				FLOAT crossProduct = XMVectorGetZ(XMVector3Cross(flipVec, toTargetVec));
 				host->rotateDeg(crossProduct > 0 ? 1.0f : -1.0f);
 			}
 			else {
@@ -131,4 +111,68 @@ VOID TurretAI::execute() {
 			}
 		}
 	}
+
+}
+
+FlakCannonAI::FlakCannonAI(AESprite* _host) : AEAI(_host) {
+	pitchAngleMax = AENSMath::deg2rad(45.0f);
+	pitchAngleMin = AENSMath::deg2rad(-20.0f);
+}
+
+VOID FlakCannonAI::execute() {
+
+	if (target) {
+
+		// Chasing player
+		if (host->getAction() == 0) {
+			XMVECTOR flipVec = host->getFacingVector();
+			XMFLOAT2 toTargetVecF = { target->getCx() - host->getCx(), target->getCy() - host->getCy() };
+			XMVECTOR toTargetVec = XMLoadFloat2(&toTargetVecF);
+			FLOAT angleBetween = XMVectorGetX(XMVector2AngleBetweenVectors(flipVec, toTargetVec));
+			if (angleBetween > AENSMath::deg2rad(1.0f)) {
+				FLOAT crossProduct = XMVectorGetZ(XMVector3Cross(flipVec, toTargetVec));
+				host->rotateDeg(crossProduct > 0 ? 1.0f : -1.0f);
+				if (host->getAngle() > pitchAngleMax) {
+					host->setAngleRad(pitchAngleMax);
+				}
+				if (host->getAngle() < pitchAngleMin) {
+					host->setAngleRad(pitchAngleMin);
+				}
+			}
+			else {
+				flakTimer = 120;
+				host->changeAction(1);
+			}
+		}
+
+		// Shooting at player
+		else if (host->getAction() == 1) {
+			if (flakTimer % 10 == 0) {
+				((FlakCannon*)host)->shoot();
+			}
+			if (flakTimer % 5 == 0) {
+				((FlakCannon*)host)->throwShell();
+			}
+			if (flakTimer > 1) flakTimer--;
+		}
+
+		// Cooling down
+		else if (host->getAction() == 2) {
+			// Do nothing
+		}
+
+	}
+
+	else {
+		VerticalScrollerScene* scene = (VerticalScrollerScene*)(host->getScene());
+		AEHashedTable<AESprite>* spriteTable = scene->getSpriteTable();
+		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+			AESprite* sprite = spriteTable->getItemByHash(iHash);
+			if (!sprite->isDead() && sprite->getTeam() != host->getTeam()) {
+				target = sprite;
+				break;
+			}
+		}
+	}
+
 }

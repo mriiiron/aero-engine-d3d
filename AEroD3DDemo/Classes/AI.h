@@ -1,15 +1,7 @@
 #pragma once
 
 
-class BulletAI : public AEAI {
-public:
-	BulletAI(AESprite* _host);
-protected:
-	VOID leaveSmoke();
-};
-
-
-class RocketAI : public BulletAI {
+class RocketAI : public AEAI {
 public:
 	RocketAI(AESprite* _host);
 	VOID execute();
@@ -18,7 +10,7 @@ private:
 };
 
 
-class HomingAI : public BulletAI {
+class HomingAI : public AEAI {
 public:
 	HomingAI(AESprite* _host, AESprite* _target);
 	VOID execute();
@@ -30,7 +22,7 @@ private:
 
 class TurretBaseAI : public AEAI {
 public:
-	TurretBaseAI(AESprite* _self);
+	TurretBaseAI(AESprite* _host);
 	
 	VOID execute();
 private:
@@ -40,10 +32,21 @@ private:
 
 class TurretAI : public AEAI {
 public:
-	TurretAI(AESprite* _self);
+	TurretAI(AESprite* _host);
 	AESprite* getTarget() { return target; }
 	VOID execute();
 private:
 	INT rocketCooldown = 0, homingFired = 0;;
+	AESprite* target = nullptr;
+};
+
+
+class FlakCannonAI : public AEAI {
+public:
+	FlakCannonAI(AESprite* _host);
+	VOID execute();
+private:
+	INT flakTimer = 0;
+	FLOAT pitchAngleMax, pitchAngleMin;
 	AESprite* target = nullptr;
 };

@@ -20,7 +20,7 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	cx = desc.cx;
 	cy = desc.cy;
 	layerDepth = desc.layerDepth;
-	facing = desc.facing;
+	flip = desc.flip;
 	if (action > 0) {
 		changeAction(desc.action);
 	}
@@ -28,10 +28,10 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	deadFlag = FALSE;
 }
 
-AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing) {
+AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip) {
 	FLOAT cosA = cos(angle), sinA = sin(angle);
 	FLOAT x, y;
-	if (facing == FACING_RIGHT) {
+	if (flip == FACING_RIGHT) {
 		x = cx + (point.x - f->getCenterx()) * cosA - (point.y - f->getCentery()) * sinA;
 		y = cy + (point.x - f->getCenterx()) * sinA + (point.y - f->getCentery()) * cosA;
 	}
@@ -42,11 +42,11 @@ AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f
 	return AEPoint(x, y);
 }
 
-AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing) {
+AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip) {
 	INT centerx = f->getCenterx(), centery = f->getCentery();
 	INT width = f->getWidth(), height = f->getHeight();
 	FLOAT x1, y1, x2, y2;
-	if (facing == FACING_RIGHT) {
+	if (flip == FACING_RIGHT) {
 		x1 = cx - centerx;
 		y1 = cy - centery;
 		x2 = x1 + width;
@@ -61,11 +61,11 @@ AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing) {
 	return AERect(x1, y1, x2, y2);
 }
 
-RECT AESprite::calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing) {
+RECT AESprite::calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip) {
 	INT centerx = f->getCenterx(), centery = f->getCentery();
 	INT width = f->getWidth(), height = f->getHeight();
 	FLOAT x1, y1, x2, y2;
-	if (facing == FACING_RIGHT) {
+	if (flip == FACING_RIGHT) {
 		x1 = cx - centerx;
 		y1 = cy - centery;
 		x2 = x1 + width;
@@ -80,12 +80,12 @@ RECT AESprite::calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing)
 	return RECT{ (LONG)x1, (LONG)y1, (LONG)x2, (LONG)y2 };
 }
 
-AEBiasRect AESprite::calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing) {
+AEBiasRect AESprite::calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip) {
 	FLOAT cosA = cos(angle), sinA = sin(angle);
 	INT centerx = f->getCenterx(), centery = f->getCentery();
 	INT width = f->getWidth(), height = f->getHeight();
 	FLOAT x1, y1, x2, y2, x3, y3, x4, y4;
-	if (facing == FACING_RIGHT) {
+	if (flip == FACING_RIGHT) {
 		x1 = cx - centerx * cosA + centery * sinA;
 		y1 = cy - centerx * sinA - centery * cosA;
 		x2 = x1 + width * cosA;
@@ -130,19 +130,30 @@ VOID AESprite::changeAction(INT _action) {
 		vy += dvy;
 }
 
-XMVECTOR AESprite::getFacingVector() {
+XMVECTOR AESprite::getFacingVector(INT option) {
 	XMFLOAT2 vec2;
-	if (angle == AENSMath::PI / 2) {
+	FLOAT facingAngle = 0.0f;
+	if (option == ANGLE_DIRECTION) {
+		facingAngle = angle;
+	}
+	else if (option == ANGLE_DISPLAY) {
+		facingAngle = angleDisplay;
+	}
+	if (facingAngle == AENSMath::PI / 2) {
 		vec2 = { 0.0f, 1.0f };
 	}
-	else if (angle == -AENSMath::PI / 2) {
+	else if (facingAngle == -AENSMath::PI / 2) {
 		vec2 = { 0.0f, -1.0f };
 	}
-	else if (angle > -AENSMath::PI / 2 && angle < AENSMath::PI / 2) {
-		vec2 = { 1.0f, tanf(angle) };
+	else if (facingAngle > -AENSMath::PI / 2 && facingAngle < AENSMath::PI / 2) {
+		vec2 = { 1.0f, tanf(facingAngle) };
 	}
 	else {
-		vec2 = { -1.0f, -tanf(angle) };
+		vec2 = { -1.0f, -tanf(facingAngle) };
+	}
+	if (flip == SpriteEffects_FlipHorizontally) {
+		vec2.x = -vec2.x;
+		vec2.y = -vec2.y;
 	}
 	return XMVector2Normalize(XMLoadFloat2(&vec2));
 }
@@ -158,7 +169,7 @@ VOID AESprite::applyControl() {
 
 VOID AESprite::platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<AEPlatform>* platformTable) {
 	XMFLOAT2 sprOldPos = { cx_old, cy_old };
-	XMFLOAT2 sprNewPos = { cx_old + (facing ? -1 : 1) * vx, cy_old + vy };
+	XMFLOAT2 sprNewPos = { cx_old + (flip ? -1 : 1) * vx, cy_old + vy };
 	for (INT iHash = 0; iHash < platformTable->getHashCount(); iHash++) {
 		AEPlatform* platform = platformTable->getItemByHash(iHash);
 		for (INT i = 0; i < platform->getSegmentCount(); i++) {
@@ -190,7 +201,7 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 		return;
 	}
 	if (timeToLive > 0) timeToLive--;
-	INT fac = (facing ? -1 : 1);
+	INT fac = (flip ? -1 : 1);
 	FLOAT cx_old = cx, cy_old = cy;
 	cx += (fac * vx);
 	cy += vy;
@@ -199,12 +210,12 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 	if (platformTable != nullptr) {
 		platformCollisionCheck(cx_old, cy_old, platformTable);
 	}
-	angle += (fac * vangle);
+	angle += (fac * vAngle);
 	if (angle < -AENSMath::PI) angle += 2.0f * AENSMath::PI;
-	if (angle > AENSMath::PI) angle -= 2.0f * AENSMath::PI;
-	angleDisplay += (fac * vangleDisplay);
+	if (angle >= AENSMath::PI) angle -= 2.0f * AENSMath::PI;
+	angleDisplay += (fac * vAngleDisplay);
 	if (angleDisplay < -AENSMath::PI) angleDisplay += 2.0f * AENSMath::PI;
-	if (angleDisplay > AENSMath::PI) angleDisplay -= 2.0f * AENSMath::PI;
+	if (angleDisplay >= AENSMath::PI) angleDisplay -= 2.0f * AENSMath::PI;
 	time++;
 	if (time >= anim->getEndTime(frameNum)) {
 		cx += (fac * anim->getFrame(frameNum)->getShiftx());
@@ -228,17 +239,20 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 
 VOID AESprite::render() {
 	AEFrame* f = obj->getAnim(action)->getFrame(frameNum);
+	FLOAT fwidth = (FLOAT)(f->getWidth()), fcenterx = (FLOAT)(f->getCenterx()), fcentery = (FLOAT)(f->getCentery());
 	AEResource* res = f->getResource();
 	RECT texClipInTexel = res->getTexClipInTexel(f->getImgOffset(), f->getImgCells());
+	FLOAT flipAdjust = flip * (fwidth - 2.0f * fcenterx);
+	FLOAT flipAdjustX = flipAdjust * cosf(angleDisplay), flipAdjustY = flipAdjust * sinf(angleDisplay);
 	xtk_SpriteBatch->Draw(
 		res->getTexture(), // Texture
-		XMFLOAT2(cx, cy), // Drawing Position (Origin Point)
+		XMFLOAT2(cx - flipAdjustX, cy - flipAdjustY), // Drawing Position (Origin Point)
 		&texClipInTexel, // Texture Clip Rectangle
 		XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
 		angleDisplay, // Rotation
-		XMFLOAT2((FLOAT)(f->getCenterx()), (FLOAT)(f->getCentery())), // Rotation Origin / Drawing Center
+		XMFLOAT2(fcenterx, fcentery), // Rotation Origin / Drawing Center
 		1.0f, // Scale
-		facing, // Sprite Effects
+		flip, // Sprite Effects
 		layerDepth // Z Value
 	);
 	if (attachments) {
@@ -247,29 +261,73 @@ VOID AESprite::render() {
 	
 	// Old drawing method not using SpriteBatch
 	/*
-	AERect texClip = res->getTexClip(f->getImgOffset(), f->getImgCells(), facing);
+	AERect texClip = res->getTexClip(f->getImgOffset(), f->getImgCells(), flip);
 	if (angle == 0.0f) {
-		AERect paintArea = calcSpriteRect(cx, cy, f, facing);
+		AERect paintArea = calcSpriteRect(cx, cy, f, flip);
 		res->addToRenderBuffer(paintArea, texClip, alpha, zValue);
 	}
 	else {
-		AEBiasRect paintArea = calcRotatedSpriteRect(cx, cy, f, angle, facing);
+		AEBiasRect paintArea = calcRotatedSpriteRect(cx, cy, f, angle, flip);
 		res->addToRenderBuffer(paintArea, texClip, alpha, zValue);
 	}
 	*/
 }
 
-VOID AESprite::rotateRad(FLOAT rad, INT rotateOption) {
-	if (rotateOption != ROTATE_DISPLAY_ONLY) {
+FLOAT AESprite::getAngle(INT option) {
+	if (option == ANGLE_DIRECTION) {
+		return angle;
+	}
+	else {
+		return angleDisplay;
+	}
+}
+
+FLOAT AESprite::getVAngle(INT option) {
+	if (option == ANGLE_DIRECTION) {
+		return vAngle;
+	}
+	else {
+		return vAngleDisplay;
+	}
+}
+
+VOID AESprite::setAngleRad(FLOAT rad, INT option) {
+	if (option != ANGLE_DISPLAY) {
+		angle = rad;
+	}
+	if (option != ANGLE_DIRECTION) {
+		angleDisplay = rad;
+	}
+}
+
+VOID AESprite::setAngleDeg(FLOAT degree, INT option) {
+	setAngleRad(AENSMath::deg2rad(degree), option);
+}
+
+VOID AESprite::setVAngleRad(FLOAT rad, INT option){
+	if (option != ANGLE_DISPLAY) {
+		vAngle = rad;
+	}
+	if (option != ANGLE_DIRECTION) {
+		vAngleDisplay = rad;
+	}
+}
+
+VOID AESprite::setVAngleDeg(FLOAT degree, INT option){
+	setVAngleRad(AENSMath::deg2rad(degree), option);
+}
+
+VOID AESprite::rotateRad(FLOAT rad, INT option) {
+	if (option != ANGLE_DISPLAY) {
 		angle += rad;
 	}
-	if (rotateOption != ROTATE_DIRECTION_ONLY) {
+	if (option != ANGLE_DIRECTION) {
 		angleDisplay += rad;
 	}
 }
 
-VOID AESprite::rotateDeg(FLOAT degree, INT rotateOption) {
-	rotateRad(AENSMath::deg2rad(degree), rotateOption);
+VOID AESprite::rotateDeg(FLOAT degree, INT option) {
+	rotateRad(AENSMath::deg2rad(degree), option);
 }
 
 VOID AESprite::createAttachmentTable(INT size) {

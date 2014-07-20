@@ -41,7 +41,7 @@ GeneralSampleScene::GeneralSampleScene(AEBackground* _bg, AEHashedTable<AEPlatfo
 	AERO_ANIMATION_DESC descAnim;
 	descAnim.frameCount = 4;
 	descAnim.isAnimLoop = TRUE;
-	descAnim.next = 0;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* gedama_anim_0 = new AEAnimation(descAnim);
@@ -117,7 +117,7 @@ VOID GeneralSampleScene::initialize() {
 	descSpr.obj = ae_ObjectTable.getItem(0);
 	descSpr.team = 0;
 	descSpr.action = 0;
-	descSpr.facing = SpriteEffects_None;
+	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = 0.0f;
 	descSpr.cy = 0.0f;
 	AESprite* spr_gedama = new AESprite(descSpr);
@@ -252,7 +252,7 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	AERO_ANIMATION_DESC descAnim;
 	descAnim.frameCount = 3;
 	descAnim.isAnimLoop = TRUE;
-	descAnim.next = 0;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* jf_anim_0 = new AEAnimation(descAnim);
@@ -263,7 +263,7 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	// Animation for Rocket
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
-	descAnim.next = 0;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* rocket_anim_0 = new AEAnimation(descAnim);
@@ -272,7 +272,7 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	// Animation for Homing Bullet
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
-	descAnim.next = 0;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* homing_anim_0 = new AEAnimation(descAnim);
@@ -297,7 +297,7 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	// Animation for TurretBase
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
-	descAnim.next = 0;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* turretbase_anim_0 = new AEAnimation(descAnim);
@@ -306,7 +306,7 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	// Animation for Turret Not Firing
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
-	descAnim.next = 0;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* turret_anim_0 = new AEAnimation(descAnim);
@@ -394,7 +394,7 @@ VOID VerticalScrollerScene::initialize() {
 	descSpr.obj = ae_ObjectTable.getItem(1);
 	descSpr.team = 0;
 	descSpr.action = 0;
-	descSpr.facing = SpriteEffects_None;
+	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = 0.0f;
 	descSpr.cy = 150.0f;
 	descSpr.layerDepth = 0.0f;
@@ -405,7 +405,7 @@ VOID VerticalScrollerScene::initialize() {
 	descSpr.obj = ae_ObjectTable.getItem(4);
 	descSpr.team = 1;
 	descSpr.action = 0;
-	descSpr.facing = SpriteEffects_None;
+	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = 0.0f;
 	descSpr.cy = -150.0f;
 	descSpr.layerDepth = 1.0f;
@@ -418,7 +418,7 @@ VOID VerticalScrollerScene::initialize() {
 	descSpr.obj = ae_ObjectTable.getItem(5);
 	descSpr.team = 1;
 	descSpr.action = 0;
-	descSpr.facing = SpriteEffects_None;
+	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = turretbase->getCx();
 	descSpr.cy = turretbase->getCy();
 	descSpr.layerDepth = 0.99f;
@@ -544,12 +544,44 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descFrame.centery = 10;
 	descFrame.imgOffset = 1;
 	AEFrame* flakcannon_frame_00 = new AEFrame(descFrame);
+	descFrame.imgOffset = 2;
+	AEFrame* flakcannon_frame_01 = new AEFrame(descFrame);
+	descFrame.imgOffset = 3;
+	AEFrame* flakcannon_frame_02 = new AEFrame(descFrame);
+	descFrame.imgOffset = 4;
+	AEFrame* flakcannon_frame_03 = new AEFrame(descFrame);
+
+	// Frames for Flak Cannon Muzzle Flash
+	descFrame.res = ae_ResourceTable.getItem(9);
+	descFrame.centerx = 8;
+	descFrame.centery = 13;
+	descFrame.dvx = 0;
+	descFrame.dvy = 0;
+	descFrame.imgOffset = 0;
+	descFrame.imgCells = 1;
+	descFrame.shiftx = 0;
+	descFrame.shifty = 0;
+	AEFrame* flakflash_frame_00 = new AEFrame(descFrame);
+	descFrame.imgOffset = 1;
+	AEFrame* flakflash_frame_01 = new AEFrame(descFrame);
+
+	// Frames for Shells
+	descFrame.res = ae_ResourceTable.getItem(3);
+	descFrame.centerx = 8;
+	descFrame.centery = 8;
+	descFrame.dvx = 0;
+	descFrame.dvy = 0;
+	descFrame.imgOffset = 2;
+	descFrame.imgCells = 1;
+	descFrame.shiftx = 0;
+	descFrame.shifty = 0;
+	AEFrame* shell_frame_00 = new AEFrame(descFrame);
 
 	// Animation for Helicopter
 	AERO_ANIMATION_DESC descAnim;
 	descAnim.frameCount = 3;
 	descAnim.isAnimLoop = TRUE;
-	descAnim.next = 0;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* heli_anim_0 = new AEAnimation(descAnim);
@@ -560,20 +592,60 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	// Animation for Flak Base
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
-	descAnim.next = 0;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* flakbase_anim_0 = new AEAnimation(descAnim);
 	flakbase_anim_0->addFrame(0, flakbase_frame_00, 100);
 
-	// Animation for Flak Cannon
+	// Animation for Flak Cannon Not Firing
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
-	descAnim.next = 0;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* flakcannon_anim_0 = new AEAnimation(descAnim);
 	flakcannon_anim_0->addFrame(0, flakcannon_frame_00, 100);
+
+	// Animation for Flak Cannon Firing
+	descAnim.frameCount = 4;
+	descAnim.isAnimLoop = TRUE;
+	descAnim.next = 2;
+	descAnim.state = 0;
+	descAnim.timeToLive = 120;
+	AEAnimation* flakcannon_anim_1 = new AEAnimation(descAnim);
+	flakcannon_anim_1->addFrame(0, flakcannon_frame_00, 3);
+	flakcannon_anim_1->addFrame(1, flakcannon_frame_01, 6);
+	flakcannon_anim_1->addFrame(2, flakcannon_frame_02, 9);
+	flakcannon_anim_1->addFrame(3, flakcannon_frame_03, 12);
+
+	// Animation for Flak Cannon Fire Cooldown
+	descAnim.frameCount = 1;
+	descAnim.isAnimLoop = FALSE;
+	descAnim.next = 0;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* flakcannon_anim_2 = new AEAnimation(descAnim);
+	flakcannon_anim_2->addFrame(0, flakcannon_frame_00, 60);
+
+	// Animation for Flak Cannon Muzzle Flash
+	descAnim.frameCount = 2;
+	descAnim.isAnimLoop = FALSE;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* flakflash_anim_0 = new AEAnimation(descAnim);
+	flakflash_anim_0->addFrame(0, flakflash_frame_00, 2);
+	flakflash_anim_0->addFrame(1, flakflash_frame_01, 4);
+
+	// Animation for Shells
+	descAnim.frameCount = 1;
+	descAnim.isAnimLoop = TRUE;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
+	descAnim.state = 0;
+	descAnim.timeToLive = 300;
+	AEAnimation* shell_anim_0 = new AEAnimation(descAnim);
+	shell_anim_0->addFrame(0, shell_frame_00, 100);
 
 	// Create Helicopter object
 	AERO_OBJECT_DESC descObj;
@@ -598,7 +670,25 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descObj.otype = OBJ_CHARACTER;
 	AEObject* flakcannon_obj = new AEObject(descObj);
 	flakcannon_obj->addAnim(0, flakcannon_anim_0);
+	flakcannon_obj->addAnim(1, flakcannon_anim_1);
+	flakcannon_obj->addAnim(2, flakcannon_anim_2);
 	ae_ObjectTable.addAt(descObj.oid, flakcannon_obj);
+
+	// Create Flak Cannon Muzzle Flash object
+	descObj.oid = 10;
+	descObj.name = "Flak Muzzle Flash";
+	descObj.otype = OBJ_EFFECT;
+	AEObject* flakflash_obj = new AEObject(descObj);
+	flakflash_obj->addAnim(0, flakflash_anim_0);
+	ae_ObjectTable.addAt(descObj.oid, flakflash_obj);
+
+	// Create Shell object
+	descObj.oid = 11;
+	descObj.name = "Bullet Shell";
+	descObj.otype = OBJ_EFFECT;
+	AEObject* shell_obj = new AEObject(descObj);
+	shell_obj->addAnim(0, shell_anim_0);
+	ae_ObjectTable.addAt(descObj.oid, shell_obj);
 
 	// Create BG layer animation. Only one frame (a static image) in this scene
 	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(7), 0);
@@ -676,7 +766,7 @@ VOID SideScrollerPlatformScene::initialize() {
 	descSpr.obj = ae_ObjectTable.getItem(7);
 	descSpr.team = 0;
 	descSpr.action = 0;
-	descSpr.facing = SpriteEffects_None;
+	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = -200.0f;
 	descSpr.cy = -100.0f;
 	descSpr.layerDepth = 0.0f;
@@ -687,7 +777,7 @@ VOID SideScrollerPlatformScene::initialize() {
 	descSpr.obj = ae_ObjectTable.getItem(8);
 	descSpr.team = 1;
 	descSpr.action = 0;
-	descSpr.facing = SpriteEffects_FlipHorizontally;
+	descSpr.flip = SpriteEffects_FlipHorizontally;
 	descSpr.cx = 105.0f;
 	descSpr.cy = 87.0f;
 	descSpr.layerDepth = 0.1f;
@@ -698,11 +788,12 @@ VOID SideScrollerPlatformScene::initialize() {
 	descSpr.obj = ae_ObjectTable.getItem(9);
 	descSpr.team = 1;
 	descSpr.action = 0;
-	descSpr.facing = SpriteEffects_FlipHorizontally;
+	descSpr.flip = SpriteEffects_FlipHorizontally;
 	descSpr.cx = 105.0f;
 	descSpr.cy = 70.0f;
 	descSpr.layerDepth = 0.2f;
 	AESprite* flakCannon = new AESprite(descSpr);
+	flakCannon->setAI(new FlakCannonAI(flakCannon));
 
 	// Attach Flak Cannon to Flak Base
 	flakBase->createAttachmentTable(1);
@@ -766,7 +857,7 @@ VOID SideScrollerPlatformScene::processInput() {
 	}
 	player->setVx(thrust - drag);
 	player->setVy(weight - lift);
-	player->setVAngleDisplay(AENSMath::deg2rad(pitch_down_hor + pitch_down_ver - pitch_up_hor - pitch_up_ver));
+	player->setVAngleDeg(pitch_down_hor + pitch_down_ver - pitch_up_hor - pitch_up_ver, AESprite::ANGLE_DISPLAY);
 
 	if (keyStateBuffer[DIK_J] & 0x80) {
 		if (!player->isFireKeyPressed) {

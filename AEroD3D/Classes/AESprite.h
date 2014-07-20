@@ -30,7 +30,7 @@ struct AERO_SPRITE_DESC {
 	FLOAT cy;
 	FLOAT layerDepth;
 	INT action;
-	SpriteEffects facing;
+	SpriteEffects flip;
 
 	AERO_SPRITE_DESC() {
 		obj = nullptr;
@@ -38,7 +38,7 @@ struct AERO_SPRITE_DESC {
 		cx = cy = 0.0f;
 		layerDepth = 0.0f;
 		action = 0;
-		facing = SpriteEffects_None;
+		flip = SpriteEffects_None;
 	}
 
 };
@@ -56,9 +56,9 @@ public:
 
 	static const INT TIME_TO_LIVE_UNLIMITED = -1;
 
-	static const INT ROTATE_BOTH = 0;
-	static const INT ROTATE_DIRECTION_ONLY = 1;
-	static const INT ROTATE_DISPLAY_ONLY = 2;
+	static const INT ANGLE_BOTH = 0;
+	static const INT ANGLE_DIRECTION = 1;
+	static const INT ANGLE_DISPLAY = 2;
 
 	AESprite(AERO_SPRITE_DESC desc);
 
@@ -71,12 +71,8 @@ public:
 	VOID setAy(FLOAT _ay) { ay = _ay; }
 	VOID setVx(FLOAT _vx) { vx = _vx; }
 	VOID setVy(FLOAT _vy) { vy = _vy; }
-	VOID setVAngle(FLOAT _vangle) { vangle = _vangle; }
-	VOID setVAngleDisplay(FLOAT _vangleDisplay) { vangleDisplay = _vangleDisplay; }
 	VOID setGroundSpeed(FLOAT _speed) { gndSpeed = _speed; }
-	VOID setAngle(FLOAT _angle) { angle = _angle; }
-	VOID setAngleDisplay(FLOAT _angleDisplay) { angleDisplay = _angleDisplay; }
-	VOID setFacing(SpriteEffects _facing) { facing = _facing; }
+	VOID setFlip(SpriteEffects _flip) { flip = _flip; }
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
 	VOID setAlpha(FLOAT _alpha) { alpha = _alpha; }
 	VOID setLayerDepth(FLOAT _layerDepth) { layerDepth = _layerDepth; }
@@ -92,16 +88,12 @@ public:
 	INT getStiffTime() { return timeToStiff; }
 	INT getKeyState() { return keyState; }
 	INT getHP() { return hpValue; }
-	INT getFacing() { return facing; }
+	INT getFlip() { return flip; }
 	FLOAT getGroundSpeed() { return gndSpeed; }
 	FLOAT getCx() { return cx; }
 	FLOAT getCy() { return cy; }
-	FLOAT getAngle() { return angle; }
-	FLOAT getAngleDisplay() { return angleDisplay; }
 	FLOAT getVx() { return vx; }
 	FLOAT getVy() { return vy; }
-	FLOAT getVAngle() { return vangle; }
-	FLOAT getVAngleDisplay() { return vangleDisplay; }
 	FLOAT getAx() { return ax; }
 	FLOAT getAy() { return ay; }
 	FLOAT getAlpha() { return alpha; }
@@ -124,10 +116,16 @@ public:
 	BOOLEAN isKeyDown(INT _key) { return (BOOLEAN)(_key & keyState); }
 	BOOLEAN isDead() { return deadFlag; }
 
-	VOID turnOverHorizontally() { if (facing == SpriteEffects_None) facing = SpriteEffects_FlipHorizontally; else if (facing == SpriteEffects_FlipHorizontally) facing = SpriteEffects_None; }
+	VOID turnOverHorizontally() { if (flip == SpriteEffects_None) flip = SpriteEffects_FlipHorizontally; else if (flip == SpriteEffects_FlipHorizontally) flip = SpriteEffects_None; }
 
-	VOID rotateRad(FLOAT rad, INT rotateOption = ROTATE_BOTH);
-	VOID rotateDeg(FLOAT degree, INT rotateOption = ROTATE_BOTH);
+	FLOAT getAngle(INT option = ANGLE_DIRECTION);
+	FLOAT getVAngle(INT option = ANGLE_DIRECTION);
+	VOID setAngleRad(FLOAT rad, INT option = ANGLE_BOTH);
+	VOID setAngleDeg(FLOAT degree, INT option = ANGLE_BOTH);
+	VOID setVAngleRad(FLOAT _vAngle, INT option = ANGLE_BOTH);
+	VOID setVAngleDeg(FLOAT _vAngle, INT option = ANGLE_BOTH);
+	VOID rotateRad(FLOAT rad, INT option = ANGLE_BOTH);
+	VOID rotateDeg(FLOAT degree, INT option = ANGLE_BOTH);
 
 	VOID createAttachmentTable(INT size);
 	VOID addAttachment(INT slot, AESprite* attachment);
@@ -136,14 +134,14 @@ public:
 	VOID toNextFrame(AEAnimation anim);
 
 	/* THESE FUNCTIONS ARE TOTALLY USELESS */
-	AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
-	AERect calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing);
-	RECT calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing);
-	XMFLOAT2 calcSpriteDrawingPosition(FLOAT cx, FLOAT cy, AEFrame* f, BYTE facing);
-	AEBiasRect calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE facing);
+	AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip);
+	AERect calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip);
+	RECT calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip);
+	XMFLOAT2 calcSpriteDrawingPosition(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip);
+	AEBiasRect calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip);
 	/* I'M NOT KIDDING */
 
-	XMVECTOR getFacingVector();
+	XMVECTOR getFacingVector(INT option = ANGLE_DIRECTION);
 	XMVECTOR getVelocityVector();
 
 	VOID platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<AEPlatform>* platformTable);
@@ -162,12 +160,12 @@ protected:
 
 	INT action, team;
 	FLOAT cx, cy;
-	SpriteEffects facing;
+	SpriteEffects flip;
 	BOOLEAN deadFlag;
 	INT timeToLive;
 
 	INT index = 0, frameNum = 0, time = 0, timeToStiff = 0;
-	FLOAT vx = 0.0f, vy = 0.0f, ax = 0.0f, ay = 0.0f, alpha = 1.0f, angle = 0.0f, angleDisplay = 0.0f, vangle = 0.0f, vangleDisplay = 0.0f, gndSpeed = 0.0f;
+	FLOAT vx = 0.0f, vy = 0.0f, ax = 0.0f, ay = 0.0f, alpha = 1.0f, angle = 0.0f, angleDisplay = 0.0f, vAngle = 0.0f, vAngleDisplay = 0.0f, gndSpeed = 0.0f;
 	FLOAT layerDepth = 0.0f;
 	INT state = 0, keyState = 0, drop, onLandform = 0;
 	BOOLEAN atkJudgeLock = FALSE;

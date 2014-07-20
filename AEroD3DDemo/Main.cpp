@@ -582,7 +582,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 //--------------------------------------------------------------------------------------
 void LoadGameResources() {
 
-	// Gedama Sprite (Sample Scene 0)
+	// Gedama Sprite
 	AERO_RESOURCE_DESC descRes;
 	descRes.rid = 0;
 	descRes.rtype = RES_5x10;
@@ -594,7 +594,7 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Starsky Background (Sample Scene 0)
+	// Starsky Background
 	descRes.rid = 1;
 	descRes.rtype = RES_1x1;
 	descRes.cellW = 1000;
@@ -605,7 +605,7 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Japanese Fighter Sprite (Sample Scene 1)
+	// Japanese Fighter Sprite
 	descRes.rid = 2;
 	descRes.rtype = RES_1x5;
 	descRes.cellW = 50;
@@ -616,7 +616,7 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Bullets Sprite (Sample Scene 1)
+	// Bullets Sprite
 	descRes.rid = 3;
 	descRes.rtype = RES_1x5;
 	descRes.cellW = 17;
@@ -627,7 +627,7 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Rocket Smoke Effect (Sample Scene 1)
+	// Rocket Smoke Effect
 	descRes.rid = 4;
 	descRes.rtype = RES_1x10;
 	descRes.cellW = 20;
@@ -638,7 +638,7 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Enemy Turret (Sample Scene 1)
+	// Enemy Turret
 	descRes.rid = 5;
 	descRes.rtype = RES_1x5;
 	descRes.cellW = 63;
@@ -649,7 +649,7 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Helicopter Sprite (Sample Scene 2)
+	// Helicopter Sprite
 	descRes.rid = 6;
 	descRes.rtype = RES_1x5;
 	descRes.cellW = 50;
@@ -671,12 +671,23 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Flak Cannon Sprite (Sample Scene 3)
+	// Flak Cannon Sprite
 	descRes.rid = 8;
 	descRes.rtype = RES_1x5;
 	descRes.cellW = 50;
 	descRes.cellH = 35;
 	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\flak_0.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
+	// Flak Cannon Muzzle Flash Sprite
+	descRes.rid = 9;
+	descRes.rtype = RES_1x5;
+	descRes.cellW = 50;
+	descRes.cellH = 25;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\flak_muzzleflash.dds", nullptr, &(descRes.tex));
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}

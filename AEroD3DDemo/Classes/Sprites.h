@@ -60,6 +60,22 @@ private:
 };
 
 
+class FlakCannon : public AESprite {
+
+public:
+
+	FlakCannon(AERO_SPRITE_DESC desc);
+
+	VOID shoot();
+	VOID throwShell();
+
+private:
+
+	
+
+};
+
+
 class Bullet : public AESprite {
 
 public:
@@ -68,11 +84,27 @@ public:
 
 	VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
 
-	FLOAT getFacingSpeed() { return facingSpeed; }
-	VOID setFacingSpeed(FLOAT _facingSpeed) { facingSpeed = _facingSpeed; }
+	FLOAT getSpeed() { return speed; }
+	VOID setSpeed(FLOAT _flipSpeed) { speed = _flipSpeed; }
+	VOID leaveSmoke();
 
 private:
 
-	FLOAT facingSpeed = 0.0f;
+	FLOAT speed = 0.0f;
+
+};
+
+
+class Shell : public AESprite {
+
+public:
+
+	Shell(AERO_SPRITE_DESC desc);
+
+	VOID platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult);
+
+private:
+
+
 
 };
