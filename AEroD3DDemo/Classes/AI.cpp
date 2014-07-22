@@ -5,19 +5,35 @@
 
 extern AEConstantTable<AEObject>			ae_ObjectTable;
 
-RocketAI::RocketAI(AESprite* _host) : AEAI(_host) {
-	smokeCooldown = 0;
-	((Bullet*)host)->setSpeed(5.0f);
+BulletAI::BulletAI(AESprite* _host) : AEAI(_host) {
+
 }
 
-VOID RocketAI::execute() {
-	if (smokeCooldown <= 0) {
-		((Bullet*)host)->setSpeed(10.0f);
-		((Bullet*)host)->leaveSmoke();
-		smokeCooldown = 0;
-	}
-	else {
-		smokeCooldown--;
+VOID BulletAI::execute() {
+	((Bullet*)host)->leaveSmoke();
+}
+
+BigSmokeEffectUnivAI::BigSmokeEffectUnivAI(AESprite* _host) : AEAI(_host) {
+	smokeCount = 3;
+}
+
+VOID BigSmokeEffectUnivAI::execute() {
+	if (smokeCount > 0) {
+		XMFLOAT2 emitportAdjust = AENSMath::randomPointWithinCircle(10.0f);
+		AERO_SPRITE_DESC descSpr;
+		descSpr.obj = ae_ObjectTable.getItem(12);
+		descSpr.team = host->getTeam();
+		descSpr.action = 0;
+		descSpr.flip = SpriteEffects_None;
+		descSpr.cx = host->getCx() + emitportAdjust.x;
+		descSpr.cy = host->getCy() + emitportAdjust.y;
+		descSpr.layerDepth = 0.1f;
+		AESprite* spr_smoke = new AESprite(descSpr);
+		XMFLOAT2 randomSpeed = AENSMath::randomPointWithinCircle(0.3f);
+		spr_smoke->setVx(randomSpeed.x);
+		spr_smoke->setVy(randomSpeed.y);
+		host->getScene()->addSprite(spr_smoke);
+		smokeCount--;
 	}
 }
 
@@ -152,6 +168,9 @@ VOID FlakCannonAI::execute() {
 			}
 			if (flakTimer % 5 == 0) {
 				((FlakCannon*)host)->throwShell();
+			}
+			if (flakTimer % 17 == 0) {
+				((FlakCannon*)host)->emitSmoke();
 			}
 			if (flakTimer > 1) flakTimer--;
 		}

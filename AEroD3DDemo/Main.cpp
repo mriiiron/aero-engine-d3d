@@ -693,6 +693,28 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
+	// Big Smoke Sprite
+	descRes.rid = 10;
+	descRes.rtype = RES_2x5;
+	descRes.cellW = 60;
+	descRes.cellH = 60;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\big_smoke.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
+	// Explosions Sprite
+	descRes.rid = 11;
+	descRes.rtype = RES_5x10;
+	descRes.cellW = 50;
+	descRes.cellH = 50;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\explosions.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
 }
 
 //--------------------------------------------------------------------------------------

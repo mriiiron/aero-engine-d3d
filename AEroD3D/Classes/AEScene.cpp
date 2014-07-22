@@ -20,6 +20,7 @@ AEScene::AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, A
 	for (INT i = 0; i < 256; i++) {
 		keyStateBuffer[i] = 0;
 	}
+	isPauseKeyPressed = isPaused = FALSE;
 }
 
 AEScene::AEScene(INT spriteTableSize) {
@@ -43,23 +44,29 @@ VOID AEScene::addSprite(AESprite* sprite) {
 	spriteTable->add(sprite);
 }
 
+VOID AEScene::pause() {
+	isPaused = !isPaused;
+}
+
 VOID AEScene::update() {
-	if (bg) {
-		bg->update();
-	}
-	if (spriteTable) {
-		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
-			AESprite* sprite = spriteTable->getItemByHash(iHash);
-			if (sprite->isDead()) {
-				spriteTable->remove(spriteTable->getHash(iHash));
-			}
-			else {
-				sprite->update(platformTable);
+	if (!isPaused) {
+		if (bg) {
+			bg->update();
+		}
+		if (spriteTable) {
+			for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+				AESprite* sprite = spriteTable->getItemByHash(iHash);
+				if (sprite->isDead()) {
+					spriteTable->remove(spriteTable->getHash(iHash));
+				}
+				else {
+					sprite->update(platformTable);
+				}
 			}
 		}
-	}
-	if (hud) {
-		hud->update();
+		if (hud) {
+			hud->update();
+		}
 	}
 }
 

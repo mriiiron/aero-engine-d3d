@@ -31,7 +31,7 @@ VOID JFighterSprite::shoot() {
 	}
 	AERO_SPRITE_DESC descSpr;
 	descSpr.obj = ae_ObjectTable.getItem(2);
-	descSpr.team = 0;
+	descSpr.team = team;
 	descSpr.action = 0;
 	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = cx + rocketSlotOffset[currentRocketSlotIndex];
@@ -39,7 +39,8 @@ VOID JFighterSprite::shoot() {
 	descSpr.layerDepth = 0.5f;
 	Bullet* rocket = new Bullet(descSpr);
 	rocket->rotateDeg(-90.0f);
-	rocket->setAI(new RocketAI(rocket));
+	rocket->setAI(new BulletAI(rocket));
+	rocket->setSpeed(10.0f);
 	scene->addSprite(rocket);
 	currentRocketSlotIndex++;
 	if (currentRocketSlotIndex >= 6) {
@@ -57,7 +58,7 @@ VOID Turret::shootRocket() {
 	XMFLOAT2 muzzle = AENSMath::rotatePoint(XMFLOAT2(cx + 15.0f, cy + (FLOAT)firingSlot * 10.0f), XMFLOAT2(cx, cy), angleDisplay);
 	AERO_SPRITE_DESC descSpr;
 	descSpr.obj = ae_ObjectTable.getItem(2);
-	descSpr.team = 1;
+	descSpr.team = team;
 	descSpr.action = 0;
 	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = muzzle.x;
@@ -65,7 +66,8 @@ VOID Turret::shootRocket() {
 	descSpr.layerDepth = 0.5f;
 	Bullet* rocket = new Bullet(descSpr);
 	rocket->rotateRad(angleDisplay);
-	rocket->setAI(new RocketAI(rocket));
+	rocket->setAI(new BulletAI(rocket));
+	rocket->setSpeed(10.0f);
 	scene->addSprite(rocket);
 	firingSlot = -1 * firingSlot;
 }
@@ -73,7 +75,7 @@ VOID Turret::shootRocket() {
 VOID Turret::shootHomingBullets() {
 	AERO_SPRITE_DESC descSpr;
 	descSpr.obj = ae_ObjectTable.getItem(6);
-	descSpr.team = 1;
+	descSpr.team = team;
 	descSpr.action = 0;
 	descSpr.flip = SpriteEffects_None;
 	XMFLOAT2 muzzleRight = AENSMath::rotatePoint(XMFLOAT2(cx - 12.0f, cy + 10.0f), XMFLOAT2(cx, cy), angleDisplay);
@@ -122,10 +124,11 @@ Helicopter::Helicopter(AERO_SPRITE_DESC desc) : AESprite(desc) {
 	pitchAngleMax = AENSMath::deg2rad(20.0f);
 	pitchAngleMin = AENSMath::deg2rad(-15.0f);
 	pitchAngleRestoreSpeed = AENSMath::deg2rad(0.2f);
+	rocketRemaining = 6;
 }
 
-VOID Helicopter::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult) {
-	AESprite::platformCollision(platformTable, collisionResult);
+VOID Helicopter::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentHead, XMFLOAT2 segmentTail) {
+	AESprite::platformCollision(platformTable, collisionResult, segmentHead, segmentTail);
 }
 
 VOID Helicopter::update(AEHashedTable<AEPlatform>* platformTable) {
@@ -142,10 +145,39 @@ VOID Helicopter::update(AEHashedTable<AEPlatform>* platformTable) {
 	else if (angleDisplay < pitchAngleBalanced) {
 		angleDisplay = (angleDisplay + pitchAngleRestoreSpeed > pitchAngleBalanced) ? pitchAngleBalanced : angleDisplay + pitchAngleRestoreSpeed;
 	}
+	if (isRocketCoolingDown) {
+		coolingDownTimer--;
+		if (coolingDownTimer <= 0) {
+			isRocketCoolingDown = FALSE;
+			rocketRemaining = 6;
+		}
+	}
 }
 
-VOID Helicopter::shoot() {
 
+VOID Helicopter::shoot() {
+	if (isRocketCoolingDown) {
+		return;
+	}
+	XMFLOAT2 muzzle = AENSMath::rotatePoint(XMFLOAT2(cx + (rocketRemaining % 2 == 0 ? 2.0f : -2.0f), cy), XMFLOAT2(cx, cy), angleDisplay);
+	AERO_SPRITE_DESC descSpr;
+	descSpr.obj = ae_ObjectTable.getItem(2);
+	descSpr.team = team;
+	descSpr.action = 0;
+	descSpr.flip = SpriteEffects_None;
+	descSpr.cx = muzzle.x;
+	descSpr.cy = muzzle.y;
+	descSpr.layerDepth = 0.0f;
+	Bullet* rocket = new Bullet(descSpr);
+	rocket->rotateRad(angleDisplay);
+	rocket->setAI(new BulletAI(rocket));
+	rocket->setSpeed(15.0f);
+	scene->addSprite(rocket);
+	rocketRemaining--;
+	if (rocketRemaining <= 0) {
+		isRocketCoolingDown = TRUE;
+		coolingDownTimer = 300;
+	}
 }
 
 
@@ -158,7 +190,7 @@ VOID FlakCannon::shoot() {
 	XMFLOAT2 randomAdjust = AENSMath::randomPointWithinCircle(2.0f);
 	AERO_SPRITE_DESC descSpr;
 	descSpr.obj = ae_ObjectTable.getItem(10);
-	descSpr.team = 1;
+	descSpr.team = team;
 	descSpr.action = 0;
 	descSpr.flip = flip;
 	descSpr.cx = muzzle.x + randomAdjust.x;
@@ -173,7 +205,7 @@ VOID FlakCannon::throwShell() {
 	XMFLOAT2 ejectionport = AENSMath::rotatePoint(XMFLOAT2(cx + (flip ? -1 : 1) * 10.0f, cy), XMFLOAT2(cx, cy), angle);
 	AERO_SPRITE_DESC descSpr;
 	descSpr.obj = ae_ObjectTable.getItem(11);
-	descSpr.team = 1;
+	descSpr.team = team;
 	descSpr.action = 0;
 	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = ejectionport.x;
@@ -184,8 +216,25 @@ VOID FlakCannon::throwShell() {
 	shell->setVx(1.0f + speedAdjust.x);
 	shell->setVy(-4.0f + speedAdjust.y);
 	shell->setAy(AEPhysics::GRAVITY);
-	shell->setVAngleDeg(10.0f);
 	scene->addSprite(shell);
+}
+
+VOID FlakCannon::emitSmoke() {
+	XMFLOAT2 emitport = AENSMath::rotatePoint(XMFLOAT2(cx + (flip ? -1 : 1) * 10.0f, cy), XMFLOAT2(cx, cy), angle);
+	AERO_SPRITE_DESC descSpr;
+	descSpr.obj = ae_ObjectTable.getItem(12);
+	descSpr.team = team;
+	descSpr.action = 0;
+	descSpr.flip = SpriteEffects_None;
+	descSpr.cx = emitport.x;
+	descSpr.cy = emitport.y;
+	descSpr.layerDepth = 0.0f;
+	AESprite* bigsmoke = new AESprite(descSpr);
+	XMFLOAT2 speedAdjust = AENSMath::randomPointWithinCircle(0.5f);
+	bigsmoke->setVx(speedAdjust.x);
+	bigsmoke->setVy(speedAdjust.y);
+	bigsmoke->setAlpha(0.5f);
+	scene->addSprite(bigsmoke);
 }
 
 
@@ -193,10 +242,32 @@ Bullet::Bullet(AERO_SPRITE_DESC desc) : AESprite(desc) {
 
 }
 
+VOID Bullet::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead) {
+	AESprite::platformCollision(platformTable, collisionResult, segmentTail, segmentHead);
+	AERO_SPRITE_DESC descSpr;
+	descSpr.obj = ae_ObjectTable.getItem(13);
+	descSpr.team = team;
+	descSpr.action = 0;
+	descSpr.flip = SpriteEffects_None;
+	descSpr.cx = cx;
+	descSpr.cy = cy;
+	descSpr.layerDepth = 0.01f;
+	AESprite* spr_exp1 = new AESprite(descSpr);
+	spr_exp1->setAI(new BigSmokeEffectUnivAI(spr_exp1));
+	scene->addSprite(spr_exp1);
+	kill();
+}
+
+VOID Bullet::update(AEHashedTable<AEPlatform>* platformTable) {
+	vx = speed * cosf(angle);
+	vy = speed * sinf(angle);
+	AESprite::update(platformTable);
+}
+
 VOID Bullet::leaveSmoke() {
 	AERO_SPRITE_DESC descSpr;
 	descSpr.obj = ae_ObjectTable.getItem(3);
-	descSpr.team = 0;
+	descSpr.team = team;
 	descSpr.action = 0;
 	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = cx;
@@ -209,18 +280,23 @@ VOID Bullet::leaveSmoke() {
 	scene->addSprite(spr_smoke);
 }
 
-VOID Bullet::update(AEHashedTable<AEPlatform>* platformTable) {
-	vx = speed * cosf(angle);
-	vy = speed * sinf(angle);
-	AESprite::update(platformTable);
-}
-
-
 Shell::Shell(AERO_SPRITE_DESC desc) : AESprite(desc) {
 
 }
 
-VOID Shell::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult) {
-	AESprite::platformCollision(platformTable, collisionResult);
-	kill();
+VOID Shell::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead) {
+	AESprite::platformCollision(platformTable, collisionResult, segmentTail, segmentHead);
+	XMFLOAT2 segmentNormalVecF = { segmentHead.y - segmentTail.y, segmentTail.x - segmentHead.x };
+	XMVECTOR normalizedSegmentNormalVec = XMVector2Normalize(XMLoadFloat2(&segmentNormalVecF));
+	XMVECTOR speedVec = getVelocityVector();
+	XMVECTOR speedReflectVec = speedVec - 2.0f * XMVectorGetX(XMVector2Dot(speedVec, normalizedSegmentNormalVec)) * normalizedSegmentNormalVec;
+	FLOAT speedModel = getSpeedModel();
+	FLOAT speedReflectDecay = 0.5f;
+	setVx(speedModel * speedReflectDecay * XMVectorGetX(speedReflectVec));
+	setVy(speedModel * speedReflectDecay * XMVectorGetY(speedReflectVec));
+}
+
+VOID Shell::update(AEHashedTable<AEPlatform>* platformTable) {
+	AESprite::update(platformTable);
+	setVAngleDeg(getSpeedModel() * 10.0f);
 }

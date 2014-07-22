@@ -94,6 +94,8 @@ public:
 	FLOAT getCy() { return cy; }
 	FLOAT getVx() { return vx; }
 	FLOAT getVy() { return vy; }
+	FLOAT getSpeedModelSquare() { return vx * vx + vy * vy; }
+	FLOAT getSpeedModel() { return sqrtf(getSpeedModelSquare()); }
 	FLOAT getAx() { return ax; }
 	FLOAT getAy() { return ay; }
 	FLOAT getAlpha() { return alpha; }
@@ -147,7 +149,7 @@ public:
 	VOID platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<AEPlatform>* platformTable);
 
 	virtual VOID applyControl();
-	virtual VOID platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult);
+	virtual VOID platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead);
 	virtual VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
 	virtual VOID render();
 

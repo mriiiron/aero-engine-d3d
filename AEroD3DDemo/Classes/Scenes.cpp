@@ -142,29 +142,40 @@ VOID GeneralSampleScene::processInput() {
 		ae_SceneManager.runScene(2);
 	}
 
-	if (keyStateBuffer[DIK_A] & 0x80) {
-		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
-		pGedama->adjustAlpha(-0.005f);
-	}
-	if (keyStateBuffer[DIK_S] & 0x80) {
-		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
-		pGedama->adjustAlpha(0.005f);
-	}
-	if (keyStateBuffer[DIK_Q] & 0x80) {
-		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
-		pGedama->rotateDeg(-1.0);
-	}
-	if (keyStateBuffer[DIK_W] & 0x80) {
-		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
-		pGedama->rotateDeg(1.0);
-	}
-	if (keyStateBuffer[DIK_E] & 0x80) {
-		AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
-		pGedama->turnOverHorizontally();
+	if (!isPaused) {
+		if (keyStateBuffer[DIK_A] & 0x80) {
+			AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
+			pGedama->adjustAlpha(-0.005f);
+		}
+		if (keyStateBuffer[DIK_S] & 0x80) {
+			AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
+			pGedama->adjustAlpha(0.005f);
+		}
+		if (keyStateBuffer[DIK_Q] & 0x80) {
+			AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
+			pGedama->rotateDeg(-1.0);
+		}
+		if (keyStateBuffer[DIK_W] & 0x80) {
+			AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
+			pGedama->rotateDeg(1.0);
+		}
+		if (keyStateBuffer[DIK_E] & 0x80) {
+			AESprite* pGedama = ae_SceneManager.getActiveScene()->getSpriteTable()->getItemByHash(0);
+			pGedama->turnOverHorizontally();
+		}
 	}
 
 	if (keyStateBuffer[DIK_L] & 0x80) {
 		int a = 1;
+	}
+	if (keyStateBuffer[DIK_RETURN] & 0x80) {
+		if (!isPauseKeyPressed) {
+			isPauseKeyPressed = TRUE;
+			pause();
+		}
+	}
+	else {
+		isPauseKeyPressed = FALSE;
 	}
 
 }
@@ -453,30 +464,41 @@ VOID VerticalScrollerScene::processInput() {
 		ae_SceneManager.runScene(2);
 	}
 
-	if (keyStateBuffer[DIK_A] & 0x80) {
-		player->move(-1.6f, 0.0f);
-	}
-	if (keyStateBuffer[DIK_D] & 0x80) {
-		player->move(1.6f, 0.0f);
-	}
-	if (keyStateBuffer[DIK_W] & 0x80) {
-		player->move(0.0f, -1.2f);
-	}
-	if (keyStateBuffer[DIK_S] & 0x80) {
-		player->move(0.0f, 1.2f);
-	}
-	if (keyStateBuffer[DIK_J] & 0x80) {
-		if (!player->isFireKeyPressed) {
-			player->isFireKeyPressed = TRUE;
-			player->shoot();
+	if (!isPaused) {
+		if (keyStateBuffer[DIK_A] & 0x80) {
+			player->move(-1.6f, 0.0f);
 		}
-	}
-	else {
-		player->isFireKeyPressed = FALSE;
+		if (keyStateBuffer[DIK_D] & 0x80) {
+			player->move(1.6f, 0.0f);
+		}
+		if (keyStateBuffer[DIK_W] & 0x80) {
+			player->move(0.0f, -1.2f);
+		}
+		if (keyStateBuffer[DIK_S] & 0x80) {
+			player->move(0.0f, 1.2f);
+		}
+		if (keyStateBuffer[DIK_J] & 0x80) {
+			if (!player->isFireKeyPressed) {
+				player->isFireKeyPressed = TRUE;
+				player->shoot();
+			}
+		}
+		else {
+			player->isFireKeyPressed = FALSE;
+		}
 	}
 
 	if (keyStateBuffer[DIK_L] & 0x80) {
 		int a = 1;
+	}
+	if (keyStateBuffer[DIK_RETURN] & 0x80) {
+		if (!isPauseKeyPressed) {
+			isPauseKeyPressed = TRUE;
+			pause();
+		}
+	}
+	else {
+		isPauseKeyPressed = FALSE;
 	}
 
 }
@@ -577,6 +599,104 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descFrame.shifty = 0;
 	AEFrame* shell_frame_00 = new AEFrame(descFrame);
 
+	// Frames for Big Smoke
+	descFrame.res = ae_ResourceTable.getItem(10);
+	descFrame.centerx = 30;
+	descFrame.centery = 30;
+	descFrame.dvx = 0;
+	descFrame.dvy = 0;
+	descFrame.imgOffset = 0;
+	descFrame.imgCells = 1;
+	descFrame.shiftx = 0;
+	descFrame.shifty = 0;
+	AEFrame* bigsmoke_frame_00 = new AEFrame(descFrame);
+	descFrame.imgOffset = 1;
+	AEFrame* bigsmoke_frame_01 = new AEFrame(descFrame);
+	descFrame.imgOffset = 2;
+	AEFrame* bigsmoke_frame_02 = new AEFrame(descFrame);
+	descFrame.imgOffset = 3;
+	AEFrame* bigsmoke_frame_03 = new AEFrame(descFrame);
+	descFrame.imgOffset = 4;
+	AEFrame* bigsmoke_frame_04 = new AEFrame(descFrame);
+	descFrame.imgOffset = 5;
+	AEFrame* bigsmoke_frame_05 = new AEFrame(descFrame);
+	descFrame.imgOffset = 6;
+	AEFrame* bigsmoke_frame_06 = new AEFrame(descFrame);
+	descFrame.imgOffset = 7;
+	AEFrame* bigsmoke_frame_07 = new AEFrame(descFrame);
+
+	// Frames for Explosion 1
+	descFrame.res = ae_ResourceTable.getItem(11);
+	descFrame.centerx = 25;
+	descFrame.centery = 25;
+	descFrame.dvx = 0;
+	descFrame.dvy = 0;
+	descFrame.imgOffset = 0;
+	descFrame.imgCells = 1;
+	descFrame.shiftx = 0;
+	descFrame.shifty = 0;
+	AEFrame* exp1_frame_00 = new AEFrame(descFrame);
+	descFrame.imgOffset = 1;
+	AEFrame* exp1_frame_01 = new AEFrame(descFrame);
+	descFrame.imgOffset = 2;
+	AEFrame* exp1_frame_02 = new AEFrame(descFrame);
+	descFrame.imgOffset = 3;
+	AEFrame* exp1_frame_03 = new AEFrame(descFrame);
+	descFrame.imgOffset = 4;
+	AEFrame* exp1_frame_04 = new AEFrame(descFrame);
+	descFrame.imgOffset = 5;
+	AEFrame* exp1_frame_05 = new AEFrame(descFrame);
+	descFrame.imgOffset = 6;
+	AEFrame* exp1_frame_06 = new AEFrame(descFrame);
+	descFrame.imgOffset = 7;
+	AEFrame* exp1_frame_07 = new AEFrame(descFrame);
+	descFrame.imgOffset = 8;
+	AEFrame* exp1_frame_08 = new AEFrame(descFrame);
+	descFrame.imgOffset = 9;
+	AEFrame* exp1_frame_09 = new AEFrame(descFrame);
+
+	descFrame.centery = 30;
+	descFrame.imgOffset = 10;
+	AEFrame* exp1_frame_10 = new AEFrame(descFrame);
+	descFrame.imgOffset = 11;
+	AEFrame* exp1_frame_11 = new AEFrame(descFrame);
+	descFrame.imgOffset = 12;
+	AEFrame* exp1_frame_12 = new AEFrame(descFrame);
+
+	descFrame.centery = 34;
+	descFrame.imgOffset = 13;
+	AEFrame* exp1_frame_13 = new AEFrame(descFrame);
+	descFrame.imgOffset = 14;
+	AEFrame* exp1_frame_14 = new AEFrame(descFrame);
+	descFrame.imgOffset = 15;
+	AEFrame* exp1_frame_15 = new AEFrame(descFrame);
+
+	descFrame.centery = 35;
+	descFrame.imgOffset = 16;
+	AEFrame* exp1_frame_16 = new AEFrame(descFrame);
+
+	descFrame.centery = 40;
+	descFrame.imgOffset = 17;
+	AEFrame* exp1_frame_17 = new AEFrame(descFrame);
+	descFrame.imgOffset = 18;
+	AEFrame* exp1_frame_18 = new AEFrame(descFrame);
+	descFrame.imgOffset = 19;
+	AEFrame* exp1_frame_19 = new AEFrame(descFrame);
+	descFrame.imgOffset = 20;
+	AEFrame* exp1_frame_20 = new AEFrame(descFrame);
+	descFrame.imgOffset = 21;
+	AEFrame* exp1_frame_21 = new AEFrame(descFrame);
+
+	descFrame.centery = 45;
+	descFrame.imgOffset = 22;
+	AEFrame* exp1_frame_22 = new AEFrame(descFrame);
+	descFrame.imgOffset = 23;
+	AEFrame* exp1_frame_23 = new AEFrame(descFrame);
+	descFrame.imgOffset = 24;
+	AEFrame* exp1_frame_24 = new AEFrame(descFrame);
+	descFrame.imgOffset = 25;
+	AEFrame* exp1_frame_25 = new AEFrame(descFrame);
+
 	// Animation for Helicopter
 	AERO_ANIMATION_DESC descAnim;
 	descAnim.frameCount = 3;
@@ -643,9 +763,59 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
 	descAnim.state = 0;
-	descAnim.timeToLive = 300;
+	descAnim.timeToLive = 60;
 	AEAnimation* shell_anim_0 = new AEAnimation(descAnim);
 	shell_anim_0->addFrame(0, shell_frame_00, 100);
+
+	// Animation for Big Smoke
+	descAnim.frameCount = 8;
+	descAnim.isAnimLoop = FALSE;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* bigsmoke_anim_0 = new AEAnimation(descAnim);
+	bigsmoke_anim_0->addFrame(0, bigsmoke_frame_00, 10);
+	bigsmoke_anim_0->addFrame(1, bigsmoke_frame_01, 20);
+	bigsmoke_anim_0->addFrame(2, bigsmoke_frame_02, 30);
+	bigsmoke_anim_0->addFrame(3, bigsmoke_frame_03, 40);
+	bigsmoke_anim_0->addFrame(4, bigsmoke_frame_04, 50);
+	bigsmoke_anim_0->addFrame(5, bigsmoke_frame_05, 60);
+	bigsmoke_anim_0->addFrame(6, bigsmoke_frame_06, 70);
+	bigsmoke_anim_0->addFrame(7, bigsmoke_frame_07, 80);
+
+	// Animation for Explosion 1
+	descAnim.frameCount = 26;
+	descAnim.isAnimLoop = FALSE;
+	descAnim.next = AESprite::ACTION_NUM_DEAD;
+	descAnim.state = 0;
+	descAnim.timeToLive = -1;
+	AEAnimation* exp1_anim_0 = new AEAnimation(descAnim);
+	exp1_anim_0->addFrame(0, exp1_frame_00, 2);
+	exp1_anim_0->addFrame(1, exp1_frame_01, 4);
+	exp1_anim_0->addFrame(2, exp1_frame_02, 6);
+	exp1_anim_0->addFrame(3, exp1_frame_03, 8);
+	exp1_anim_0->addFrame(4, exp1_frame_04, 10);
+	exp1_anim_0->addFrame(5, exp1_frame_05, 12);
+	exp1_anim_0->addFrame(6, exp1_frame_06, 14);
+	exp1_anim_0->addFrame(7, exp1_frame_07, 16);
+	exp1_anim_0->addFrame(8, exp1_frame_08, 18);
+	exp1_anim_0->addFrame(9, exp1_frame_09, 20);
+	exp1_anim_0->addFrame(10, exp1_frame_10, 22);
+	exp1_anim_0->addFrame(11, exp1_frame_11, 24);
+	exp1_anim_0->addFrame(12, exp1_frame_12, 26);
+	exp1_anim_0->addFrame(13, exp1_frame_13, 28);
+	exp1_anim_0->addFrame(14, exp1_frame_14, 30);
+	exp1_anim_0->addFrame(15, exp1_frame_15, 32);
+	exp1_anim_0->addFrame(16, exp1_frame_16, 34);
+	exp1_anim_0->addFrame(17, exp1_frame_17, 36);
+	exp1_anim_0->addFrame(18, exp1_frame_18, 38);
+	exp1_anim_0->addFrame(19, exp1_frame_19, 40);
+	exp1_anim_0->addFrame(20, exp1_frame_20, 42);
+	exp1_anim_0->addFrame(21, exp1_frame_21, 44);
+	exp1_anim_0->addFrame(22, exp1_frame_22, 46);
+	exp1_anim_0->addFrame(23, exp1_frame_23, 48);
+	exp1_anim_0->addFrame(24, exp1_frame_24, 50);
+	exp1_anim_0->addFrame(25, exp1_frame_25, 52);
 
 	// Create Helicopter object
 	AERO_OBJECT_DESC descObj;
@@ -690,6 +860,22 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	shell_obj->addAnim(0, shell_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, shell_obj);
 
+	// Create Big Smoke object
+	descObj.oid = 12;
+	descObj.name = "Big Smoke";
+	descObj.otype = OBJ_EFFECT;
+	AEObject* bigsmoke_obj = new AEObject(descObj);
+	bigsmoke_obj->addAnim(0, bigsmoke_anim_0);
+	ae_ObjectTable.addAt(descObj.oid, bigsmoke_obj);
+
+	// Create Explosion 1 object
+	descObj.oid = 13;
+	descObj.name = "Explosion 1";
+	descObj.otype = OBJ_EFFECT;
+	AEObject* exp1_obj = new AEObject(descObj);
+	exp1_obj->addAnim(0, exp1_anim_0);
+	ae_ObjectTable.addAt(descObj.oid, exp1_obj);
+	
 	// Create BG layer animation. Only one frame (a static image) in this scene
 	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(7), 0);
 	AERO_BGLAYERANIM_DESC descBGLayerAnim;
@@ -769,7 +955,7 @@ VOID SideScrollerPlatformScene::initialize() {
 	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = -200.0f;
 	descSpr.cy = -100.0f;
-	descSpr.layerDepth = 0.0f;
+	descSpr.layerDepth = 0.01f;
 	Helicopter* heli = new Helicopter(descSpr);
 	addSprite(heli);
 
@@ -823,54 +1009,65 @@ VOID SideScrollerPlatformScene::processInput() {
 		ae_SceneManager.runScene(1);
 	}
 
-	if (keyStateBuffer[DIK_A] & 0x80) {
-		drag = 1.0f;
-		pitch_up_hor = 0.8f;
-	}
-	else {
-		drag = 0.0f;
-		pitch_up_hor = 0.0f;
-	}
-	if (keyStateBuffer[DIK_D] & 0x80) {
-		thrust = 1.5f;
-		pitch_down_hor = 1.0f;
-	}
-	else {
-		thrust = 0.0f;
-		pitch_down_hor = 0.0f;
-	}
-	if (keyStateBuffer[DIK_W] & 0x80) {
-		lift = 0.8f;
-		pitch_up_ver = 0.6f;
-	}
-	else {
-		lift = 0.0f;
-		pitch_up_ver = 0.0f;
-	}
-	if (keyStateBuffer[DIK_S] & 0x80) {
-		weight = 1.2f;
-		pitch_down_ver = 1.0f;
-	}
-	else {
-		weight = 0.0f;
-		pitch_down_ver = 0.0f;
-	}
-	player->setVx(thrust - drag);
-	player->setVy(weight - lift);
-	player->setVAngleDeg(pitch_down_hor + pitch_down_ver - pitch_up_hor - pitch_up_ver, AESprite::ANGLE_DISPLAY);
-
-	if (keyStateBuffer[DIK_J] & 0x80) {
-		if (!player->isFireKeyPressed) {
-			player->isFireKeyPressed = TRUE;
-			
+	if (!isPaused) {
+		if (keyStateBuffer[DIK_A] & 0x80) {
+			drag = 1.0f;
+			pitch_up_hor = 0.8f;
 		}
-	}
-	else {
-		player->isFireKeyPressed = FALSE;
+		else {
+			drag = 0.0f;
+			pitch_up_hor = 0.0f;
+		}
+		if (keyStateBuffer[DIK_D] & 0x80) {
+			thrust = 1.5f;
+			pitch_down_hor = 1.0f;
+		}
+		else {
+			thrust = 0.0f;
+			pitch_down_hor = 0.0f;
+		}
+		if (keyStateBuffer[DIK_W] & 0x80) {
+			lift = 0.8f;
+			pitch_up_ver = 0.6f;
+		}
+		else {
+			lift = 0.0f;
+			pitch_up_ver = 0.0f;
+		}
+		if (keyStateBuffer[DIK_S] & 0x80) {
+			weight = 1.2f;
+			pitch_down_ver = 1.0f;
+		}
+		else {
+			weight = 0.0f;
+			pitch_down_ver = 0.0f;
+		}
+		player->setVx(thrust - drag);
+		player->setVy(weight - lift);
+		player->setVAngleDeg(pitch_down_hor + pitch_down_ver - pitch_up_hor - pitch_up_ver, AESprite::ANGLE_DISPLAY);
+
+		if (keyStateBuffer[DIK_J] & 0x80) {
+			if (!player->isFireKeyPressed) {
+				player->isFireKeyPressed = TRUE;
+				player->shoot();
+			}
+		}
+		else {
+			player->isFireKeyPressed = FALSE;
+		}
 	}
 
 	if (keyStateBuffer[DIK_L] & 0x80) {
 		int a = 1;
+	}
+	if (keyStateBuffer[DIK_RETURN] & 0x80) {
+		if (!isPauseKeyPressed) {
+			isPauseKeyPressed = TRUE;
+			pause();
+		}
+	}
+	else {
+		isPauseKeyPressed = FALSE;
 	}
 
 }

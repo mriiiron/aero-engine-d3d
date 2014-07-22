@@ -140,8 +140,11 @@ AECollisionResult AENSCollision::vectorAndSegment(XMFLOAT2 A, XMFLOAT2 B, XMFLOA
 		}
 
 	}
+
 	else {
 		result.isCollided = FALSE;
 	}
+
 	return result;
+
 }

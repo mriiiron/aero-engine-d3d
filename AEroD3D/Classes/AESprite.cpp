@@ -21,11 +21,7 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	cy = desc.cy;
 	layerDepth = desc.layerDepth;
 	flip = desc.flip;
-	if (action > 0) {
-		changeAction(desc.action);
-	}
-	timeToLive = TIME_TO_LIVE_UNLIMITED;
-	deadFlag = FALSE;
+	changeAction(desc.action);
 }
 
 AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip) {
@@ -113,21 +109,16 @@ VOID AESprite::changeAction(INT _action) {
 		deadFlag = TRUE;
 		return;
 	}
+	else {
+		deadFlag = FALSE;
+	}
 	action = _action;
 	AEAnimation* anim = obj->getAnim(action);
 	state = anim->getState();
 	timeToLive = anim->getTTL();
 	frameNum = time = 0;
-	INT dvx = anim->getFrame(frameNum)->getDvx();
-	if (dvx == 999)
-		vx = 0;
-	else
-		vx += dvx;
-	INT dvy = anim->getFrame(frameNum)->getDvy();
-	if (dvy == 999)
-		vy = 0;
-	else
-		vy += dvy;
+	vx += anim->getFrame(frameNum)->getDvx();
+	vy += anim->getFrame(frameNum)->getDvy();
 }
 
 XMVECTOR AESprite::getFacingVector(INT option) {
@@ -175,20 +166,18 @@ VOID AESprite::platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<
 		for (INT i = 0; i < platform->getSegmentCount(); i++) {
 			AECollisionResult collisionResult = AENSCollision::vectorAndSegment(sprOldPos, sprNewPos, platform->getNode(i), platform->getNode(i + 1));
 			if (collisionResult.isCollided) {
-				platformCollision(platformTable, collisionResult);
-				// TODO: One-side collision
-				// TODO: On-the-platform check and process
+				platformCollision(platformTable, collisionResult, platform->getNode(i), platform->getNode(i + 1));
 			}
 		}
 	}
 
 }
 
-VOID AESprite::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult) {
-	XMVECTOR normalizedFacingVec = getVelocityVector();
-	FLOAT groundAdjust = 0.1f;
-	cx = collisionResult.point.x - groundAdjust * XMVectorGetX(normalizedFacingVec);
-	cy = collisionResult.point.y - groundAdjust * XMVectorGetY(normalizedFacingVec);
+VOID AESprite::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead) {
+	XMVECTOR normalizedSpeedVec = getVelocityVector();
+	FLOAT hitGroundAdjust = 0.1f;
+	setCx(collisionResult.point.x - hitGroundAdjust * XMVectorGetX(normalizedSpeedVec));
+	setCy(collisionResult.point.y - hitGroundAdjust * XMVectorGetY(normalizedSpeedVec));
 }
 
 VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
@@ -200,7 +189,9 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 		changeAction(anim->getNext());
 		return;
 	}
-	if (timeToLive > 0) timeToLive--;
+	if (timeToLive > 0) {
+		timeToLive--;
+	}
 	INT fac = (flip ? -1 : 1);
 	FLOAT cx_old = cx, cy_old = cy;
 	cx += (fac * vx);

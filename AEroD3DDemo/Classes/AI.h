@@ -1,12 +1,21 @@
 #pragma once
 
 
-class RocketAI : public AEAI {
+class BulletAI : public AEAI {
 public:
-	RocketAI(AESprite* _host);
+	BulletAI(AESprite* _host);
 	VOID execute();
 private:
-	INT smokeCooldown = 0;
+
+};
+
+
+class BigSmokeEffectUnivAI : public AEAI {
+public:
+	BigSmokeEffectUnivAI(AESprite* _host);
+	VOID execute();
+private:
+	INT smokeCount;
 };
 
 

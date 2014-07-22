@@ -37,6 +37,8 @@ public:
 
 	VOID addSprite(AESprite* sprite);
 
+	VOID pause();
+
 	virtual VOID update();
 	virtual VOID render();
 	virtual VOID processInput();
@@ -47,6 +49,8 @@ protected:
 	AEHashedTable<AEPlatform>* platformTable;
 	AEHashedTable<AESprite>* spriteTable;
 	AEHeadUpDisplay* hud;
+
+	BOOLEAN isPauseKeyPressed, isPaused;
 
 };
 
