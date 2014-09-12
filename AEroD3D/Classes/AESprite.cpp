@@ -114,11 +114,8 @@ VOID AESprite::changeAction(INT _action) {
 	}
 	action = _action;
 	AEAnimation* anim = obj->getAnim(action);
-	state = anim->getState();
 	timeToLive = anim->getTTL();
 	frameNum = time = 0;
-	vx += anim->getFrame(frameNum)->getDvx();
-	vy += anim->getFrame(frameNum)->getDvy();
 }
 
 XMVECTOR AESprite::getFacingVector(INT option) {
@@ -166,18 +163,15 @@ VOID AESprite::platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<
 		for (INT i = 0; i < platform->getSegmentCount(); i++) {
 			AECollisionResult collisionResult = AENSCollision::vectorAndSegment(sprOldPos, sprNewPos, platform->getNode(i), platform->getNode(i + 1));
 			if (collisionResult.isCollided) {
-				platformCollision(platformTable, collisionResult, platform->getNode(i), platform->getNode(i + 1));
+				platformCollision(platform, i, collisionResult);
 			}
 		}
 	}
 
 }
 
-VOID AESprite::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead) {
-	XMVECTOR normalizedSpeedVec = getVelocityVector();
-	FLOAT hitGroundAdjust = 0.1f;
-	setCx(collisionResult.point.x - hitGroundAdjust * XMVectorGetX(normalizedSpeedVec));
-	setCy(collisionResult.point.y - hitGroundAdjust * XMVectorGetY(normalizedSpeedVec));
+VOID AESprite::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
+	// Defaultly do nothing when collision with platforms
 }
 
 VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
@@ -187,10 +181,24 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 	AEAnimation* anim = obj->getAnim(action);
 	if (timeToLive == 0) {
 		changeAction(anim->getNext());
-		return;
 	}
 	if (timeToLive > 0) {
 		timeToLive--;
+	}
+	time++;
+	BOOLEAN isFrameChange = FALSE;
+	if (time >= anim->getEndTime(frameNum)) {
+		isFrameChange = TRUE;
+		frameNum++;
+		if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
+			time = 0;
+		}
+		if (frameNum == anim->getFrameCount()) {
+			frameNum = 0;
+			if (!anim->isLoop()) {
+				changeAction(anim->getNext());
+			}
+		}
 	}
 	INT fac = (flip ? -1 : 1);
 	FLOAT cx_old = cx, cy_old = cy;
@@ -201,29 +209,16 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 	if (platformTable != nullptr) {
 		platformCollisionCheck(cx_old, cy_old, platformTable);
 	}
+	if (isFrameChange) {
+		isFrameChange = FALSE;
+	}
 	angle += (fac * vAngle);
 	if (angle < -AENSMath::PI) angle += 2.0f * AENSMath::PI;
 	if (angle >= AENSMath::PI) angle -= 2.0f * AENSMath::PI;
 	angleDisplay += (fac * vAngleDisplay);
 	if (angleDisplay < -AENSMath::PI) angleDisplay += 2.0f * AENSMath::PI;
 	if (angleDisplay >= AENSMath::PI) angleDisplay -= 2.0f * AENSMath::PI;
-	time++;
-	if (time >= anim->getEndTime(frameNum)) {
-		cx += (fac * anim->getFrame(frameNum)->getShiftx());
-		cy += anim->getFrame(frameNum)->getShifty();
-		frameNum++;
-		if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
-			time = 0;
-		}
-		if (frameNum == anim->getFrameCount()) {
-			frameNum = 0;
-			if (!anim->isLoop()) {
-				changeAction(anim->getNext());
-				return;
-			}
-		}
-	}
-	if (attachments) {
+	if (attachmentTable) {
 		updateAttachments(fac* vx, vy);
 	}
 }
@@ -237,7 +232,7 @@ VOID AESprite::render() {
 	FLOAT flipAdjustX = flipAdjust * cosf(angleDisplay), flipAdjustY = flipAdjust * sinf(angleDisplay);
 	xtk_SpriteBatch->Draw(
 		res->getTexture(), // Texture
-		XMFLOAT2(cx - flipAdjustX, cy - flipAdjustY), // Drawing Position (Origin Point)
+		XMFLOAT2(INT(cx - flipAdjustX), INT(cy - flipAdjustY)), // Drawing Position (Origin Point)
 		&texClipInTexel, // Texture Clip Rectangle
 		XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
 		angleDisplay, // Rotation
@@ -246,9 +241,6 @@ VOID AESprite::render() {
 		flip, // Sprite Effects
 		layerDepth // Z Value
 	);
-	if (attachments) {
-		renderAttachments();
-	}
 	
 	// Old drawing method not using SpriteBatch
 	/*
@@ -322,37 +314,18 @@ VOID AESprite::rotateDeg(FLOAT degree, INT option) {
 }
 
 VOID AESprite::createAttachmentTable(INT size) {
-	attachments = new AEHashedTable<AESprite>(size);
+	attachmentTable = new AEHashedTable<AESprite>(size);
 	attachmentTableSize = size;
 }
 
-VOID AESprite::addAttachment(INT slot, AESprite* attachment) {
-	if (attachmentTableSize == 0 || attachments == nullptr) {
-		AENSGameControl::exitGame("Cannot add attachment to sprite.");
-		return;
-	}
-	attachment->setScene(scene);
-	attachments->addAt(slot, attachment);
-}
-
 VOID AESprite::updateAttachments(FLOAT hostdx, FLOAT hostdy) {
-	for (INT iHash = 0; iHash < attachments->getHashCount(); iHash++) {
-		AESprite* sprite = attachments->getItemByHash(iHash);
-		if (sprite->isDead()) {
-			attachments->remove(attachments->getHash(iHash));
+	for (INT iHash = 0; iHash < attachmentTable->getHashCount(); iHash++) {
+		AESprite* attachment = attachmentTable->getItemByHash(iHash);
+		if (attachment == nullptr) {
+			attachmentTable->removeItemByHash(iHash);
 		}
 		else {
-			sprite->move(hostdx, hostdy);
-			sprite->update();
-		}
-	}
-}
-
-VOID AESprite::renderAttachments() {
-	for (INT iHash = 0; iHash < attachments->getHashCount(); iHash++) {
-		AESprite* sprite = attachments->getItemByHash(iHash);
-		if (!(sprite->isDead())) {
-			sprite->render();
+			attachment->move(hostdx, hostdy);
 		}
 	}
 }

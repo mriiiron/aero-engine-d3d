@@ -127,8 +127,12 @@ Helicopter::Helicopter(AERO_SPRITE_DESC desc) : AESprite(desc) {
 	rocketRemaining = 6;
 }
 
-VOID Helicopter::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentHead, XMFLOAT2 segmentTail) {
-	AESprite::platformCollision(platformTable, collisionResult, segmentHead, segmentTail);
+VOID Helicopter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
+	AESprite::platformCollision(platform, tailNodeIndex, collisionResult);
+	XMVECTOR normalizedSpeedVec = getVelocityVector();
+	FLOAT hitGroundAdjust = 0.1f;
+	setCx(collisionResult.point.x - hitGroundAdjust * XMVectorGetX(normalizedSpeedVec));
+	setCy(collisionResult.point.y - hitGroundAdjust * XMVectorGetY(normalizedSpeedVec));
 }
 
 VOID Helicopter::update(AEHashedTable<AEPlatform>* platformTable) {
@@ -242,8 +246,8 @@ Bullet::Bullet(AERO_SPRITE_DESC desc) : AESprite(desc) {
 
 }
 
-VOID Bullet::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead) {
-	AESprite::platformCollision(platformTable, collisionResult, segmentTail, segmentHead);
+VOID Bullet::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
+	AESprite::platformCollision(platform, tailNodeIndex, collisionResult);
 	AERO_SPRITE_DESC descSpr;
 	descSpr.obj = ae_ObjectTable.getItem(13);
 	descSpr.team = team;
@@ -284,8 +288,10 @@ Shell::Shell(AERO_SPRITE_DESC desc) : AESprite(desc) {
 
 }
 
-VOID Shell::platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead) {
-	AESprite::platformCollision(platformTable, collisionResult, segmentTail, segmentHead);
+VOID Shell::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
+	AESprite::platformCollision(platform, tailNodeIndex, collisionResult);
+	XMFLOAT2 segmentTail = platform->getNode(tailNodeIndex);
+	XMFLOAT2 segmentHead = platform->getNode(tailNodeIndex + 1);
 	XMFLOAT2 segmentNormalVecF = { segmentHead.y - segmentTail.y, segmentTail.x - segmentHead.x };
 	XMVECTOR normalizedSegmentNormalVec = XMVector2Normalize(XMLoadFloat2(&segmentNormalVecF));
 	XMVECTOR speedVec = getVelocityVector();

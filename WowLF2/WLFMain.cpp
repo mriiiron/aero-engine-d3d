@@ -1,7 +1,8 @@
 //--------------------------------------------------------------------------------------
-// File: Main.cpp
+// File: WLFMain.cpp
 //
-// This demo application exhibits features of AEro Engine through several sample scenes.
+// A 2D-ACT simulation on World of Warcraft.
+// Sprites originally from the game Little Fighter 2 by Marti Wong & Starsky Wong.
 //
 // Feel free to use this code for reference.
 //
@@ -9,11 +10,8 @@
 // Author Blog : http://blog.calebzhong.net
 //--------------------------------------------------------------------------------------
 
-#pragma comment(lib, "dinput8.lib")
-
 #include <windows.h>
 #include <d3d11_1.h>
-#include <d3dcompiler.h>
 #include <directxmath.h>
 #include <directxcolors.h>
 #include <dinput.h>
@@ -22,8 +20,8 @@
 #include "resource.h"
 #include "AEroEngine.h"
 
-#include "Classes\Sprites.h"
-#include "Classes\Scenes.h"
+#include "Classes\WLFSprites.h"
+#include "Classes\WLFScenes.h"
 
 using namespace DirectX;
 
@@ -48,6 +46,7 @@ extern ID3D11RasterizerState*				g_pRasterizerState;
 extern ID3D11VertexShader*					g_pVertexShader;
 extern ID3D11PixelShader*					g_pPixelShader;
 extern ID3D11InputLayout*					g_pVertexLayout;
+extern ID3D11InputLayout*					g_pDebugVertexLayout;
 extern ID3D11Buffer*						g_pVertexBuffer;
 extern ID3D11Buffer*						g_pIndexBuffer;
 extern ID3D11Buffer*						g_pCBNeverChanges;
@@ -186,10 +185,6 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 }
 
 
-//--------------------------------------------------------------------------------------
-// Initiate DirectInput objects
-// I cannot put DirectInput objects in AEroEngine.cpp..
-//--------------------------------------------------------------------------------------
 HRESULT InitDirectInput() {
 
 	// Initialize DirectInput device
@@ -231,7 +226,6 @@ VOID ReadInputDevice(IDirectInputDevice8* pDIDevice, LPVOID pBuffer, LONG lSize)
 	}
 }
 
-
 //--------------------------------------------------------------------------------------
 // Called every time the application receives a message
 //--------------------------------------------------------------------------------------
@@ -264,134 +258,35 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 //--------------------------------------------------------------------------------------
 void LoadGameResources() {
 
-	// Gedama Sprite
+	// Warrior Deep
 	AERO_RESOURCE_DESC descRes;
 	descRes.rid = 0;
 	descRes.rtype = RES_5x10;
 	descRes.cellW = 80;
-	descRes.cellH = 70;
-	HRESULT hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\gedama_0.dds", nullptr, &(descRes.tex));
+	descRes.cellH = 80;
+	HRESULT hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\warrior_deep_0.dds", nullptr, &(descRes.tex));
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Starsky Background
+	// Dummy Bandit
 	descRes.rid = 1;
-	descRes.rtype = RES_1x1;
-	descRes.cellW = 1000;
-	descRes.cellH = 771;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\starsky.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Japanese Fighter Sprite
-	descRes.rid = 2;
-	descRes.rtype = RES_1x5;
-	descRes.cellW = 50;
-	descRes.cellH = 50;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\jfighter_0.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Bullets Sprite
-	descRes.rid = 3;
-	descRes.rtype = RES_1x5;
-	descRes.cellW = 17;
-	descRes.cellH = 17;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\bullet_0.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Rocket Smoke Effect
-	descRes.rid = 4;
-	descRes.rtype = RES_1x10;
-	descRes.cellW = 20;
-	descRes.cellH = 20;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\bullet_smoke.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Enemy Turret
-	descRes.rid = 5;
-	descRes.rtype = RES_1x5;
-	descRes.cellW = 63;
-	descRes.cellH = 63;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\turret_0.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Helicopter Sprite
-	descRes.rid = 6;
-	descRes.rtype = RES_1x5;
-	descRes.cellW = 50;
-	descRes.cellH = 20;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\heli_0.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Platform background
-	descRes.rid = 7;
-	descRes.rtype = RES_1x1;
-	descRes.cellW = 640;
-	descRes.cellH = 480;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\platform_bg.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Flak Cannon Sprite
-	descRes.rid = 8;
-	descRes.rtype = RES_1x5;
-	descRes.cellW = 50;
-	descRes.cellH = 35;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\flak_0.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Flak Cannon Muzzle Flash Sprite
-	descRes.rid = 9;
-	descRes.rtype = RES_1x5;
-	descRes.cellW = 50;
-	descRes.cellH = 25;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\flak_muzzleflash.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Big Smoke Sprite
-	descRes.rid = 10;
-	descRes.rtype = RES_2x5;
-	descRes.cellW = 60;
-	descRes.cellH = 60;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\big_smoke.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	// Explosions Sprite
-	descRes.rid = 11;
 	descRes.rtype = RES_5x10;
-	descRes.cellW = 50;
-	descRes.cellH = 50;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\explosions.dds", nullptr, &(descRes.tex));
+	descRes.cellW = 80;
+	descRes.cellH = 80;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\dummy_bandit_0.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
+	// Shrine Cave
+	descRes.rid = 10;
+	descRes.rtype = RES_1x1;
+	descRes.cellW = 1500;
+	descRes.cellH = 480;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\shrine_cave.dds", nullptr, &(descRes.tex));
 	if (FAILED(hr)) {
 		AENSGameControl::exitGame("On loading texture: Texture load failed.");
 	}
@@ -406,22 +301,10 @@ void InitGameplay() {
 
 	AENSCore::AEInitialize();
 
-	// Scene 0 - General Sample Scene
-	GeneralSampleScene* generalSampleScene = new GeneralSampleScene(nullptr, nullptr, new AEHashedTable<AESprite>(100), nullptr);
-	ae_SceneManager.addSceneAt(0, generalSampleScene);
-
-	// Scene 1 - Vertical Scroller Scene
-	VerticalScrollerScene* verticalScrollerScene = new VerticalScrollerScene(nullptr, nullptr, new AEHashedTable<AESprite>(1000), nullptr);
-	ae_SceneManager.addSceneAt(1, verticalScrollerScene);
-
-	// Scene 2 - Side Scroller Scene with Platform
-	SideScrollerPlatformScene* sideScrollerPlatformScene = new SideScrollerPlatformScene(nullptr, nullptr, new AEHashedTable<AESprite>(1000), nullptr);
-	ae_SceneManager.addSceneAt(2, sideScrollerPlatformScene);
-
-	// Initialize scenes
-	generalSampleScene->initialize();
-	verticalScrollerScene->initialize();
-	sideScrollerPlatformScene->initialize();
+	// Create Scene
+	WLFShrineCaveScene* scene = new WLFShrineCaveScene(nullptr, nullptr, new AEHashedTable<AESprite>(100), nullptr);
+	ae_SceneManager.addSceneAt(0, scene);
+	scene->initialize();
 
 	// Run a scene
 	ae_SceneManager.runScene(0);
@@ -432,8 +315,7 @@ void InitGameplay() {
 //--------------------------------------------------------------------------------------
 // Update a frame
 //--------------------------------------------------------------------------------------
-void Update()
-{
+void Update() {
 
 	// Get input and update the scene
 	AEScene* activeScene = ae_SceneManager.getActiveScene();
@@ -446,12 +328,10 @@ void Update()
 
 	// Update our time
 	static float t = 0.0f;
-	if( g_driverType == D3D_DRIVER_TYPE_REFERENCE )
-	{
+	if( g_driverType == D3D_DRIVER_TYPE_REFERENCE ) {
 		t += ( float )XM_PI * 0.0125f;
 	}
-	else
-	{
+	else {
 		static ULONGLONG timeStart = 0;
 		static ULONGLONG timeLast = 0;
 		ULONGLONG timeCur = GetTickCount64();
@@ -476,8 +356,7 @@ void Update()
 //--------------------------------------------------------------------------------------
 // Render a frame
 //--------------------------------------------------------------------------------------
-void Render()
-{
+void Render() {
 
 	// Clear the back buffer
 	g_pImmediateContext->ClearRenderTargetView( g_pRenderTargetView, Colors::Black );

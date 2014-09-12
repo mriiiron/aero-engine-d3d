@@ -15,6 +15,18 @@ AECollisionResult AENSCollision::rectAndRect(AERect r1, AERect r2) {
 	return result;
 }
 
+AECollisionResult AENSCollision::rectAndRect(RECT r1, RECT r2) {
+	AECollisionResult result;
+	if (r1.left <= r2.right && r1.top <= r2.bottom && r1.right >= r2.left && r1.bottom >= r2.top) {
+		result.isCollided = TRUE;
+		result.point = { 0.0f, 0.0f }; // TODO
+	}
+	else {
+		result.isCollided = FALSE;
+	}
+	return result;
+}
+
 // Segment 1 as AB; Segment 2 as CD
 AECollisionResult AENSCollision::vectorAndSegment(XMFLOAT2 A, XMFLOAT2 B, XMFLOAT2 C, XMFLOAT2 D){
 	AECollisionResult result;

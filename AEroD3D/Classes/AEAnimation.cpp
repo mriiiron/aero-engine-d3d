@@ -11,29 +11,18 @@ AEFrame::AEFrame(AERO_FRAME_DESC desc) {
 	height = desc.res->getCellHeight();
 	centerx = desc.centerx;
 	centery = desc.centery;
-	shiftx = desc.shiftx;
-	shifty = desc.shifty;
-	dvx = desc.dvx;
-	dvy = desc.dvy;
-	for (INT i = 0; i < MAX_ATTRIB_COUNT; i++) {
-		attribTable[i] = nullptr;
-	}
 }
 
 AEFrame::~AEFrame() {
 	// TODO
 }
 
-VOID AEFrame::addOptionalByStrAt(std::string line) {
-
-}
-
 
 AEAnimation::AEAnimation(AERO_ANIMATION_DESC desc) {
+	name = desc.name;
 	frameCount = desc.frameCount;
 	isAnimLoop = desc.isAnimLoop;
 	next = desc.next;
-	state = desc.state;
 	timeToLive = desc.timeToLive;
 	for (INT i = 0; i < MAX_FRAME_COUNT; i++) {
 		frameTable[i] = nullptr;
@@ -53,12 +42,3 @@ VOID AEAnimation::addFrame(INT index, AEFrame* frame, INT endTime) {
 	frameTable[index] = frame;
 	endTimeTable[index] = endTime;
 }
-
-VOID AEAnimation::cloneFrame(INT srcIndex, INT dstIndex) {
-
-}
-
-VOID AEAnimation::loadFrameOptional(INT index, INT _slot, std::string str) {
-
-}
-

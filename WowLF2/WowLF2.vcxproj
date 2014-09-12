@@ -27,8 +27,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>AEroD3D Demo</ProjectName>
-    <ProjectGuid>{19E85523-848E-4E55-AAF0-E0C6F83741F6}</ProjectGuid>
+    <ProjectName>WowLF2</ProjectName>
+    <ProjectGuid>{EE459B0B-4990-4258-8F04-BCD8B013BCA8}</ProjectGuid>
     <RootNamespace>Tutorial07</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -120,6 +120,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <OpenMPSupport>false</OpenMPSupport>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FloatingPointModel>Fast</FloatingPointModel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <ExceptionHandling>Sync</ExceptionHandling>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
@@ -132,7 +133,7 @@
     </ClCompile>
     <Link>
       <AdditionalOptions> %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>AEroD3D.lib;DirectXTK\DirectXTK.lib;d3d11.lib;d3dcompiler.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AEroD3D.lib;dinput8.lib;DirectXTK\DirectXTK.lib;d3d11.lib;d3dcompiler.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
@@ -400,15 +401,19 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Classes\AI.cpp" />
-    <ClCompile Include="Classes\Scenes.cpp" />
-    <ClCompile Include="Classes\Sprites.cpp" />
-    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Classes\WLFAI.cpp" />
+    <ClCompile Include="Classes\WLFAnimation.cpp" />
+    <ClCompile Include="Classes\WLFFileReader.cpp" />
+    <ClCompile Include="Classes\WLFScenes.cpp" />
+    <ClCompile Include="Classes\WLFSprites.cpp" />
+    <ClCompile Include="WLFMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Classes\AI.h" />
-    <ClInclude Include="Classes\Scenes.h" />
-    <ClInclude Include="Classes\Sprites.h" />
+    <ClInclude Include="Classes\WLFAI.h" />
+    <ClInclude Include="Classes\WLFAnimation.h" />
+    <ClInclude Include="Classes\WLFFileReader.h" />
+    <ClInclude Include="Classes\WLFScenes.h" />
+    <ClInclude Include="Classes\WLFSprites.h" />
     <CLInclude Include="resource.h" />
     <ResourceCompile Include="AEroD3D.rc" />
   </ItemGroup>

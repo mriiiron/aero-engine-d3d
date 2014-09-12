@@ -39,4 +39,15 @@ namespace AENSCore {
 	VOID AEInitialize();
 	VOID CleanupDevice();
 
+	HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+	HRESULT InitDevice();
+
+
+
+	LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+	void LoadGameResources();
+	void InitGameplay();
+	void Update();
+	void Render();
+
 }

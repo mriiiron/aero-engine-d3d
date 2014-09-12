@@ -102,6 +102,7 @@ public:
 	FLOAT getLayerDepth() { return layerDepth; }
 	AEPoint getCenter() { return AEPoint(cx, cy); }
 	AEObject* getObject() { return obj; }
+	AEAnimation* getAnimation() { return obj->getAnim(action); }
 	std::string getObjName() { return obj->getName(); }
 	AEAI* getAI() { return ai; }
 	AEScene* getScene() { return scene; }
@@ -130,7 +131,8 @@ public:
 	VOID rotateDeg(FLOAT degree, INT option = ANGLE_BOTH);
 
 	VOID createAttachmentTable(INT size);
-	VOID addAttachment(INT slot, AESprite* attachment);
+	BOOLEAN hasAttachments() { return (attachmentTable == nullptr ? FALSE : TRUE); }
+	AEHashedTable<AESprite>* getAttachmentTable() { return attachmentTable; }
 
 	VOID changeAction(INT _action);
 	VOID toNextFrame(AEAnimation anim);
@@ -149,7 +151,7 @@ public:
 	VOID platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<AEPlatform>* platformTable);
 
 	virtual VOID applyControl();
-	virtual VOID platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead);
+	virtual VOID platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult);
 	virtual VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
 	virtual VOID render();
 
@@ -158,7 +160,7 @@ protected:
 	AEObject* obj;
 	AEScene* scene = nullptr;
 	AEAI* ai = nullptr;
-	AEHashedTable<AESprite>* attachments = nullptr;
+	AEHashedTable<AESprite>* attachmentTable = nullptr;
 
 	INT action, team;
 	FLOAT cx, cy;
@@ -175,6 +177,5 @@ protected:
 	INT attachmentTableSize = 0;
 
 	VOID updateAttachments(FLOAT hostdx, FLOAT hostdy);
-	VOID renderAttachments();
 
 };

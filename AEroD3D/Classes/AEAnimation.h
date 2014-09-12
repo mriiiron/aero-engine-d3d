@@ -1,16 +1,8 @@
 #pragma once
 
 
+#include <string>
 #include "AEResource.h"
-
-
-class AEFrameAttrib {
-
-public:
-
-	virtual ~AEFrameAttrib() {}
-
-};
 
 
 struct AERO_FRAME_DESC {
@@ -18,13 +10,12 @@ struct AERO_FRAME_DESC {
 	AEResource* res;
 	INT imgOffset, imgCells;
 	INT centerx, centery;
-	INT shiftx, shifty, dvx, dvy;
 
 	AERO_FRAME_DESC() {
 		res = nullptr;
-		imgOffset = imgCells = 0;
+		imgOffset = 0;
+		imgCells = 1;
 		centerx = centery = 0;
-		shiftx = shifty = dvx = dvy = 0;
 	}
 
 };
@@ -33,8 +24,6 @@ struct AERO_FRAME_DESC {
 class AEFrame {
 
 public:
-
-	static const INT MAX_ATTRIB_COUNT			= 20;
 	
 	AEFrame(AERO_FRAME_DESC desc);
 	~AEFrame();
@@ -45,38 +34,30 @@ public:
 	INT getHeight() { return height; }
 	INT getCenterx() { return centerx; }
 	INT getCentery() { return centery; }
-	INT getShiftx() { return shiftx; }
-	INT getShifty() { return shifty; }
-	INT getDvx() { return dvx; }
-	INT getDvy() { return dvy; }
 	AEResource* getResource() { return res; }
-	AEFrameAttrib* getOptional(INT index) { return attribTable[index]; }
-
-	virtual VOID addOptionalByStrAt(std::string line);
 
 private:
 
 	AEResource* res;
 	INT imgOffset, imgCells;
 	INT width, height, centerx, centery;
-	INT shiftx, shifty, dvx, dvy;
-	AEFrameAttrib* attribTable[MAX_ATTRIB_COUNT];
 
 };
 
 
 struct AERO_ANIMATION_DESC {
 
+	std::string name;
 	INT frameCount;
 	INT timeToLive, next;
 	BOOLEAN isAnimLoop;
-	INT state;
 
 	AERO_ANIMATION_DESC() {
+		name = "Unknown Animation";
 		frameCount = 0;
-		timeToLive = next = 0;
+		timeToLive = -1;
+		next = 0;
 		isAnimLoop = FALSE;
-		state = 0;
 	}
 
 };
@@ -92,6 +73,7 @@ public:
 	AEAnimation(AERO_ANIMATION_DESC desc);
 	~AEAnimation();
 	
+	std::string getName() { return name; }
 	AEFrame* getFrame(INT index) { return frameTable[index]; }
 	INT getEndTime(INT index) { return endTimeTable[index]; }
 	INT getFrameCount() { return frameCount; }
@@ -101,10 +83,10 @@ public:
 	INT getState() { return state; }
 
 	VOID addFrame(INT index, AEFrame* frame, INT endTime);
-	VOID cloneFrame(INT srcIndex, INT dstIndex);
-	VOID loadFrameOptional(INT index, INT _slot, std::string str);
 
-private:
+protected:
+
+	std::string name;
 
 	// Defining frames. Each frame has a time value to indicate that when it would change to next frame.
 	INT frameCount;

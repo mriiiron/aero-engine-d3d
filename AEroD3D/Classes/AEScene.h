@@ -36,6 +36,7 @@ public:
 	VOID setHUD(AEHeadUpDisplay* _hud) { hud = _hud; }
 
 	VOID addSprite(AESprite* sprite);
+	VOID addSpriteAttachment(AESprite* host, AESprite* attachment);
 
 	VOID pause();
 

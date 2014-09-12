@@ -18,7 +18,8 @@ public:
 	INT getSize() { return maxElemCount; }
 	VOID add(T* t);
 	VOID addAt(INT index, T* t);
-	VOID remove(INT index);
+	VOID removeItem(INT index);
+	VOID removeItemByHash(INT hashIndex);
 	VOID clear();
 
 protected:
@@ -107,12 +108,12 @@ VOID AEHashedTable<T>::addAt(INT index, T* t) {
 }
 
 template <typename T>
-VOID AEHashedTable<T>::remove(INT index) {
+VOID AEHashedTable<T>::removeItem(INT index) {
 	if (!occupied[index]) {
 		AENSGameControl::exitGame("On removing from hashed table: Slot empty.");
 	}
-	delete table[index];
-	table[index] = NULL;
+	if (table[index]) delete table[index];  // Allowing removing a "memory releaseed but still staying in table" sprite
+	table[index] = nullptr;
 	occupied[index] = 0;
 	while (!occupied[maxIndex] && maxIndex > 0) maxIndex--;
 	for (int i = 0; i < pHash; i++) {
@@ -126,11 +127,16 @@ VOID AEHashedTable<T>::remove(INT index) {
 }
 
 template <typename T>
+VOID AEHashedTable<T>::removeItemByHash(INT hashIndex) {
+	removeItem(getHash(hashIndex));
+}
+
+template <typename T>
 VOID AEHashedTable<T>::clear() {
 	for (int i = 0; i <= maxIndex; i++) {
 		if (occupied[i]) {
 			occupied[i] = 0;
-			remove(i);
+			removeItem(i);
 		}
 		hash[i] = -1;
 	}

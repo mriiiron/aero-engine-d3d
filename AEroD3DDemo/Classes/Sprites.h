@@ -44,7 +44,7 @@ public:
 
 	Helicopter(AERO_SPRITE_DESC desc);
 
-	VOID platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentHead, XMFLOAT2 segmentTail);
+	VOID platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult);
 	VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
 
 	VOID shoot();
@@ -84,7 +84,7 @@ public:
 
 	Bullet(AERO_SPRITE_DESC desc);
 
-	VOID platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead);
+	VOID platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult);
 	VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
 
 	FLOAT getSpeed() { return speed; }
@@ -104,7 +104,7 @@ public:
 
 	Shell(AERO_SPRITE_DESC desc);
 
-	VOID platformCollision(AEHashedTable<AEPlatform>* platformTable, AECollisionResult collisionResult, XMFLOAT2 segmentTail, XMFLOAT2 segmentHead);
+	VOID platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult);
 	VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
 
 private:

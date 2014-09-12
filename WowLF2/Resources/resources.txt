@@ -1,0 +1,2 @@
+0 warrior_deep_0.dds
+1 dummy_bandit_0.dds

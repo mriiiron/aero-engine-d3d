@@ -44,6 +44,15 @@ VOID AEScene::addSprite(AESprite* sprite) {
 	spriteTable->add(sprite);
 }
 
+VOID AEScene::addSpriteAttachment(AESprite* host, AESprite* attachment) {
+	if (!(host->hasAttachments())) {
+		AENSGameControl::exitGame("Cannot add attachment for Sprite " + host->getObjName() + ".");
+		return;
+	}
+	host->getAttachmentTable()->add(attachment);
+	addSprite(attachment);
+}
+
 VOID AEScene::pause() {
 	isPaused = !isPaused;
 }
@@ -57,7 +66,7 @@ VOID AEScene::update() {
 			for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
 				AESprite* sprite = spriteTable->getItemByHash(iHash);
 				if (sprite->isDead()) {
-					spriteTable->remove(spriteTable->getHash(iHash));
+					spriteTable->removeItemByHash(iHash);
 				}
 				else {
 					sprite->update(platformTable);

@@ -17,12 +17,8 @@ GeneralSampleScene::GeneralSampleScene(AEBackground* _bg, AEHashedTable<AEPlatfo
 	descFrame.res = ae_ResourceTable.getItem(0);
 	descFrame.centerx = 40;
 	descFrame.centery = 60;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* gedama_frame_00 = new AEFrame(descFrame);
 	descFrame.imgOffset = 1;
 	AEFrame* gedama_frame_01 = new AEFrame(descFrame);
@@ -42,7 +38,6 @@ GeneralSampleScene::GeneralSampleScene(AEBackground* _bg, AEHashedTable<AEPlatfo
 	descAnim.frameCount = 4;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* gedama_anim_0 = new AEAnimation(descAnim);
 	gedama_anim_0->addFrame(0, gedama_frame_00, 15);
@@ -54,7 +49,6 @@ GeneralSampleScene::GeneralSampleScene(AEBackground* _bg, AEHashedTable<AEPlatfo
 	descAnim.frameCount = 3;
 	descAnim.isAnimLoop = FALSE;
 	descAnim.next = 0;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* gedama_anim_1 = new AEAnimation(descAnim);
 	gedama_anim_1->addFrame(0, gedama_frame_10, 5);
@@ -188,12 +182,8 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descFrame.res = ae_ResourceTable.getItem(2);
 	descFrame.centerx = 25;
 	descFrame.centery = 25;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* jf_frame_00 = new AEFrame(descFrame);
 	descFrame.imgOffset = 1;
 	AEFrame* jf_frame_01 = new AEFrame(descFrame);
@@ -204,12 +194,8 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descFrame.res = ae_ResourceTable.getItem(3);
 	descFrame.centerx = 8;
 	descFrame.centery = 8;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* rocket_frame_00 = new AEFrame(descFrame);
 
 	// Frames for Homing Bullet
@@ -221,12 +207,8 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descFrame.res = ae_ResourceTable.getItem(4);
 	descFrame.centerx = 10;
 	descFrame.centery = 10;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* smoke_frame_00 = new AEFrame(descFrame);
 	descFrame.imgOffset = 1;
 	AEFrame* smoke_frame_01 = new AEFrame(descFrame);
@@ -247,12 +229,8 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descFrame.res = ae_ResourceTable.getItem(5);
 	descFrame.centerx = 31;
 	descFrame.centery = 31;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* turretbase_frame_00 = new AEFrame(descFrame);
 
 	// Frames for Turret
@@ -264,7 +242,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descAnim.frameCount = 3;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* jf_anim_0 = new AEAnimation(descAnim);
 	jf_anim_0->addFrame(0, jf_frame_00, 5);
@@ -275,7 +252,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* rocket_anim_0 = new AEAnimation(descAnim);
 	rocket_anim_0->addFrame(0, rocket_frame_00, 100);
@@ -284,7 +260,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* homing_anim_0 = new AEAnimation(descAnim);
 	homing_anim_0->addFrame(0, homing_frame_00, 100);
@@ -293,7 +268,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descAnim.frameCount = 8;
 	descAnim.isAnimLoop = FALSE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* smoke_anim_0 = new AEAnimation(descAnim);
 	smoke_anim_0->addFrame(0, smoke_frame_00, 3);
@@ -309,7 +283,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* turretbase_anim_0 = new AEAnimation(descAnim);
 	turretbase_anim_0->addFrame(0, turretbase_frame_00, 100);
@@ -318,7 +291,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* turret_anim_0 = new AEAnimation(descAnim);
 	turret_anim_0->addFrame(0, turret_frame_00, 100);
@@ -327,7 +299,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = FALSE;
 	descAnim.next = 2;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* turret_anim_1 = new AEAnimation(descAnim);
 	turret_anim_1->addFrame(0, turret_frame_00, 120);
@@ -336,7 +307,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = FALSE;
 	descAnim.next = 0;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* turret_anim_2 = new AEAnimation(descAnim);
 	turret_anim_2->addFrame(0, turret_frame_00, 60);
@@ -433,11 +403,11 @@ VOID VerticalScrollerScene::initialize() {
 	descSpr.cx = turretbase->getCx();
 	descSpr.cy = turretbase->getCy();
 	descSpr.layerDepth = 0.99f;
-	Turret* spr_turret = new Turret(descSpr);
-	spr_turret->setAI(new TurretAI(spr_turret));
+	Turret* turret = new Turret(descSpr);
+	turret->setAI(new TurretAI(turret));
 
 	// Attach Turret to its Base
-	turretbase->addAttachment(0, spr_turret);
+	addSpriteAttachment(turretbase, turret);
 
 	// Set player
 	player = (JFighterSprite*)jfighter;
@@ -477,7 +447,19 @@ VOID VerticalScrollerScene::processInput() {
 		if (keyStateBuffer[DIK_S] & 0x80) {
 			player->move(0.0f, 1.2f);
 		}
+		if (keyStateBuffer[DIK_Q] & 0x80) {
+			
+		}
+		if (keyStateBuffer[DIK_E] & 0x80) {
+			
+		}
 		if (keyStateBuffer[DIK_J] & 0x80) {
+
+		}
+		else {
+
+		}
+		if (keyStateBuffer[DIK_K] & 0x80) {
 			if (!player->isFireKeyPressed) {
 				player->isFireKeyPressed = TRUE;
 				player->shoot();
@@ -537,12 +519,8 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descFrame.res = ae_ResourceTable.getItem(6);
 	descFrame.centerx = 29;
 	descFrame.centery = 11;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* heli_frame_00 = new AEFrame(descFrame);
 	descFrame.imgOffset = 1;
 	AEFrame* heli_frame_01 = new AEFrame(descFrame);
@@ -553,12 +531,8 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descFrame.res = ae_ResourceTable.getItem(8);
 	descFrame.centerx = 25;
 	descFrame.centery = 27;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* flakbase_frame_00 = new AEFrame(descFrame);
 	
 	// Frames for Flak Cannon
@@ -577,12 +551,8 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descFrame.res = ae_ResourceTable.getItem(9);
 	descFrame.centerx = 8;
 	descFrame.centery = 13;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* flakflash_frame_00 = new AEFrame(descFrame);
 	descFrame.imgOffset = 1;
 	AEFrame* flakflash_frame_01 = new AEFrame(descFrame);
@@ -591,24 +561,16 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descFrame.res = ae_ResourceTable.getItem(3);
 	descFrame.centerx = 8;
 	descFrame.centery = 8;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 2;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* shell_frame_00 = new AEFrame(descFrame);
 
 	// Frames for Big Smoke
 	descFrame.res = ae_ResourceTable.getItem(10);
 	descFrame.centerx = 30;
 	descFrame.centery = 30;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* bigsmoke_frame_00 = new AEFrame(descFrame);
 	descFrame.imgOffset = 1;
 	AEFrame* bigsmoke_frame_01 = new AEFrame(descFrame);
@@ -629,12 +591,8 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descFrame.res = ae_ResourceTable.getItem(11);
 	descFrame.centerx = 25;
 	descFrame.centery = 25;
-	descFrame.dvx = 0;
-	descFrame.dvy = 0;
 	descFrame.imgOffset = 0;
 	descFrame.imgCells = 1;
-	descFrame.shiftx = 0;
-	descFrame.shifty = 0;
 	AEFrame* exp1_frame_00 = new AEFrame(descFrame);
 	descFrame.imgOffset = 1;
 	AEFrame* exp1_frame_01 = new AEFrame(descFrame);
@@ -702,7 +660,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.frameCount = 3;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* heli_anim_0 = new AEAnimation(descAnim);
 	heli_anim_0->addFrame(0, heli_frame_00, 5);
@@ -713,7 +670,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* flakbase_anim_0 = new AEAnimation(descAnim);
 	flakbase_anim_0->addFrame(0, flakbase_frame_00, 100);
@@ -722,7 +678,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* flakcannon_anim_0 = new AEAnimation(descAnim);
 	flakcannon_anim_0->addFrame(0, flakcannon_frame_00, 100);
@@ -731,7 +686,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.frameCount = 4;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = 2;
-	descAnim.state = 0;
 	descAnim.timeToLive = 120;
 	AEAnimation* flakcannon_anim_1 = new AEAnimation(descAnim);
 	flakcannon_anim_1->addFrame(0, flakcannon_frame_00, 3);
@@ -743,7 +697,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = FALSE;
 	descAnim.next = 0;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* flakcannon_anim_2 = new AEAnimation(descAnim);
 	flakcannon_anim_2->addFrame(0, flakcannon_frame_00, 60);
@@ -752,7 +705,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.frameCount = 2;
 	descAnim.isAnimLoop = FALSE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* flakflash_anim_0 = new AEAnimation(descAnim);
 	flakflash_anim_0->addFrame(0, flakflash_frame_00, 2);
@@ -762,7 +714,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.frameCount = 1;
 	descAnim.isAnimLoop = TRUE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = 60;
 	AEAnimation* shell_anim_0 = new AEAnimation(descAnim);
 	shell_anim_0->addFrame(0, shell_frame_00, 100);
@@ -771,7 +722,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.frameCount = 8;
 	descAnim.isAnimLoop = FALSE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* bigsmoke_anim_0 = new AEAnimation(descAnim);
 	bigsmoke_anim_0->addFrame(0, bigsmoke_frame_00, 10);
@@ -787,7 +737,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	descAnim.frameCount = 26;
 	descAnim.isAnimLoop = FALSE;
 	descAnim.next = AESprite::ACTION_NUM_DEAD;
-	descAnim.state = 0;
 	descAnim.timeToLive = -1;
 	AEAnimation* exp1_anim_0 = new AEAnimation(descAnim);
 	exp1_anim_0->addFrame(0, exp1_frame_00, 2);
@@ -983,10 +932,10 @@ VOID SideScrollerPlatformScene::initialize() {
 
 	// Attach Flak Cannon to Flak Base
 	flakBase->createAttachmentTable(1);
-	flakBase->addAttachment(0, flakCannon);
+	addSpriteAttachment(flakBase, flakCannon);
 
 	// Set player
-	player = (Helicopter*)heli;
+	player = heli;
 
 }
 
