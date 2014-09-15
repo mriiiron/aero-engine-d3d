@@ -8,8 +8,8 @@ $ImageResource 1
 10 39 79
 11 39 79
 12 39 79
-13 39 79
-14 39 79
+13 46 79
+14 44 79
 15 39 79
 16 39 79
 $ImageResource_End
@@ -24,39 +24,39 @@ $FrameCount 6 loop -1
 0 1 2 3 2 1
 40 8 8 30 8 8
 0 0 0 0 0 0
-$On_Hit 21 18 64 80 all
+$Body 21 18 64 80 $End
 $Anim_End
 
-$Anim 1 hit_front_lower
+$Anim 20 hit_front_lower
 $FrameCount 2 next 0
 10 11
 8 8
 0 0
-$On_Hit 21 18 64 80 all
+$Body 21 18 64 80 $End
 $Anim_End
 
-$Anim 2 hit_front_upper
+$Anim 21 hit_front_upper
 $FrameCount 2 next 0
 13 14
 8 8
 0 0
-$On_Hit 21 18 64 80 all
+$Body 21 18 64 80 $End
 $Anim_End
 
-$Anim 3 hit_back_lower
+$Anim 22 hit_back_lower
 $FrameCount 2 next 0
 15 16
 8 8
 0 0
-$On_Hit 21 18 64 80 all
+$Body 21 18 64 80 $End
 $Anim_End
 
-$Anim 4 hit_back_upper
+$Anim 23 hit_back_upper
 $FrameCount 2 next 0
 10 11
 8 8
 0 0
-$On_Hit 21 18 64 80 all
+$Body 21 18 64 80 $End
 $Anim_End
 
 #Animations_End

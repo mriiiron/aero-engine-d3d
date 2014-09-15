@@ -165,7 +165,7 @@ VOID GeneralSampleScene::processInput() {
 	if (keyStateBuffer[DIK_RETURN] & 0x80) {
 		if (!isPauseKeyPressed) {
 			isPauseKeyPressed = TRUE;
-			pause();
+			togglePause();
 		}
 	}
 	else {
@@ -476,7 +476,7 @@ VOID VerticalScrollerScene::processInput() {
 	if (keyStateBuffer[DIK_RETURN] & 0x80) {
 		if (!isPauseKeyPressed) {
 			isPauseKeyPressed = TRUE;
-			pause();
+			togglePause();
 		}
 	}
 	else {
@@ -1012,7 +1012,7 @@ VOID SideScrollerPlatformScene::processInput() {
 	if (keyStateBuffer[DIK_RETURN] & 0x80) {
 		if (!isPauseKeyPressed) {
 			isPauseKeyPressed = TRUE;
-			pause();
+			togglePause();
 		}
 	}
 	else {

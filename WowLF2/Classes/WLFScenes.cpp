@@ -24,8 +24,7 @@ WLFShrineCaveScene::WLFShrineCaveScene(AEBackground* _bg, AEHashedTable<AEPlatfo
 	descObj.name = "Warrior Deep";
 	descObj.otype = OBJ_CHARACTER;
 	AEObject* deep_obj = new AEObject(descObj);
-
-	WLFObjectDataFileReader::read("Resources\\warrior_deep.txt", deep_obj);
+	WLFDataFileReader::readObject("Resources\\warrior_deep.txt", deep_obj);
 	ae_ObjectTable.addAt(descObj.oid, deep_obj);
 
 	// Create Dummy Bandit
@@ -34,13 +33,21 @@ WLFShrineCaveScene::WLFShrineCaveScene(AEBackground* _bg, AEHashedTable<AEPlatfo
 	descObj.name = "Dummy Bandit";
 	descObj.otype = OBJ_CHARACTER;
 	AEObject* bandit_obj = new AEObject(descObj);
-
-	WLFObjectDataFileReader::read("Resources\\dummy_bandit.txt", bandit_obj);
+	WLFDataFileReader::readObject("Resources\\dummy_bandit.txt", bandit_obj);
 	ae_ObjectTable.addAt(descObj.oid, bandit_obj);
+
+	// Create Slash Effect
+
+	descObj.oid = 10;
+	descObj.name = "Slash Effect";
+	descObj.otype = OBJ_EFFECT;
+	AEObject* slash_obj = new AEObject(descObj);
+	WLFDataFileReader::readObject("Resources\\effect_hit_slash.txt", slash_obj);
+	ae_ObjectTable.addAt(descObj.oid, slash_obj);
 
 	// Create Shrine Cave BG
 
-	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(10), 0);
+	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(20), 0);
 	AERO_BGLAYERANIM_DESC descBGLayerAnim;
 	descBGLayerAnim.frameCount = 1;
 	AEBGLayerAnim* bgLayerAnim = new AEBGLayerAnim(descBGLayerAnim);
@@ -122,6 +129,7 @@ VOID WLFShrineCaveScene::initialize() {
 }
 
 VOID WLFShrineCaveScene::update() {
+	processCollision();
 	AEScene::update();
 }
 
@@ -161,34 +169,60 @@ VOID WLFShrineCaveScene::processInput() {
 		if (keyStateBuffer[DIK_K] & 0x80) {
 			player->attack_2();
 		}
-		if (keyStateBuffer[DIK_L] & 0x80) {
-			INT a = 1;
+	}
+	if (keyStateBuffer[DIK_L] & 0x80) {
+		INT a = 1;
+	}
+	if (keyStateBuffer[DIK_RETURN] & 0x80) {
+		if (!isPauseKeyPressed) {
+			isPauseKeyPressed = TRUE;
+			togglePause();
 		}
+	}
+	else {
+		isPauseKeyPressed = FALSE;
 	}
 }
 
 VOID WLFShrineCaveScene::processCollision() {
-	INT spriteCount = spriteTable->getHashCount() - 1;
+	INT spriteCount = spriteTable->getHashCount();
 	for (INT i = 0; i < spriteCount; i++) {
-		AESprite* s1 = spriteTable->getItemByHash(i);
-		WLFAnimation* anim1 = (WLFAnimation*)(s1->getAnimation());
-		WLFJudgeAreaRect* judgeArea1 = anim1->getJudgeArea(s1->getFrameNum());
-		if (judgeArea1 == nullptr || judgeArea1->type != WLFAnimation::JUDGE_TYPE_ATTACK) {
+		AESprite* sprite1 = spriteTable->getItemByHash(i);
+		WLFAnimation* anim1 = (WLFAnimation*)(sprite1->getAnimation());
+		WLFAttackJudgeArea* attackJudge = anim1->getAttackJudge(sprite1->getFrameNum());
+		if (attackJudge == nullptr || ((WLFCharacter*)sprite1)->isAttackLocked()) {
 			continue;
 		}
-		for (INT j = 0; i < spriteCount; j++) {
-			AESprite* s2 = spriteTable->getItemByHash(j);
-			if (i == j || s1->getTeam() == s2->getTeam()) {
+		for (INT j = 0; j < spriteCount; j++) {
+			AESprite* sprite2 = spriteTable->getItemByHash(j);
+			if (i == j || sprite1->getTeam() == sprite2->getTeam()) {
 				continue;
 			}
-			WLFAnimation* anim2 = (WLFAnimation*)(s2->getAnimation());
-			WLFJudgeAreaRect* judgeArea2 = anim2->getJudgeArea(s2->getFrameNum());
-			if (judgeArea2 == nullptr || judgeArea2->type != WLFAnimation::JUDGE_TYPE_ON_HIT) {
+			WLFAnimation* anim2 = (WLFAnimation*)(sprite2->getAnimation());
+			WLFBodyJudgeArea* bodyJudge = anim2->getBodyJudge(sprite2->getFrameNum());
+			if (bodyJudge == nullptr) {
 				continue;
 			}
-			AECollisionResult collisionResult = AENSCollision::rectAndRect(judgeArea1->rect, judgeArea2->rect);
+			AEFrame* frame1 = anim1->getFrame(sprite1->getFrameNum());
+			AEFrame* frame2 = anim2->getFrame(sprite2->getFrameNum());
+			AECollisionResult collisionResult = AENSCollision::rectAndRect(
+				AENSMath::moveRect(attackJudge->rect, sprite1->getCx() - frame1->getCenterx(), sprite1->getCy() - frame1->getCentery()),
+				AENSMath::moveRect(bodyJudge->rect, sprite2->getCx() - frame2->getCenterx(), sprite2->getCy() - frame2->getCentery())
+			);
 			if (collisionResult.isCollided) {
-
+				((WLFCharacter*)sprite1)->setAttackLock(TRUE);
+				sprite2->changeAction(AENSMath::randomIntBetween(20, 21));
+				AERO_SPRITE_DESC descSpr;
+				descSpr.obj = ae_ObjectTable.getItem(10);
+				descSpr.team = -1;  // Neutral
+				descSpr.action = attackJudge->effect;
+				descSpr.flip = SpriteEffects_None;
+				descSpr.cx = collisionResult.point.x;
+				descSpr.cy = collisionResult.point.y;
+				descSpr.layerDepth = 0.0f;
+				AESprite* spark = new AESprite(descSpr);
+				spark->rotateDeg(attackJudge->angle);
+				addSprite(spark);
 			}
 		}
 	}

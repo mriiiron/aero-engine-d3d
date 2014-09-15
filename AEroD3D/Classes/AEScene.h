@@ -38,7 +38,7 @@ public:
 	VOID addSprite(AESprite* sprite);
 	VOID addSpriteAttachment(AESprite* host, AESprite* attachment);
 
-	VOID pause();
+	VOID togglePause() { isPaused = !isPaused; }
 
 	virtual VOID update();
 	virtual VOID render();

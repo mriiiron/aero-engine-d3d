@@ -5,11 +5,14 @@
 #include <sstream>
 
 
-class WLFObjectDataFileReader {
+class WLFDataFileReader {
 
 public:
 
-	static VOID read(std::string fileName, AEObject* obj);
+	static AEResType resourceTypeDecrypt(std::string resTypeStr);
+
+	static VOID readResources(std::string fileName, AEConstantTable<AEResource>* pResourceTable, ID3D11Device** device);
+	static VOID readObject(std::string fileName, AEObject* obj);
 
 private:
 

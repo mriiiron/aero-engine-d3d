@@ -129,6 +129,8 @@ namespace AENSMath {
 	AERect flipRect(AERect rect, AEFlipDirection direction);
 	AEBiasRect flipRect(AEBiasRect rect, AEFlipDirection direction);
 
+	AERect moveRect(RECT rect, FLOAT dx, FLOAT dy);
+
 	XMFLOAT2 lineIntersect(XMFLOAT2 A, XMFLOAT2 B, XMFLOAT2 C, XMFLOAT2 D);
 	BOOLEAN pointEqual(XMFLOAT2 A, XMFLOAT2 B);
 	BOOLEAN pointOnSegment(XMFLOAT2 P, XMFLOAT2 A, XMFLOAT2 B);

@@ -4,7 +4,21 @@
 WLFAnimation::WLFAnimation(AERO_ANIMATION_DESC desc) : AEAnimation(desc) {
 	for (INT i = 0; i < MAX_FRAME_COUNT; i++) {
 		xShiftTable[i] = 0;
-		judgeTable[i] = nullptr;
+		attackJudgeTable[i] = nullptr;
+		bodyJudgeTable[i] = nullptr;
+	}
+}
+
+WLFAnimation::~WLFAnimation() {
+	for (INT i = 0; i < MAX_FRAME_COUNT; i++) {
+		if (attackJudgeTable[i]) {
+			delete attackJudgeTable[i];
+			attackJudgeTable[i] = nullptr;
+		}
+		if (bodyJudgeTable[i]) {
+			delete bodyJudgeTable[i];
+			bodyJudgeTable[i] = nullptr;
+		}
 	}
 }
 
@@ -16,10 +30,18 @@ VOID WLFAnimation::addXShiftForFrame(INT index, INT xShift) {
 	xShiftTable[index] = xShift;
 }
 
-VOID WLFAnimation::addJudgeAreaForFrame(INT index, WLFJudgeAreaRect* judgeArea) {
+VOID WLFAnimation::addAttackJudgeForFrame(INT index, WLFAttackJudgeArea* attackJudgeArea) {
 	if (index < 0 || index >= frameCount) {
 		// Error
 		return;
 	}
-	judgeTable[index] = judgeArea;
+	attackJudgeTable[index] = attackJudgeArea;
+}
+
+VOID WLFAnimation::addBodyJudgeForFrame(INT index, WLFBodyJudgeArea* bodyJudgeArea) {
+	if (index < 0 || index >= frameCount) {
+		// Error
+		return;
+	}
+	bodyJudgeTable[index] = bodyJudgeArea;
 }

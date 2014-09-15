@@ -15,6 +15,25 @@ AEResource::AEResource(AERO_RESOURCE_DESC desc) {
 	cellH = desc.cellH;
 }
 
+INT AEResource::getCellCount() {
+	switch (rtype) {
+	case RES_1x1:
+		return 1;
+	case RES_1x5:
+		return 5;
+	case RES_1x10:
+		return 10;
+	case RES_2x5:
+		return 10;
+	case RES_4x5:
+		return 20;
+	case RES_5x10:
+		return 50;
+	default:
+		return 0;
+	}
+}
+
 AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse) {
 	FLOAT x1, x2, y1, y2;
 	switch (rtype) {

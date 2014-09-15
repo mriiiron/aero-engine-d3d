@@ -102,6 +102,10 @@ AEBiasRect AENSMath::flipRect(AEBiasRect rect, AEFlipDirection direction) {
 	}
 }
 
+AERect AENSMath::moveRect(RECT rect, FLOAT dx, FLOAT dy) {
+	return AERect(rect.left + dx, rect.right + dx, rect.top + dy, rect.bottom + dy);
+}
+
 // Assuming AB and CD is not collineate or parallel
 XMFLOAT2 AENSMath::lineIntersect(XMFLOAT2 A, XMFLOAT2 B, XMFLOAT2 C, XMFLOAT2 D) {
 	XMFLOAT2 result;

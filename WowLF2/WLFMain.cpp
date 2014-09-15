@@ -20,6 +20,7 @@
 #include "resource.h"
 #include "AEroEngine.h"
 
+#include "Classes\WLFFileReader.h"
 #include "Classes\WLFSprites.h"
 #include "Classes\WLFScenes.h"
 
@@ -258,6 +259,8 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 //--------------------------------------------------------------------------------------
 void LoadGameResources() {
 
+	// TODO: WLFDataFileReader::readResources("Resources\\resources.txt", &ae_ResourceTable, &g_pd3dDevice);
+
 	// Warrior Deep
 	AERO_RESOURCE_DESC descRes;
 	descRes.rid = 0;
@@ -281,8 +284,30 @@ void LoadGameResources() {
 	}
 	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Shrine Cave
+	// Slash Effect 0
 	descRes.rid = 10;
+	descRes.rtype = RES_2x5;
+	descRes.cellW = 133;
+	descRes.cellH = 40;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\hit_slash_0.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
+	// Slash Effect 1
+	descRes.rid = 11;
+	descRes.rtype = RES_1x5;
+	descRes.cellW = 70;
+	descRes.cellH = 120;
+	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\hit_slash_1.dds", nullptr, &(descRes.tex));
+	if (FAILED(hr)) {
+		AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	}
+	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+
+	// Shrine Cave
+	descRes.rid = 20;
 	descRes.rtype = RES_1x1;
 	descRes.cellW = 1500;
 	descRes.cellH = 480;

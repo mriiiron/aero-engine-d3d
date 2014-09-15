@@ -19,6 +19,8 @@ public:
 	VOID attack_2();
 
 	VOID adsorbToPlatform();
+	BOOLEAN isAttackLocked() { return attackLock; }
+	VOID setAttackLock(BOOLEAN lock) { attackLock = lock; }
 
 	BOOLEAN isRightKeyPressed, isLeftKeyPressed;
 
@@ -26,6 +28,7 @@ private:
 
 	AEPlatform* onPlatform;
 	INT onPlatformTailIndex;
+	BOOLEAN attackLock;
 
 };
 

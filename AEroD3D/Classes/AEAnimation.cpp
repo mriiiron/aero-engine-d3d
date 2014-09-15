@@ -31,7 +31,12 @@ AEAnimation::AEAnimation(AERO_ANIMATION_DESC desc) {
 }
 
 AEAnimation::~AEAnimation() {
-	// TODO
+	for (INT i = 0; i < MAX_FRAME_COUNT; i++) {
+		if (frameTable[i]) {
+			delete frameTable[i];
+			frameTable[i] = nullptr;
+		}
+	}
 }
 
 VOID AEAnimation::addFrame(INT index, AEFrame* frame, INT endTime) {

@@ -7,7 +7,7 @@ AECollisionResult AENSCollision::rectAndRect(AERect r1, AERect r2) {
 	AECollisionResult result;
 	if (r1.x1 <= r2.x2 && r1.y1 <= r2.y2 && r1.x2 >= r2.x1 && r1.y2 >= r2.y1) {
 		result.isCollided = TRUE;
-		result.point = { 0.0f, 0.0f }; // TODO
+		result.point = { (r1.x1 + r1.x2 + r2.x1 + r2.x2) / 4.0f, (r1.y1 + r1.y2 + r2.y1 + r2.y2) / 4.0f };
 	}
 	else {
 		result.isCollided = FALSE;
@@ -19,7 +19,7 @@ AECollisionResult AENSCollision::rectAndRect(RECT r1, RECT r2) {
 	AECollisionResult result;
 	if (r1.left <= r2.right && r1.top <= r2.bottom && r1.right >= r2.left && r1.bottom >= r2.top) {
 		result.isCollided = TRUE;
-		result.point = { 0.0f, 0.0f }; // TODO
+		result.point = { (r1.left + r1.right + r2.left + r2.right) / 4.0f, (r1.top + r1.bottom + r2.top + r2.bottom) / 4.0f };
 	}
 	else {
 		result.isCollided = FALSE;

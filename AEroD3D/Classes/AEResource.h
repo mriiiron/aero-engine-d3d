@@ -15,7 +15,7 @@
 
 
 typedef enum AEResType {
-	RES_UNKNOWN, RES_1x1, RES_1x5, RES_1x10, RES_2x5, RES_4x5, RES_5x10, RES_FONT
+	RES_UNKNOWN, RES_1x1, RES_1x5, RES_1x10, RES_2x5, RES_4x5, RES_5x10
 };
 
 
@@ -52,6 +52,7 @@ public:
 	INT getCellHeight() { return cellH; }
 	BOOLEAN isBufferEmpty() { return (vertexBuffer.size() == 0 ? TRUE : FALSE); }
 
+	INT getCellCount();
 	AERect getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse = TEXCLIP_INVERSE_NONE);
 	RECT getTexClipInTexel(INT imgOffset, INT imgCellCount, BYTE inverse = TEXCLIP_INVERSE_NONE);
 	VOID addToRenderBuffer(AERect paintArea, AERect texClip, FLOAT alpha, FLOAT zValue);

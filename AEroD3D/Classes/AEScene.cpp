@@ -53,10 +53,6 @@ VOID AEScene::addSpriteAttachment(AESprite* host, AESprite* attachment) {
 	addSprite(attachment);
 }
 
-VOID AEScene::pause() {
-	isPaused = !isPaused;
-}
-
 VOID AEScene::update() {
 	if (!isPaused) {
 		if (bg) {

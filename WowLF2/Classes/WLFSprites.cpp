@@ -11,6 +11,7 @@ WLFCharacter::WLFCharacter(AERO_SPRITE_DESC desc) : AESprite(desc) {
 	onPlatform = nullptr;
 	onPlatformTailIndex = 0;
 	isRightKeyPressed = isLeftKeyPressed = FALSE;
+	attackLock = FALSE;
 }
 
 VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
@@ -64,6 +65,7 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 	BOOLEAN isFrameChange = FALSE;
 	if (time >= anim->getEndTime(frameNum)) {
 		isFrameChange = TRUE;
+		if (attackLock) attackLock = FALSE;
 		frameNum++;
 		if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
 			time = 0;
