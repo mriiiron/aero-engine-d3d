@@ -404,16 +404,16 @@
     <ClCompile Include="Classes\WLFAI.cpp" />
     <ClCompile Include="Classes\WLFAnimation.cpp" />
     <ClCompile Include="Classes\WLFFileReader.cpp" />
-    <ClCompile Include="Classes\WLFScenes.cpp" />
-    <ClCompile Include="Classes\WLFSprites.cpp" />
+    <ClCompile Include="Classes\WLFScene.cpp" />
+    <ClCompile Include="Classes\WLFSprite.cpp" />
     <ClCompile Include="WLFMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\WLFAI.h" />
     <ClInclude Include="Classes\WLFAnimation.h" />
     <ClInclude Include="Classes\WLFFileReader.h" />
-    <ClInclude Include="Classes\WLFScenes.h" />
-    <ClInclude Include="Classes\WLFSprites.h" />
+    <ClInclude Include="Classes\WLFScene.h" />
+    <ClInclude Include="Classes\WLFSprite.h" />
     <CLInclude Include="resource.h" />
     <ResourceCompile Include="AEroD3D.rc" />
   </ItemGroup>

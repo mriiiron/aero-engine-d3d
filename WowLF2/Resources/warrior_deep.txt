@@ -112,9 +112,9 @@ $FrameCount 1 loop -1
 $Anim_End
 
 $Anim 9 land
-$FrameCount 2 next 0
+$FrameCount 3 next 0
 39 38 39
-6 8 8
+2 8 8
 0 0 0
 $Anim_End
 

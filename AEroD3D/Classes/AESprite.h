@@ -102,7 +102,8 @@ public:
 	FLOAT getLayerDepth() { return layerDepth; }
 	AEPoint getCenter() { return AEPoint(cx, cy); }
 	AEObject* getObject() { return obj; }
-	AEAnimation* getAnimation() { return obj->getAnim(action); }
+	AEAnimation* getCurrentAnimation() { return obj->getAnim(action); }
+	AEFrame* getCurrentFrame() { return obj->getAnim(action)->getFrame(frameNum); }
 	std::string getObjName() { return obj->getName(); }
 	AEAI* getAI() { return ai; }
 	AEScene* getScene() { return scene; }

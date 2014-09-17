@@ -12,6 +12,9 @@ $ImageResource 1
 14 44 79
 15 39 79
 16 39 79
+20 39 79
+21 39 79
+22 39 79
 $ImageResource_End
 
 #Frames_End
@@ -27,35 +30,51 @@ $FrameCount 6 loop -1
 $Body 21 18 64 80 $End
 $Anim_End
 
+$Anim 8 in_air
+$FrameCount 1 loop -1
+22
+10
+0
+$Anim_End
+
+$Anim 9 land
+$FrameCount 3 next 0
+20 21 20
+2 8 8
+0 0 0
+$Anim_End
+
 $Anim 20 hit_front_lower
-$FrameCount 2 next 0
-10 11
-8 8
-0 0
+$FrameCount 3 next 0
+10 10 11
+0 8 8
+0 0 0
 $Body 21 18 64 80 $End
+$CreateSprite 15 action: 1 at: 49 50 frame: 1 team: -1 depth: 0.0 $End
 $Anim_End
 
 $Anim 21 hit_front_upper
-$FrameCount 2 next 0
-13 14
-8 8
-0 0
+$FrameCount 3 next 0
+13 13 14
+0 8 8
+0 0 0
 $Body 21 18 64 80 $End
+$CreateSprite 15 action: 2 at: 17 46 frame: 1 team: -1 flip: 3 depth: 0.0 $End
 $Anim_End
 
 $Anim 22 hit_back_lower
-$FrameCount 2 next 0
-15 16
-8 8
+$FrameCount 3 next 0
+15 15 16
+0 8 8
 0 0
 $Body 21 18 64 80 $End
 $Anim_End
 
 $Anim 23 hit_back_upper
-$FrameCount 2 next 0
-10 11
-8 8
-0 0
+$FrameCount 3 next 0
+10 10 11
+0 8 8
+0 0 0
 $Body 21 18 64 80 $End
 $Anim_End
 

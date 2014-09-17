@@ -6,6 +6,7 @@ WLFAnimation::WLFAnimation(AERO_ANIMATION_DESC desc) : AEAnimation(desc) {
 		xShiftTable[i] = 0;
 		attackJudgeTable[i] = nullptr;
 		bodyJudgeTable[i] = nullptr;
+		spriteCreateTable[i] = nullptr;
 	}
 }
 
@@ -18,6 +19,10 @@ WLFAnimation::~WLFAnimation() {
 		if (bodyJudgeTable[i]) {
 			delete bodyJudgeTable[i];
 			bodyJudgeTable[i] = nullptr;
+		}
+		if (spriteCreateTable[i]) {
+			delete spriteCreateTable[i];
+			spriteCreateTable[i] = nullptr;
 		}
 	}
 }
@@ -44,4 +49,12 @@ VOID WLFAnimation::addBodyJudgeForFrame(INT index, WLFBodyJudgeArea* bodyJudgeAr
 		return;
 	}
 	bodyJudgeTable[index] = bodyJudgeArea;
+}
+
+VOID WLFAnimation::addSpriteCreateForFrame(INT index, WLFSpriteCreatePoint* spriteCountPoint) {
+	if (index < 0 || index >= frameCount) {
+		// Error
+		return;
+	}
+	spriteCreateTable[index] = spriteCountPoint;
 }

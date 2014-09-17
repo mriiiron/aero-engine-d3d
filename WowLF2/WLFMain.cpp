@@ -21,8 +21,8 @@
 #include "AEroEngine.h"
 
 #include "Classes\WLFFileReader.h"
-#include "Classes\WLFSprites.h"
-#include "Classes\WLFScenes.h"
+#include "Classes\WLFSprite.h"
+#include "Classes\WLFScene.h"
 
 using namespace DirectX;
 
@@ -259,63 +259,63 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 //--------------------------------------------------------------------------------------
 void LoadGameResources() {
 
-	// TODO: WLFDataFileReader::readResources("Resources\\resources.txt", &ae_ResourceTable, &g_pd3dDevice);
+	WLFDataFileReader::readResources("Resources\\resources.txt");
 
-	// Warrior Deep
-	AERO_RESOURCE_DESC descRes;
-	descRes.rid = 0;
-	descRes.rtype = RES_5x10;
-	descRes.cellW = 80;
-	descRes.cellH = 80;
-	HRESULT hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\warrior_deep_0.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+	//// Warrior Deep
+	//AERO_RESOURCE_DESC descRes;
+	//descRes.rid = 0;
+	//descRes.rtype = RES_5x10;
+	//descRes.cellW = 80;
+	//descRes.cellH = 80;
+	//HRESULT hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\warrior_deep_0.dds", nullptr, &(descRes.tex));
+	//if (FAILED(hr)) {
+	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	//}
+	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Dummy Bandit
-	descRes.rid = 1;
-	descRes.rtype = RES_5x10;
-	descRes.cellW = 80;
-	descRes.cellH = 80;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\dummy_bandit_0.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+	//// Dummy Bandit
+	//descRes.rid = 1;
+	//descRes.rtype = RES_5x10;
+	//descRes.cellW = 80;
+	//descRes.cellH = 80;
+	//hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\dummy_bandit_0.dds", nullptr, &(descRes.tex));
+	//if (FAILED(hr)) {
+	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	//}
+	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Slash Effect 0
-	descRes.rid = 10;
-	descRes.rtype = RES_2x5;
-	descRes.cellW = 133;
-	descRes.cellH = 40;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\hit_slash_0.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+	//// Slash Effect 0
+	//descRes.rid = 10;
+	//descRes.rtype = RES_2x5;
+	//descRes.cellW = 133;
+	//descRes.cellH = 40;
+	//hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\hit_slash_0.dds", nullptr, &(descRes.tex));
+	//if (FAILED(hr)) {
+	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	//}
+	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Slash Effect 1
-	descRes.rid = 11;
-	descRes.rtype = RES_1x5;
-	descRes.cellW = 70;
-	descRes.cellH = 120;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\hit_slash_1.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+	//// Slash Effect 1
+	//descRes.rid = 11;
+	//descRes.rtype = RES_1x5;
+	//descRes.cellW = 70;
+	//descRes.cellH = 120;
+	//hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\hit_slash_1.dds", nullptr, &(descRes.tex));
+	//if (FAILED(hr)) {
+	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	//}
+	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
-	// Shrine Cave
-	descRes.rid = 20;
-	descRes.rtype = RES_1x1;
-	descRes.cellW = 1500;
-	descRes.cellH = 480;
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\shrine_cave.dds", nullptr, &(descRes.tex));
-	if (FAILED(hr)) {
-		AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	}
-	ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+	//// Shrine Cave
+	//descRes.rid = 20;
+	//descRes.rtype = RES_1x1;
+	//descRes.cellW = 1500;
+	//descRes.cellH = 480;
+	//hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\shrine_cave.dds", nullptr, &(descRes.tex));
+	//if (FAILED(hr)) {
+	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
+	//}
+	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 
 }
 

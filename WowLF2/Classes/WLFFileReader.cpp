@@ -2,6 +2,7 @@
 #include "WLFAnimation.h"
 #include "WLFFileReader.h"
 
+extern ID3D11Device*						g_pd3dDevice;
 extern AEConstantTable<AEResource>			ae_ResourceTable;
 
 
@@ -27,7 +28,7 @@ AEResType WLFDataFileReader::resourceTypeDecrypt(std::string resTypeStr) {
 }
 
 
-VOID WLFDataFileReader::readResources(std::string fileName, AEConstantTable<AEResource>* pResourceTable, ID3D11Device** device) {
+VOID WLFDataFileReader::readResources(std::string fileName) {
 
 	std::ifstream fs(fileName);
 	if (fs.fail()) {
@@ -46,17 +47,17 @@ VOID WLFDataFileReader::readResources(std::string fileName, AEConstantTable<AERe
 		iss >> item;  descRes.rid = stoi(item);
 		iss >> item;  descRes.rtype = resourceTypeDecrypt(item);
 		iss >> item;  descRes.cellW = stoi(item);
-		iss >> item;  descRes.cellW = stoi(item);
+		iss >> item;  descRes.cellH = stoi(item);
 		iss >> item;
 		newSizeW = strlen(item.c_str()) + 1;
 		convertedChars = 0;
 		wchar_t* witem = new wchar_t[newSizeW];
 		mbstowcs_s(&convertedChars, witem, newSizeW, item.c_str(), _TRUNCATE);  // Must convert std::string to wchar_t*
-		HRESULT hr = CreateDDSTextureFromFile(*device, witem, nullptr, &(descRes.tex));
+		HRESULT hr = CreateDDSTextureFromFile(g_pd3dDevice, witem, nullptr, &(descRes.tex));
 		if (FAILED(hr)) {
 			AENSGameControl::exitGame("On loading texture: Texture load failed.");
 		}
-		pResourceTable->addAt(descRes.rid, new AEResource(descRes));
+		ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
 	}
 
 	fs.close();
@@ -193,6 +194,52 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 								}
 								else {
 									anim->addBodyJudgeForFrame(frame, bodyJudge);
+								}
+							}
+							else if (item == "$CreateSprite") {
+								WLFSpriteCreatePoint* spriteCreate = new WLFSpriteCreatePoint;
+								iss >> item;  spriteCreate->oid = stoi(item);
+								spriteCreate->descSprite.obj = nullptr;
+								spriteCreate->descSprite.action = 0;
+								spriteCreate->descSprite.cx = 0.0f;
+								spriteCreate->descSprite.cy = 0.0f;
+								spriteCreate->descSprite.flip = SpriteEffects_None;
+								spriteCreate->descSprite.layerDepth = 0.0f;
+								spriteCreate->descSprite.team = 0;
+								iss >> item;
+								INT frame = -1;
+								while (item != "$End") {
+									if (item == "frame:") {
+										iss >> item;  frame = stoi(item);
+									}
+									else if (item == "action:") {
+										iss >> item;  spriteCreate->descSprite.action = stoi(item);
+									}
+									else if (item == "team:") {
+										iss >> item;  spriteCreate->descSprite.team = stoi(item);
+									}
+									else if (item == "flip:") {
+										iss >> item;  spriteCreate->flip = stoi(item);
+									}
+									else if (item == "at:") {
+										iss >> item;  spriteCreate->x = stoi(item);
+										iss >> item;  spriteCreate->y = stoi(item);
+									}
+									else if (item == "depth:") {
+										iss >> item;  spriteCreate->descSprite.layerDepth = stof(item);
+									}
+									else if (item == "count:") {
+										iss >> item;  spriteCreate->count = stoi(item);
+									}
+									iss >> item;
+								}
+								if (frame == -1) {
+									for (INT i = 0; i < anim->getFrameCount(); i++) {
+										anim->addSpriteCreateForFrame(i, spriteCreate);
+									}
+								}
+								else {
+									anim->addSpriteCreateForFrame(frame, spriteCreate);
 								}
 							}
 						}

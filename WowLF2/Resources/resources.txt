@@ -1,4 +1,6 @@
 0 5x10 80 80 Resources\warrior_deep_0.dds
 1 5x10 80 80 Resources\dummy_bandit_0.dds
 10 2x5 133 40 Resources\hit_slash_0.dds
+11 1x5 70 120 Resources\hit_slash_1.dds
+15 5x10 40 40 Resources\blood_0.dds
 20 1x1 1500 480 Resources\shrine_cave.dds
