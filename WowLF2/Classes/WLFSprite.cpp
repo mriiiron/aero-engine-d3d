@@ -19,7 +19,7 @@ VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AE
 	onPlatform = platform;
 	onPlatformTailIndex = tailNodeIndex;
 	state = STATE_ON_GROUND;
-	changeAction(9);
+	changeAction(WLFCharacter::ACTION_LAND);
 	ay = 0.0f;
 	vy = 0.0f;
 	adsorbToPlatform();
@@ -28,26 +28,44 @@ VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AE
 //  Overrides AESprite::update() completely
 VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 	if (state == STATE_IN_AIR) {
-		changeAction(8);
+		changeAction(WLFCharacter::ACTION_IN_AIR);
 		ay = ((WLFShrineCaveScene*)scene)->GRAVITY;
 	}
 	if (state == STATE_ON_GROUND) {
-		if (action == 0) {
+		if (action == WLFCharacter::ACTION_STAND) {
 			if (isRightKeyPressed && !isLeftKeyPressed) {
-				changeAction(2);
-				flip = SpriteEffects::SpriteEffects_None;
-				setVx(2.0f);
+				if (flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
+					changeAction(WLFCharacter::ACTION_TURN);
+				}
+				else {
+					changeAction(WLFCharacter::ACTION_WALK);
+					flip = SpriteEffects::SpriteEffects_None;
+					setVx(2.0f);
+				}
 			}
 			else if (!isRightKeyPressed && isLeftKeyPressed) {
-				changeAction(2);
-				flip = SpriteEffects::SpriteEffects_FlipHorizontally;
-				setVx(2.0f);
+				if (flip == SpriteEffects::SpriteEffects_None) {
+					changeAction(WLFCharacter::ACTION_TURN);
+				}
+				else {
+					changeAction(WLFCharacter::ACTION_WALK);
+					flip = SpriteEffects::SpriteEffects_FlipHorizontally;
+					setVx(2.0f);
+				}
 			}
 		}
-		else if (action == 2) {
+		else if (action == WLFCharacter::ACTION_WALK) {
 			if (isRightKeyPressed == isLeftKeyPressed) {
-				changeAction(0);
+				changeAction(WLFCharacter::ACTION_STAND);
 				setVx(0.0f);
+			}
+			else if (isRightKeyPressed && !isLeftKeyPressed && flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
+				setVx(0.0f);
+				changeAction(WLFCharacter::ACTION_TURN);
+			}
+			else if (!isRightKeyPressed && isLeftKeyPressed && flip == SpriteEffects::SpriteEffects_None) {
+				setVx(0.0f);
+				changeAction(WLFCharacter::ACTION_TURN);
 			}
 		}
 	}
@@ -69,15 +87,14 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 		if (attackLock) attackLock = FALSE;
 		frameNum++;
 		if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
-
 			time = 0;
 		}
 		vx += anim->getXShift(frameNum);
 		WLFSpriteCreatePoint* spriteCreate = anim->getSpriteCreate(frameNum);
 		if (spriteCreate != nullptr) {
 			spriteCreate->descSprite.obj = ae_ObjectTable.getItem(spriteCreate->oid);
-			spriteCreate->descSprite.cx = this->cx - fac * (getCurrentFrame()->getCenterx() - spriteCreate->x);
-			spriteCreate->descSprite.cy = this->cy - getCurrentFrame()->getCentery() + spriteCreate->y;
+			spriteCreate->descSprite.cx = cx - fac * (getCurrentFrame()->getCenterx() - spriteCreate->x);
+			spriteCreate->descSprite.cy = cy - getCurrentFrame()->getCentery() + spriteCreate->y;
 			switch (spriteCreate->flip) {
 			case WLFSpriteCreatePoint::FLIP_ALWAYS_RIGHT:
 				spriteCreate->descSprite.flip = SpriteEffects_None;
@@ -86,16 +103,19 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 				spriteCreate->descSprite.flip = SpriteEffects_FlipHorizontally;
 				break;
 			case WLFSpriteCreatePoint::FLIP_OPPOSITE_TO_HOST:
-				spriteCreate->descSprite.flip = (this->flip == SpriteEffects_None ? SpriteEffects_FlipHorizontally : SpriteEffects_None);
+				spriteCreate->descSprite.flip = (flip == SpriteEffects_None ? SpriteEffects_FlipHorizontally : SpriteEffects_None);
 				break;
 			default:
-				spriteCreate->descSprite.flip = this->flip;
+				spriteCreate->descSprite.flip = flip;
 				break;
 			}
 			scene->addSprite(new AESprite(spriteCreate->descSprite));
 		}
 		if (frameNum == anim->getFrameCount()) {
 			frameNum = 0;
+			if (anim->isTurnAfterAnim()) {
+				flip = (flip == SpriteEffects_None ? SpriteEffects_FlipHorizontally : SpriteEffects_None);
+			}
 			if (!anim->isLoop()) {
 				changeAction(anim->getNext());
 			}
@@ -149,13 +169,13 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 
 VOID WLFCharacter::toBattleStance() {
 	if (this->getAction() == 0) {
-		this->changeAction(4);
+		this->changeAction(WLFCharacter::ACTION_BATTLE_STANCE_START);
 	}
 }
 
 VOID WLFCharacter::toStand() {
 	if (this->getAction() == 1) {
-		this->changeAction(5);
+		this->changeAction(WLFCharacter::ACTION_BATTLE_STANCE_END);
 	}
 }
 

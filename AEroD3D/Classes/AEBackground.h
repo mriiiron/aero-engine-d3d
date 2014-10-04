@@ -165,7 +165,7 @@ public:
 	VOID addAnimAt(INT index, AEBGLayerAnim* layerAnim);
 
 	VOID update();
-	VOID render(AEPoint ae_CameraCenter);
+	VOID render(XMFLOAT2 ae_CameraCenter);
 
 private:
 

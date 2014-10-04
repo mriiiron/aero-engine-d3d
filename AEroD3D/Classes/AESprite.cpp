@@ -4,10 +4,8 @@
 #include <cmath>
 #include "AEMath.h"
 #include "AEPhysics.h"
-#include "AETable.h"
 #include "AEResource.h"
 #include "AEBackground.h"
-#include "AEPlatform.h"
 #include "AESprite.h"
 
 extern AEConstantTable<AEObject>			ae_ObjectTable;

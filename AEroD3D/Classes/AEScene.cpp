@@ -75,23 +75,20 @@ VOID AEScene::update() {
 	}
 }
 
-VOID AEScene::render() {
-	if (bg) {
+VOID AEScene::render(INT renderMode) {
+	if (bg && (renderMode & RENDER_BACKGROUND)) {
 		bg->render(ae_Camera.getFocus());
-		//ae_ResourceTable.renderAndClear();
 	}
-	if (spriteTable) {
+	if (spriteTable && (renderMode & RENDER_SPRITES)) {
 		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
 			AESprite* sprite = spriteTable->getItemByHash(iHash);
 			if (!(sprite->isDead())) {
 				sprite->render();
 			}
 		}
-		//ae_ResourceTable.renderAndClear();
 	}
-	if (hud) {
-		hud->addToRenderBuffer();
-		//ae_ResourceTable.renderAndClear();
+	if (hud && (renderMode & RENDER_HUD)) {
+		// TODO: HUD Render
 	}
 }
 

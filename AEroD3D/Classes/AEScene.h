@@ -20,6 +20,11 @@ class AEScene {
 
 public:
 
+	const static INT RENDER_ALL = 0x7;
+	const static INT RENDER_BACKGROUND = 0x1;
+	const static INT RENDER_SPRITES = 0x2;
+	const static INT RENDER_HUD = 0x4;
+
 	AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
 	AEScene(INT spriteTableSize);
 	~AEScene();
@@ -41,7 +46,7 @@ public:
 	VOID togglePause() { isPaused = !isPaused; }
 
 	virtual VOID update();
-	virtual VOID render();
+	virtual VOID render(INT renderMode = RENDER_ALL);
 	virtual VOID processInput();
 
 protected:

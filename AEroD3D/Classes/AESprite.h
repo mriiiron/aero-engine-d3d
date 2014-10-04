@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "AETable.h"
+#include "AEPlatform.h"
 #include "AECollision.h"
 #include "AEObject.h"
 #include "AEAI.h"

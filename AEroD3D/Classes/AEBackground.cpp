@@ -105,7 +105,7 @@ VOID AEBackground::update() {
 	}
 }
 
-VOID AEBackground::render(AEPoint ae_CameraCenter) {
+VOID AEBackground::render(XMFLOAT2 ae_CameraCenter) {
 	for (INT i = layerCount - 1; i >= 0; i--) {
 		FLOAT dx = ae_CameraCenter.x;
 		FLOAT depth = FLOAT(layerTable[i]->getDepth());

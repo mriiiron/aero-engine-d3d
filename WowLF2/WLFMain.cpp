@@ -60,6 +60,10 @@ extern XMMATRIX								gm_World;
 extern XMMATRIX								gm_View;
 extern XMMATRIX								gm_Projection;
 extern XMMATRIX								gm_Transform;
+extern XMMATRIX								gm_TransformForHUD;
+
+extern INT									gi_WindowWidth;
+extern INT									gi_WindowHeight;
 
 LPDIRECTINPUT8								g_pDirectInput;
 LPDIRECTINPUTDEVICE8						g_pKeyboardDevice;
@@ -389,10 +393,22 @@ void Render() {
 	// Clear the depth buffer to 1.0 (max depth)
 	g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 
+	// Change the view matrix by camera position
+	XMVECTOR Eye = XMVectorSet((INT)(ae_Camera.getFocus().x - (gi_WindowWidth / 2.0f)), (INT)(ae_Camera.getFocus().y - (gi_WindowHeight / 2.0f)), 0.0f, 0.0f);
+	XMVECTOR At = XMVectorSet((INT)(ae_Camera.getFocus().x - (gi_WindowWidth / 2.0f)), (INT)(ae_Camera.getFocus().y - (gi_WindowHeight / 2.0f)), 100.0f, 0.0f);
+	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	gm_View = XMMatrixLookAtLH(Eye, At, Up);
+
 	// Calculate the overall transform matrix
 	gm_Transform = gm_World * gm_View * gm_Projection;
 
-	// Begin rendering
+	// Get and check the current active scene
+	AEScene* activeScene = ae_SceneManager.getActiveScene();
+	if (activeScene == nullptr) {
+		AENSGameControl::exitGame("On gameplay: No active scene.");
+	}
+
+	// Render transformed things (non-HUD things)
 	xtk_SpriteBatch->Begin(
 		SpriteSortMode_BackToFront,
 		g_pBlendState,
@@ -402,13 +418,20 @@ void Render() {
 		nullptr, // TODO: Apply shaders
 		gm_Transform
 	);
+	activeScene->render(AEScene::RENDER_BACKGROUND | AEScene::RENDER_SPRITES);
+	xtk_SpriteBatch->End();
 
-	AEScene* activeScene = ae_SceneManager.getActiveScene();
-	if ( activeScene == nullptr ) {
-		AENSGameControl::exitGame("On gameplay: No active scene.");
-	}
-	activeScene->render();
-
+	// Render HUD and debug informations (keeps stationary position on game window)
+	xtk_SpriteBatch->Begin(
+		SpriteSortMode_BackToFront,
+		g_pBlendState,
+		g_pSamplerLinear,
+		nullptr,
+		g_pRasterizerState,
+		nullptr, // TODO: Apply shaders
+		gm_TransformForHUD
+	);
+	activeScene->render(AEScene::RENDER_HUD);
 	LPTSTR strSpriteCount = new TCHAR[1024];
 	wsprintf(strSpriteCount, L"Sprite Count: %d", activeScene->getSpriteTable()->getHashCount());
 	xtk_SpriteFont->DrawString(xtk_SpriteBatch, strSpriteCount, XMFLOAT2(-320.0f, -240.0f));

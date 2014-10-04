@@ -11,7 +11,7 @@ public:
 
 	VOID initialize();
 	VOID update();
-	VOID render();
+	VOID render(INT renderMode = RENDER_ALL);
 	VOID processInput();
 
 	VOID processCollision();

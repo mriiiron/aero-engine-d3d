@@ -42,6 +42,10 @@ XMMATRIX									gm_World;
 XMMATRIX									gm_View;
 XMMATRIX									gm_Projection;
 XMMATRIX									gm_Transform;
+XMMATRIX									gm_TransformForHUD;
+
+INT											gi_WindowWidth;
+INT											gi_WindowHeight;
 
 //--------------------------------------------------------------------------------------
 // AE Global Variables
@@ -143,8 +147,8 @@ HRESULT AENSCore::InitDevice()
 
 	RECT rc;
 	GetClientRect(g_hWnd, &rc);
-	UINT width = rc.right - rc.left;
-	UINT height = rc.bottom - rc.top;
+	gi_WindowWidth = rc.right - rc.left;
+	gi_WindowHeight = rc.bottom - rc.top;
 
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
@@ -172,8 +176,8 @@ HRESULT AENSCore::InitDevice()
 	DXGI_SWAP_CHAIN_DESC sd;
 	ZeroMemory(&sd, sizeof(sd));
 	sd.BufferCount = 1;
-	sd.BufferDesc.Width = width;
-	sd.BufferDesc.Height = height;
+	sd.BufferDesc.Width = gi_WindowWidth;
+	sd.BufferDesc.Height = gi_WindowHeight;
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
@@ -228,8 +232,8 @@ HRESULT AENSCore::InitDevice()
 	// Create depth stencil texture
 	D3D11_TEXTURE2D_DESC descDepth;
 	ZeroMemory(&descDepth, sizeof(descDepth));
-	descDepth.Width = width;
-	descDepth.Height = height;
+	descDepth.Width = gi_WindowWidth;
+	descDepth.Height = gi_WindowHeight;
 	descDepth.MipLevels = 1;
 	descDepth.ArraySize = 1;
 	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -257,8 +261,8 @@ HRESULT AENSCore::InitDevice()
 
 	// Setup the viewport
 	D3D11_VIEWPORT vp;
-	vp.Width = (FLOAT)width;
-	vp.Height = (FLOAT)height;
+	vp.Width = (FLOAT)gi_WindowWidth;
+	vp.Height = (FLOAT)gi_WindowHeight;
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0;
@@ -410,14 +414,18 @@ HRESULT AENSCore::InitDevice()
 	gm_World = XMMatrixIdentity();
 
 	// Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet(-(width / 2.0f), -(height / 2.0f), 0.0f, 0.0f);
-	XMVECTOR At = XMVectorSet(-(width / 2.0f), -(height / 2.0f), 100.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet(-(gi_WindowWidth / 2.0f), -(gi_WindowHeight / 2.0f), 0.0f, 0.0f);
+	XMVECTOR At = XMVectorSet(-(gi_WindowWidth / 2.0f), -(gi_WindowHeight / 2.0f), 100.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	gm_View = XMMatrixLookAtLH(Eye, At, Up);
-	//gm_View = XMMatrixIdentity();
+	// gm_View = XMMatrixIdentity();
 
 	// Initialize the projection matrix
 	gm_Projection = XMMatrixIdentity();
+
+	// Initialize transform matrices
+	gm_TransformForHUD = gm_World * gm_View * gm_Projection;
+	gm_Transform = gm_World * gm_View * gm_Projection;
 
 	xtk_SpriteBatch = new SpriteBatch(g_pImmediateContext);
 	xtk_SpriteFont = new SpriteFont(g_pd3dDevice, L"Resources\\arial.spritefont");

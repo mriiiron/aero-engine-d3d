@@ -8,6 +8,7 @@ WLFAnimation::WLFAnimation(AERO_ANIMATION_DESC desc) : AEAnimation(desc) {
 		bodyJudgeTable[i] = nullptr;
 		spriteCreateTable[i] = nullptr;
 	}
+	isTurn = FALSE;
 }
 
 WLFAnimation::~WLFAnimation() {

@@ -9,34 +9,36 @@
 
 #pragma once
 
-
-enum AECameraMode {
-	CAMMODE_NONE, CAMMODE_STABLE, CAMMODE_CHASE, CAMMODE_KEYBOARD
-};
+#include "AESprite.h"
 
 
 class AECamera {
 
 public:
 
+	const static INT MODE_NONE = 0;
+	const static INT MODE_STABLE = 1;
+	const static INT MODE_CHASE = 2;
+	const static INT MODE_KEYBOARD = 3;
+
 	AECamera();
 
-	VOID move();
-	VOID update();
-	VOID changeTarget();
 	VOID setFocus(FLOAT _x, FLOAT _y) { focus.x = _x;  focus.y = _y; }
 	VOID setVx(FLOAT _vx) { vx = _vx; }
 	VOID setVy(FLOAT _vy) { vy = _vy; }
-	VOID setMode(AECameraMode _mode) { mode = _mode; }
-	VOID setTargetID(INT _targetID) { targetID = _targetID; }
+	VOID setMode(INT _mode) { mode = _mode; }
+	VOID setTarget(AESprite* _target) { target = _target; }
 	VOID moveFocus(FLOAT dx, FLOAT dy) { focus.x += dx;  focus.y += dy; }
-	AEPoint getFocus() { return focus; }
+	XMFLOAT2 getFocus() { return focus; }
+
+	VOID move(FLOAT dx, FLOAT dy) { focus.x += dx;  focus.y += dy; }
+	VOID update() { focus.x += vx; focus.y += vy; }
 
 private:
 
-	AECameraMode mode;
-	AEPoint focus;
+	INT mode;
+	XMFLOAT2 focus;
 	FLOAT vx, vy;
-	INT targetID;
+	AESprite* target;
 
 };

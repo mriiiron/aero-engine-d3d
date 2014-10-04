@@ -62,6 +62,9 @@ public:
 	VOID addAttackJudgeForFrame(INT index, WLFAttackJudgeArea* attackJudgeArea);
 	VOID addBodyJudgeForFrame(INT index, WLFBodyJudgeArea* bodyJudgeArea);
 	VOID addSpriteCreateForFrame(INT index, WLFSpriteCreatePoint* bodyJudgeArea);
+	VOID setTurnAfterAnim(BOOLEAN _isTurn) { isTurn = _isTurn; }
+
+	BOOLEAN isTurnAfterAnim() { return isTurn; }
 
 private:
 
@@ -69,5 +72,6 @@ private:
 	WLFAttackJudgeArea* attackJudgeTable[MAX_FRAME_COUNT];
 	WLFBodyJudgeArea*  bodyJudgeTable[MAX_FRAME_COUNT];
 	WLFSpriteCreatePoint* spriteCreateTable[MAX_FRAME_COUNT];
+	BOOLEAN isTurn;
 
 };

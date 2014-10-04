@@ -11,7 +11,7 @@ extern AEConstantTable<AEResource>			ae_ResourceTable;
 extern AEConstantTable<AEObject>			ae_ObjectTable;
 extern AEBackgroundLibrary					ae_BGLibrary;
 extern AESceneManager						ae_SceneManager;
-
+extern AECamera								ae_Camera;
 
 const FLOAT WLFShrineCaveScene::GRAVITY = 0.2f;
 
@@ -101,7 +101,10 @@ VOID WLFShrineCaveScene::initialize() {
 	addSprite(deep);
 
 	// Set player
-	this->player = deep;
+	player = deep;
+
+	// Set camera focusing on player
+	ae_Camera.setFocus(player->getCx(), 0.0f);
 
 	// Create Dummy
 	descSpr.obj = ae_ObjectTable.getItem(1);
@@ -121,8 +124,9 @@ VOID WLFShrineCaveScene::update() {
 	AEScene::update();
 }
 
-VOID WLFShrineCaveScene::render() {
-	AEScene::render();
+VOID WLFShrineCaveScene::render(INT renderMode) {
+	ae_Camera.setFocus(player->getCx(), 0.0f);
+	AEScene::render(renderMode);
 }
 
 VOID WLFShrineCaveScene::processInput() {
@@ -200,7 +204,7 @@ VOID WLFShrineCaveScene::processCollision() {
 			if (collisionResult.isCollided) {
 				
 				((WLFCharacter*)sprite1)->setAttackLock(TRUE);
-				sprite2->changeAction(AENSMath::randomIntBetween(20, 21));
+				sprite2->changeAction(AENSMath::randomIntBetween(WLFCharacter::ACTION_HIT_FRONT_LOWER, WLFCharacter::ACTION_HIT_FRONT_UPPER));
 				
 				AERO_SPRITE_DESC descSpr;
 				descSpr.obj = ae_ObjectTable.getItem(10);  // Slash Effect

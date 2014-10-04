@@ -242,6 +242,13 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 									anim->addSpriteCreateForFrame(frame, spriteCreate);
 								}
 							}
+							else if (item == "$Turn") {
+								anim->setTurnAfterAnim(TRUE);
+								iss >> item;
+								while (item != "$End") {
+									iss >> item;
+								}
+							}
 						}
 						delete[] frameNums;
 						delete[] endTimes;
