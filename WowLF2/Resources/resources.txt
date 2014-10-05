@@ -4,3 +4,6 @@
 11 1x5 70 120 Resources\hit_slash_1.dds
 15 5x10 40 40 Resources\blood_0.dds
 20 1x1 1500 480 Resources\shrine_cave.dds
+30 1x1 125 34 Resources\ui_namepad.dds
+31 5x1 85 7 Resources\ui_bars.dds
+32 1x1 30 30 Resources\ui_f_deep.dds

@@ -21,6 +21,8 @@ INT AEResource::getCellCount() {
 		return 1;
 	case RES_1x5:
 		return 5;
+	case RES_5x1:
+		return 5;
 	case RES_1x10:
 		return 10;
 	case RES_2x5:
@@ -48,6 +50,12 @@ AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse) {
 		x2 = x1 + 0.2f * imgCellCount;
 		y1 = 0.0f;
 		y2 = 1.0f;
+		break;
+	case RES_5x1:
+		x1 = 0.0f;
+		x2 = 1.0f;
+		y1 = 0.2f * (imgOffset / 10);
+		y2 = y1 + 0.2f;
 		break;
 	case RES_1x10:
 		x1 = 0.1f * (imgOffset % 10);
@@ -108,6 +116,12 @@ RECT AEResource::getTexClipInTexel(INT imgOffset, INT imgCellCount, BYTE inverse
 		x2 = x1 + cellW * imgCellCount;
 		y1 = 0;
 		y2 = cellH;
+		break;
+	case RES_5x1:
+		x1 = 0;
+		x2 = cellW;
+		y1 = cellH * (imgOffset / 10);
+		y2 = y1 + cellH;
 		break;
 	case RES_1x10:
 		x1 = cellW * (imgOffset % 10);

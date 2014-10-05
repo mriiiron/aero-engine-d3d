@@ -428,7 +428,7 @@ HRESULT AENSCore::InitDevice()
 	gm_Transform = gm_World * gm_View * gm_Projection;
 
 	xtk_SpriteBatch = new SpriteBatch(g_pImmediateContext);
-	xtk_SpriteFont = new SpriteFont(g_pd3dDevice, L"Resources\\arial.spritefont");
+	xtk_SpriteFont = new SpriteFont(g_pd3dDevice, L"Resources\\arial_10.spritefont");
 
 	return S_OK;
 }

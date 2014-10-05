@@ -42,6 +42,7 @@ public:
 
 	VOID addSprite(AESprite* sprite);
 	VOID addSpriteAttachment(AESprite* host, AESprite* attachment);
+	VOID addSpriteForHUD(AESprite* hudSprite);
 
 	VOID togglePause() { isPaused = !isPaused; }
 

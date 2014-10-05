@@ -1,0 +1,42 @@
+#Frames
+
+$ImageResource 30
+0 0 0
+$ImageResource_End
+
+$ImageResource 31
+0 -37 -2
+1 -37 -2
+$ImageResource_End
+
+$ImageResource 32
+0 -2 -2
+$ImageResource_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 namepad
+$FrameCount 1 loop -1
+0
+100
+0
+$Anim_End
+
+$Anim 1 bar_hp
+$FrameCount 1 loop -1
+1
+100
+0
+$Anim_End
+
+$Anim 2 face_deep
+$FrameCount 1 loop -1
+6
+100
+0
+$Anim_End
+
+#Animations_End

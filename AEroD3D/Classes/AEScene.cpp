@@ -31,6 +31,7 @@ AEScene::AEScene(INT spriteTableSize) {
 	for (INT i = 0; i < 256; i++) {
 		keyStateBuffer[i] = 0;
 	}
+	isPauseKeyPressed = isPaused = FALSE;
 }
 
 AEScene::~AEScene() {
@@ -51,6 +52,11 @@ VOID AEScene::addSpriteAttachment(AESprite* host, AESprite* attachment) {
 	}
 	host->getAttachmentTable()->add(attachment);
 	addSprite(attachment);
+}
+
+VOID AEScene::addSpriteForHUD(AESprite* hudSprite) {
+	hudSprite->setScene(this);
+	hud->getSpriteTable()->add(hudSprite);
 }
 
 VOID AEScene::update() {
@@ -88,7 +94,7 @@ VOID AEScene::render(INT renderMode) {
 		}
 	}
 	if (hud && (renderMode & RENDER_HUD)) {
-		// TODO: HUD Render
+		hud->render();
 	}
 }
 

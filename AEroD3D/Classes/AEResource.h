@@ -15,7 +15,7 @@
 
 
 typedef enum AEResType {
-	RES_UNKNOWN, RES_1x1, RES_1x5, RES_1x10, RES_2x5, RES_4x5, RES_5x10
+	RES_UNKNOWN, RES_1x1, RES_1x5, RES_5x1, RES_1x10, RES_2x5, RES_4x5, RES_5x10
 };
 
 

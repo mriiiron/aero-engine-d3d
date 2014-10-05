@@ -22,6 +22,9 @@ AEResType WLFDataFileReader::resourceTypeDecrypt(std::string resTypeStr) {
 	else if (resTypeStr == "1x5") {
 		return RES_1x5;
 	}
+	else if (resTypeStr == "5x1") {
+		return RES_5x1;
+	}
 	else {
 		return RES_1x1;
 	}

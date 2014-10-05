@@ -24,8 +24,8 @@
 
 #include "Classes\AEObject.h"
 
-#include "Classes\AEHeadUpDisplay.h"
 #include "Classes\AESprite.h"
+#include "Classes\AEHeadUpDisplay.h"
 #include "Classes\AECamera.h"
 
 #include "Classes\AEScene.h"

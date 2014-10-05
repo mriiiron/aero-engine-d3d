@@ -331,7 +331,7 @@ void InitGameplay() {
 	AENSCore::AEInitialize();
 
 	// Create Scene
-	WLFShrineCaveScene* scene = new WLFShrineCaveScene(nullptr, nullptr, new AEHashedTable<AESprite>(100), nullptr);
+	WLFShrineCaveScene* scene = new WLFShrineCaveScene(100);
 	ae_SceneManager.addSceneAt(0, scene);
 	scene->initialize();
 
@@ -421,7 +421,7 @@ void Render() {
 	activeScene->render(AEScene::RENDER_BACKGROUND | AEScene::RENDER_SPRITES);
 	xtk_SpriteBatch->End();
 
-	// Render HUD and debug informations (keeps stationary position on game window)
+	// Render HUD (keeps stationary position on game window)
 	xtk_SpriteBatch->Begin(
 		SpriteSortMode_BackToFront,
 		g_pBlendState,
@@ -432,9 +432,11 @@ void Render() {
 		gm_TransformForHUD
 	);
 	activeScene->render(AEScene::RENDER_HUD);
+
+	// Render debug information
 	LPTSTR strSpriteCount = new TCHAR[1024];
 	wsprintf(strSpriteCount, L"Sprite Count: %d", activeScene->getSpriteTable()->getHashCount());
-	xtk_SpriteFont->DrawString(xtk_SpriteBatch, strSpriteCount, XMFLOAT2(-320.0f, -240.0f));
+	xtk_SpriteFont->DrawString(xtk_SpriteBatch, strSpriteCount, XMFLOAT2(-320.0f, 220.0f));
 	xtk_SpriteBatch->End();
 
 	// Present our back buffer to our front buffer

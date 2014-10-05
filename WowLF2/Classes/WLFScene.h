@@ -5,7 +5,7 @@ class WLFShrineCaveScene : public AEScene {
 
 public:
 
-	WLFShrineCaveScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
+	WLFShrineCaveScene(INT spriteTableSize);
 
 	static const FLOAT GRAVITY;
 
