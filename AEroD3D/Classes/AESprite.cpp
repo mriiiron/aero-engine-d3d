@@ -12,6 +12,11 @@ extern AEConstantTable<AEObject>			ae_ObjectTable;
 extern SpriteBatch*							xtk_SpriteBatch;
 
 AESprite::AESprite(AERO_SPRITE_DESC desc) {
+	keyState = 0;
+	state = 0;
+	index = frameNum = time = timeToStiff = 0;
+	vx = vy = ax = ay = angle = angleDisplay = vAngle = vAngleDisplay = 0.0f;
+	alpha = 1.0f;
 	obj = desc.obj;
 	action = desc.action;
 	team = desc.team;

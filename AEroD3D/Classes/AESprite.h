@@ -73,7 +73,6 @@ public:
 	VOID setAy(FLOAT _ay) { ay = _ay; }
 	VOID setVx(FLOAT _vx) { vx = _vx; }
 	VOID setVy(FLOAT _vy) { vy = _vy; }
-	VOID setGroundSpeed(FLOAT _speed) { gndSpeed = _speed; }
 	VOID setFlip(SpriteEffects _flip) { flip = _flip; }
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
 	VOID setAlpha(FLOAT _alpha) { alpha = _alpha; }
@@ -88,10 +87,9 @@ public:
 	INT getState() { return state; }
 	INT getTeam() { return team; }
 	INT getStiffTime() { return timeToStiff; }
-	INT getKeyState() { return keyState; }
+	UINT getKeyState() { return keyState; }
 	INT getHP() { return hpValue; }
 	INT getFlip() { return flip; }
-	FLOAT getGroundSpeed() { return gndSpeed; }
 	FLOAT getCx() { return cx; }
 	FLOAT getCy() { return cy; }
 	FLOAT getVx() { return vx; }
@@ -114,12 +112,14 @@ public:
 	VOID stiffen(INT _time) { timeToStiff = _time; }
 	VOID lockAtkJudge() { atkJudgeLock = 1; }
 	VOID unlockAtkJudge() { atkJudgeLock = 0; }
-	VOID keyDown(INT _key) { keyState = keyState | _key; }
-	VOID keyUp(INT _key) { keyState = keyState & ~_key; }
+
+	VOID keyDown(UINT _key) { keyState |= _key; }
+	VOID keyUp(UINT _key) { keyState &= ~_key; }
+	BOOLEAN isKeyPressed(UINT _key) { return ((_key & keyState) == 0 ? false : true); }
+
 	VOID takeDamage(INT damage) { hpValue -= damage; }
 	VOID kill() { deadFlag = TRUE; }
 	BOOLEAN isAtkJudgeLocked() { return atkJudgeLock; }
-	BOOLEAN isKeyDown(INT _key) { return (BOOLEAN)(_key & keyState); }
 	BOOLEAN isDead() { return deadFlag; }
 
 	VOID turnOverHorizontally() { if (flip == SpriteEffects_None) flip = SpriteEffects_FlipHorizontally; else if (flip == SpriteEffects_FlipHorizontally) flip = SpriteEffects_None; }
@@ -171,10 +171,11 @@ protected:
 	BOOLEAN deadFlag;
 	INT timeToLive;
 
-	INT index = 0, frameNum = 0, time = 0, timeToStiff = 0;
-	FLOAT vx = 0.0f, vy = 0.0f, ax = 0.0f, ay = 0.0f, alpha = 1.0f, angle = 0.0f, angleDisplay = 0.0f, vAngle = 0.0f, vAngleDisplay = 0.0f, gndSpeed = 0.0f;
-	FLOAT layerDepth = 0.0f;
-	INT state = 0, keyState = 0, drop, onLandform = 0;
+	INT index, frameNum, time, timeToStiff;
+	FLOAT vx, vy, ax, ay, angle, angleDisplay, vAngle, vAngleDisplay;
+	FLOAT alpha, layerDepth;
+	INT state;
+	UINT keyState;
 	BOOLEAN atkJudgeLock = FALSE;
 	INT hpValue = 100, hpMax = 100;
 	INT attachmentTableSize = 0;

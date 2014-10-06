@@ -21,6 +21,12 @@ public:
 	static const INT ACTION_HIT_BACK_LOWER = 22;
 	static const INT ACTION_HIT_BACK_UPPER = 23;
 
+	static const UINT KEY_LEFT = 0x1;
+	static const UINT KEY_RIGHT = 0x2;
+	static const UINT KEY_ATTACK_1 = 0x4;
+	static const UINT KEY_ATTACK_2 = 0x8;
+	static const UINT KEY_CHANGE_TARGET = 0x100;
+
 	WLFCharacter(AERO_SPRITE_DESC desc);
 
 	VOID platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult);
@@ -30,15 +36,16 @@ public:
 	VOID toStand();
 	VOID attack_1();
 	VOID attack_2();
+	VOID changeTarget();
 
 	VOID adsorbToPlatform();
 	BOOLEAN isAttackLocked() { return attackLock; }
 	VOID setAttackLock(BOOLEAN lock) { attackLock = lock; }
 
-	BOOLEAN isRightKeyPressed, isLeftKeyPressed;
-
 private:
 
+	INT targetIndexHash;
+	WLFCharacter* target;
 	AEPlatform* onPlatform;
 	INT onPlatformTailIndex;
 	BOOLEAN attackLock;

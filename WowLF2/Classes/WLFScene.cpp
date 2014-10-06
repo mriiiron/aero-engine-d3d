@@ -170,22 +170,49 @@ VOID WLFShrineCaveScene::processInput() {
 
 		}
 		if (keyStateBuffer[DIK_A] & 0x80) {
-			player->isLeftKeyPressed = TRUE;
+			player->keyDown(WLFCharacter::KEY_LEFT);
 		}
 		else {
-			player->isLeftKeyPressed = FALSE;
+			player->keyUp(WLFCharacter::KEY_LEFT);
 		}
 		if (keyStateBuffer[DIK_D] & 0x80) {
-			player->isRightKeyPressed = TRUE;
+			player->keyDown(WLFCharacter::KEY_RIGHT);
 		}
 		else {
-			player->isRightKeyPressed = FALSE;
+			player->keyUp(WLFCharacter::KEY_RIGHT);
 		}
 		if (keyStateBuffer[DIK_J] & 0x80) {
-			player->attack_1();
+			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_1)) {
+				player->attack_1();
+			}
+			player->keyDown(WLFCharacter::KEY_ATTACK_1);
+		}
+		else {
+			player->keyUp(WLFCharacter::KEY_ATTACK_1);
 		}
 		if (keyStateBuffer[DIK_K] & 0x80) {
-			player->attack_2();
+			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_2)) {
+				player->attack_2();
+			}
+			else {
+				INT a = 1;
+			}
+			player->keyDown(WLFCharacter::KEY_ATTACK_2);
+		}
+		else {
+			player->keyUp(WLFCharacter::KEY_ATTACK_2);
+		}
+		if (keyStateBuffer[DIK_TAB] & 0x80) {
+			if (!player->isKeyPressed(WLFCharacter::KEY_CHANGE_TARGET)) {
+				player->changeTarget();
+			}
+			else {
+				INT a = 1;
+			}
+			player->keyDown(WLFCharacter::KEY_CHANGE_TARGET);
+		}
+		else {
+			player->keyUp(WLFCharacter::KEY_CHANGE_TARGET);
 		}
 	}
 	if (keyStateBuffer[DIK_L] & 0x80) {
@@ -208,7 +235,7 @@ VOID WLFShrineCaveScene::processCollision() {
 		AESprite* sprite1 = spriteTable->getItemByHash(i);
 		WLFAnimation* anim1 = (WLFAnimation*)(sprite1->getCurrentAnimation());
 		WLFAttackJudgeArea* attackJudge = anim1->getAttackJudge(sprite1->getFrameNum());
-		if (attackJudge == nullptr || ((WLFCharacter*)sprite1)->isAttackLocked()) {
+		if (attackJudge == nullptr || dynamic_cast<WLFCharacter*>(sprite1)->isAttackLocked()) {
 			continue;
 		}
 		for (INT j = 0; j < spriteCount; j++) {
@@ -242,7 +269,7 @@ VOID WLFShrineCaveScene::processCollision() {
 				descSpr.cy = collisionResult.point.y;
 				descSpr.layerDepth = 0.0f;
 
-				((WLFCharacter*)sprite1)->setAttackLock(TRUE);
+				dynamic_cast<WLFCharacter*>(sprite1)->setAttackLock(TRUE);
 				if (sprite1->getFlip() != sprite2->getFlip()) {
 					sprite2->changeAction(AENSMath::randomIntBetween(WLFCharacter::ACTION_HIT_FRONT_LOWER, WLFCharacter::ACTION_HIT_FRONT_UPPER));
 					descSpr.flip = SpriteEffects_None;

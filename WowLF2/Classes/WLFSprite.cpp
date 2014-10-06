@@ -8,9 +8,10 @@ extern AEConstantTable<AEObject>			ae_ObjectTable;
 
 
 WLFCharacter::WLFCharacter(AERO_SPRITE_DESC desc) : AESprite(desc) {
+	targetIndexHash = 0;
+	target = nullptr;
 	onPlatform = nullptr;
 	onPlatformTailIndex = 0;
-	isRightKeyPressed = isLeftKeyPressed = FALSE;
 	attackLock = FALSE;
 }
 
@@ -33,7 +34,7 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 	}
 	if (state == STATE_ON_GROUND) {
 		if (action == WLFCharacter::ACTION_STAND) {
-			if (isRightKeyPressed && !isLeftKeyPressed) {
+			if (isKeyPressed(KEY_RIGHT) && !isKeyPressed(KEY_LEFT)) {
 				if (flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
 					changeAction(WLFCharacter::ACTION_TURN);
 				}
@@ -43,7 +44,7 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 					setVx(2.0f);
 				}
 			}
-			else if (!isRightKeyPressed && isLeftKeyPressed) {
+			else if (!isKeyPressed(KEY_RIGHT) && isKeyPressed(KEY_LEFT)) {
 				if (flip == SpriteEffects::SpriteEffects_None) {
 					changeAction(WLFCharacter::ACTION_TURN);
 				}
@@ -55,15 +56,15 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 			}
 		}
 		else if (action == WLFCharacter::ACTION_WALK) {
-			if (isRightKeyPressed == isLeftKeyPressed) {
+			if (isKeyPressed(KEY_RIGHT) == isKeyPressed(KEY_LEFT)) {
 				changeAction(WLFCharacter::ACTION_STAND);
 				setVx(0.0f);
 			}
-			else if (isRightKeyPressed && !isLeftKeyPressed && flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
+			else if (isKeyPressed(KEY_RIGHT) && !isKeyPressed(KEY_LEFT) && flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
 				setVx(0.0f);
 				changeAction(WLFCharacter::ACTION_TURN);
 			}
-			else if (!isRightKeyPressed && isLeftKeyPressed && flip == SpriteEffects::SpriteEffects_None) {
+			else if (!isKeyPressed(KEY_RIGHT) && isKeyPressed(KEY_LEFT) && flip == SpriteEffects::SpriteEffects_None) {
 				setVx(0.0f);
 				changeAction(WLFCharacter::ACTION_TURN);
 			}
@@ -188,6 +189,35 @@ VOID WLFCharacter::attack_1() {
 VOID WLFCharacter::attack_2() {
 	if (this->getAction() == 1) {
 		this->changeAction(14);
+	}
+}
+
+VOID WLFCharacter::changeTarget() {
+	AEHashedTable<AESprite>* spriteTable = scene->getSpriteTable();
+	if (target == nullptr) {
+		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+			AESprite* sprite = spriteTable->getItemByHash(iHash);
+			if (dynamic_cast<WLFCharacter*>(sprite) && sprite->getTeam() != this->team) {
+				targetIndexHash = iHash;
+				target = dynamic_cast<WLFCharacter*>(sprite);
+				break;
+			}
+		}
+	}
+	else {
+		INT iHash = targetIndexHash;
+		iHash++;
+		if (iHash >= spriteTable->getHashCount()) iHash = 0;
+		while (iHash != targetIndexHash) {
+			AESprite* sprite = spriteTable->getItemByHash(iHash);
+			if (dynamic_cast<WLFCharacter*>(sprite) && sprite->getTeam() != this->team) {
+				targetIndexHash = iHash;
+				target = dynamic_cast<WLFCharacter*>(sprite);
+				break;
+			}
+			iHash++;
+			if (iHash >= spriteTable->getHashCount()) iHash = 0;
+		}
 	}
 }
 
