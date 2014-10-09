@@ -118,7 +118,6 @@ public:
 	BOOLEAN isKeyPressed(UINT _key) { return ((_key & keyState) == 0 ? false : true); }
 
 	VOID takeDamage(INT damage) { hpValue -= damage; }
-	VOID kill() { deadFlag = TRUE; }
 	BOOLEAN isAtkJudgeLocked() { return atkJudgeLock; }
 	BOOLEAN isDead() { return deadFlag; }
 
@@ -153,6 +152,8 @@ public:
 
 	VOID platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<AEPlatform>* platformTable);
 
+	VOID updateAttachments();
+
 	virtual VOID applyControl();
 	virtual VOID platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult);
 	virtual VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
@@ -179,7 +180,5 @@ protected:
 	BOOLEAN atkJudgeLock = FALSE;
 	INT hpValue = 100, hpMax = 100;
 	INT attachmentTableSize = 0;
-
-	VOID updateAttachments(FLOAT hostdx, FLOAT hostdy);
 
 };

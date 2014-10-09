@@ -1,6 +1,11 @@
 #pragma once
 
 
+struct WLFCharacterHUDItemHashes {
+	INT namepad, portrait, bar_hp, bar_energy;
+};
+
+
 class WLFCharacter : public AESprite {
 
 public:
@@ -41,6 +46,7 @@ public:
 	VOID adsorbToPlatform();
 	BOOLEAN isAttackLocked() { return attackLock; }
 	VOID setAttackLock(BOOLEAN lock) { attackLock = lock; }
+	VOID setHUDItemHashes(INT namepad, INT portrait, INT bar_hp, INT bar_energy) { hudItems = { namepad, portrait, bar_hp, bar_energy }; }
 
 private:
 
@@ -49,5 +55,7 @@ private:
 	AEPlatform* onPlatform;
 	INT onPlatformTailIndex;
 	BOOLEAN attackLock;
+
+	WLFCharacterHUDItemHashes hudItems;
 
 };

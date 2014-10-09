@@ -16,7 +16,7 @@ extern AECamera								ae_Camera;
 const FLOAT WLFShrineCaveScene::GRAVITY = 0.2f;
 
 
-VOID WLFShrineCaveScene::addObject(INT oid, std::string fileName, std::string objName, AEObjType objType) {
+VOID WLFShrineCaveScene::loadObject(INT oid, std::string fileName, std::string objName, AEObjType objType) {
 	AERO_OBJECT_DESC descObj;
 	descObj.oid = oid;
 	descObj.name = objName;
@@ -26,13 +26,49 @@ VOID WLFShrineCaveScene::addObject(INT oid, std::string fileName, std::string ob
 	ae_ObjectTable.addAt(oid, obj);
 }
 
+VOID WLFShrineCaveScene::addNamepadToHUD(WLFCharacter* character, INT portraitIndex, INT slot) {
+
+	AERO_SPRITE_DESC descSpr;
+	descSpr.obj = ae_ObjectTable.getItem(40);
+	descSpr.team = character->getTeam();
+	descSpr.action = 0;
+	descSpr.flip = SpriteEffects_None;
+	if (slot == NAMEPAD_SLOT_PLAYER) {
+		descSpr.cx = -300.0f;
+	}
+	else {
+		descSpr.cx = -150.0f;
+	}
+	descSpr.cy = -220.0f;
+	descSpr.layerDepth = 0.01f;
+	AESprite* namepad = new AESprite(descSpr);
+	addSpriteForHUD(namepad);
+
+	descSpr.action = portraitIndex;
+	descSpr.cx = namepad->getCx();
+	descSpr.cy = namepad->getCy();
+	AESprite* portrait = new AESprite(descSpr);
+	addSpriteForHUD(portrait);
+
+	descSpr.action = 1;
+	AESprite* hpbar = new AESprite(descSpr);
+	addSpriteForHUD(hpbar);
+
+	descSpr.action = 2;
+	AESprite* energybar = new AESprite(descSpr);
+	addSpriteForHUD(energybar);
+
+	character->setHUDItemHashes(namepad->getIndex(), portrait->getIndex(), hpbar->getIndex(), energybar->getIndex());
+
+}
+
 WLFShrineCaveScene::WLFShrineCaveScene(INT spriteTableSize) : AEScene(spriteTableSize) {
 
-	addObject(0, "Resources\\warrior_deep.txt", "Warrior Deep", OBJ_CHARACTER);
-	addObject(1, "Resources\\dummy_bandit.txt", "Dummy Bandit", OBJ_CHARACTER);
-	addObject(10, "Resources\\effect_hit_slash.txt", "Slash Effect", OBJ_EFFECT);
-	addObject(15, "Resources\\effect_blood.txt", "Blood Effect", OBJ_EFFECT);
-	addObject(40, "Resources\\ui.txt", "UI", OBJ_EFFECT);
+	loadObject(0, "Resources\\warrior_deep.txt", "Warrior Deep", OBJ_CHARACTER);
+	loadObject(1, "Resources\\dummy_bandit.txt", "Dummy Bandit", OBJ_CHARACTER);
+	loadObject(10, "Resources\\effect_hit_slash.txt", "Slash Effect", OBJ_EFFECT);
+	loadObject(15, "Resources\\effect_blood.txt", "Blood Effect", OBJ_EFFECT);
+	loadObject(40, "Resources\\ui.txt", "UI", OBJ_EFFECT);
 
 	// Create Shrine Cave BG
 
@@ -110,7 +146,7 @@ VOID WLFShrineCaveScene::initialize() {
 	// Set camera focusing on player
 	ae_Camera.setFocus(player->getCx(), 0.0f);
 
-	// Create Dummy
+	// Create Dummy #1
 	descSpr.obj = ae_ObjectTable.getItem(1);
 	descSpr.team = 1;
 	descSpr.action = 0;
@@ -118,30 +154,17 @@ VOID WLFShrineCaveScene::initialize() {
 	descSpr.cx = 210.0f;
 	descSpr.cy = 0.0f;  // 150.0f;
 	descSpr.layerDepth = 0.01f;
-	WLFCharacter* bandit = new WLFCharacter(descSpr);
-	addSprite(bandit);
+	WLFCharacter* bandit1 = new WLFCharacter(descSpr);
+	addSprite(bandit1);
+
+	// Create Dummy #2
+	descSpr.cx = 170.0f;
+	descSpr.cy = 0.0f;  // 150.0f;
+	WLFCharacter* bandit2 = new WLFCharacter(descSpr);
+	addSprite(bandit2);
 
 	// Create player namepad
-	descSpr.obj = ae_ObjectTable.getItem(40);
-	descSpr.team = 1;
-	descSpr.action = 0;
-	descSpr.flip = SpriteEffects_None;
-	descSpr.cx = -300.0f;
-	descSpr.cy = -220.0f;
-	descSpr.layerDepth = 0.01f;
-	AESprite* deep_namepad = new AESprite(descSpr);
-	addSpriteForHUD(deep_namepad);
-
-	descSpr.action = 2;
-	descSpr.cx = deep_namepad->getCx();
-	descSpr.cy = deep_namepad->getCy();
-	AESprite* deep_namepad_face = new AESprite(descSpr);
-	addSpriteForHUD(deep_namepad_face);
-
-	descSpr.action = 1;
-	AESprite* deep_namepad_hpbar = new AESprite(descSpr);
-	addSpriteForHUD(deep_namepad_hpbar);
-
+	addNamepadToHUD(deep, 10, NAMEPAD_SLOT_PLAYER);
 
 }
 

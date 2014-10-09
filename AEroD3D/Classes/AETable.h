@@ -3,6 +3,10 @@
 #include "AEGameControl.h"
 
 
+#define MEMORY_RELEASE 0
+#define MEMORY_NOT_RELEASE 1
+
+
 template <typename T>
 class AEHashedTable {
 
@@ -16,10 +20,10 @@ public:
 	INT getHash(INT hashIndex) { return hash[hashIndex]; }
 	INT getHashCount() { return pHash; }
 	INT getSize() { return maxElemCount; }
-	VOID add(T* t);
-	VOID addAt(INT index, T* t);
-	VOID removeItem(INT index);
-	VOID removeItemByHash(INT hashIndex);
+	INT add(T* t);
+	INT addAt(INT index, T* t);
+	VOID removeItem(INT index, INT memoryOption = MEMORY_RELEASE);
+	VOID removeItemByHash(INT hashIndex, INT memoryOption = MEMORY_RELEASE);
 	VOID clear();
 
 protected:
@@ -77,42 +81,50 @@ AEHashedTable<T>::~AEHashedTable() {
 }
 
 template <typename T>
-VOID AEHashedTable<T>::add(T* t) {
+INT AEHashedTable<T>::add(T* t) {
 	for (INT i = 0; i <= maxIndex; i++) {
 		if (!occupied[i]) {
 			table[i] = t;  occupied[i] = 1;
 			hash[pHash] = i;  pHash++;
-			return;
+			return i;
 		}
 	}
-	if (maxIndex == maxElemCount - 1) {
+	if (maxIndex >= maxElemCount - 1) {
 		AENSGameControl::exitGame("On adding to hashed table: Too many items.");
+		return -1;
 	}
 	else {
 		maxIndex++;
 		table[maxIndex] = t;  occupied[maxIndex] = 1;
 		hash[pHash] = maxIndex;  pHash++;
+		return maxIndex;
 	}
 }
 
 template <typename T>
-VOID AEHashedTable<T>::addAt(INT index, T* t) {
+INT AEHashedTable<T>::addAt(INT index, T* t) {
 	if (occupied[index]) {
 		AENSGameControl::exitGame("On adding to hashed table: Slot occupied.");
+		return -1;
+	}
+	if (index >= maxElemCount) {
+		AENSGameControl::exitGame("On adding to hashed table: Exceeding limit.");
+		return -1;
 	}
 	if (index > maxIndex) {
 		maxIndex = index;
 	}
 	table[index] = t;  occupied[index] = 1;
 	hash[pHash] = maxIndex;  pHash++;
+	return index;
 }
 
 template <typename T>
-VOID AEHashedTable<T>::removeItem(INT index) {
+VOID AEHashedTable<T>::removeItem(INT index, INT memoryOption) {
 	if (!occupied[index]) {
 		AENSGameControl::exitGame("On removing from hashed table: Slot empty.");
 	}
-	if (table[index]) delete table[index];  // Allowing removing a "memory releaseed but still staying in table" sprite
+	if (memoryOption == MEMORY_RELEASE) delete table[index];  // DANGER!!! MAKE SURE YOUR MEMORY IS PROPERLY RELEASED!!! 
 	table[index] = nullptr;
 	occupied[index] = 0;
 	while (!occupied[maxIndex] && maxIndex > 0) maxIndex--;
@@ -127,8 +139,8 @@ VOID AEHashedTable<T>::removeItem(INT index) {
 }
 
 template <typename T>
-VOID AEHashedTable<T>::removeItemByHash(INT hashIndex) {
-	removeItem(getHash(hashIndex));
+VOID AEHashedTable<T>::removeItemByHash(INT hashIndex, INT memoryOption) {
+	removeItem(getHash(hashIndex), memoryOption);
 }
 
 template <typename T>

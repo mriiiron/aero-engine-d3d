@@ -6,11 +6,20 @@ $ImageResource_End
 
 $ImageResource 31
 0 -37 -2
-1 -37 -2
+1 -37 -13
 $ImageResource_End
 
 $ImageResource 32
 0 -2 -2
+1 -2 -2
+$ImageResource_End
+
+$ImageResource 33
+0 37 18
+1 37 18
+2 37 18
+3 37 18
+4 37 18
 $ImageResource_End
 
 #Frames_End
@@ -32,9 +41,30 @@ $FrameCount 1 loop -1
 0
 $Anim_End
 
-$Anim 2 face_deep
+$Anim 2 energy_hp
+$FrameCount 1 loop -1
+2
+100
+0
+$Anim_End
+
+$Anim 3 crosshair
+$FrameCount 5 next 1000
+11 12 13 14 15
+10 10 10 10 10
+0 0 0 0 0
+$Anim_End
+
+$Anim 10 portriat_deep
 $FrameCount 1 loop -1
 6
+100
+0
+$Anim_End
+
+$Anim 11 portriat_bandit
+$FrameCount 1 loop -1
+7
 100
 0
 $Anim_End

@@ -109,11 +109,11 @@ AEBiasRect AESprite::calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT
 
 VOID AESprite::changeAction(INT _action) {
 	if (_action == ACTION_NUM_DEAD) {
-		deadFlag = TRUE;
+		deadFlag = true;
 		return;
 	}
 	else {
-		deadFlag = FALSE;
+		deadFlag = false;
 	}
 	action = _action;
 	AEAnimation* anim = obj->getAnim(action);
@@ -189,9 +189,9 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 		timeToLive--;
 	}
 	time++;
-	BOOLEAN isFrameChange = FALSE;
+	BOOLEAN isFrameChange = false;
 	if (time >= anim->getEndTime(frameNum)) {
-		isFrameChange = TRUE;
+		isFrameChange = true;
 		frameNum++;
 		if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
 			time = 0;
@@ -221,9 +221,6 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 	angleDisplay += (fac * vAngleDisplay);
 	if (angleDisplay < -AENSMath::PI) angleDisplay += 2.0f * AENSMath::PI;
 	if (angleDisplay >= AENSMath::PI) angleDisplay -= 2.0f * AENSMath::PI;
-	if (attachmentTable) {
-		updateAttachments(fac* vx, vy);
-	}
 }
 
 VOID AESprite::render() {
@@ -321,14 +318,14 @@ VOID AESprite::createAttachmentTable(INT size) {
 	attachmentTableSize = size;
 }
 
-VOID AESprite::updateAttachments(FLOAT hostdx, FLOAT hostdy) {
+VOID AESprite::updateAttachments() {
 	for (INT iHash = 0; iHash < attachmentTable->getHashCount(); iHash++) {
 		AESprite* attachment = attachmentTable->getItemByHash(iHash);
-		if (attachment == nullptr) {
-			attachmentTable->removeItemByHash(iHash);
+		if (attachment->isDead()) {
+			attachmentTable->removeItemByHash(iHash, MEMORY_NOT_RELEASE);
 		}
 		else {
-			attachment->move(hostdx, hostdy);
+			attachment->move((flip ? -1 : 1) * vx, vy);
 		}
 	}
 }

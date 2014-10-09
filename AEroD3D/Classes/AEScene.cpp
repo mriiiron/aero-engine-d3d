@@ -42,7 +42,7 @@ AEScene::~AEScene() {
 
 VOID AEScene::addSprite(AESprite* sprite) {
 	sprite->setScene(this);
-	spriteTable->add(sprite);
+	sprite->setIndex(spriteTable->add(sprite));
 }
 
 VOID AEScene::addSpriteAttachment(AESprite* host, AESprite* attachment) {
@@ -56,7 +56,7 @@ VOID AEScene::addSpriteAttachment(AESprite* host, AESprite* attachment) {
 
 VOID AEScene::addSpriteForHUD(AESprite* hudSprite) {
 	hudSprite->setScene(this);
-	hud->getSpriteTable()->add(hudSprite);
+	hudSprite->setIndex(hud->getSpriteTable()->add(hudSprite));
 }
 
 VOID AEScene::update() {
@@ -65,6 +65,10 @@ VOID AEScene::update() {
 			bg->update();
 		}
 		if (spriteTable) {
+
+			// Update sprite table first
+			// Removing a sprite directly from sprite table is forbidden
+			// Must set a sprite to death (deadFlag = true), then remove it next time we update the scene
 			for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
 				AESprite* sprite = spriteTable->getItemByHash(iHash);
 				if (sprite->isDead()) {
@@ -74,6 +78,17 @@ VOID AEScene::update() {
 					sprite->update(platformTable);
 				}
 			}
+
+			// Update attachment table for each sprite after updating sprite table
+			// If any attachment sprite is set to death (deadFlag == true), clear the corresponding pointer in attachment table here
+			// To avoid memory leak
+			for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+				AESprite* sprite = spriteTable->getItemByHash(iHash);
+				if (sprite->hasAttachments()) {
+					sprite->updateAttachments();
+				}
+			}
+			
 		}
 		if (hud) {
 			hud->update();

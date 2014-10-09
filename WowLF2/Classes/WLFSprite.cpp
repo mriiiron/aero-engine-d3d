@@ -13,6 +13,8 @@ WLFCharacter::WLFCharacter(AERO_SPRITE_DESC desc) : AESprite(desc) {
 	onPlatform = nullptr;
 	onPlatformTailIndex = 0;
 	attackLock = FALSE;
+	hudItems = { 0, 0, 0 };
+	createAttachmentTable(10);
 }
 
 VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
@@ -163,9 +165,6 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 	angleDisplay += (fac * vAngleDisplay);
 	if (angleDisplay < -AENSMath::PI) angleDisplay += 2.0f * AENSMath::PI;
 	if (angleDisplay >= AENSMath::PI) angleDisplay -= 2.0f * AENSMath::PI;
-	if (hasAttachments()) {
-		updateAttachments(fac* vx, vy);
-	}
 }
 
 VOID WLFCharacter::toBattleStance() {
@@ -200,24 +199,47 @@ VOID WLFCharacter::changeTarget() {
 			if (dynamic_cast<WLFCharacter*>(sprite) && sprite->getTeam() != this->team) {
 				targetIndexHash = iHash;
 				target = dynamic_cast<WLFCharacter*>(sprite);
+
+				AERO_SPRITE_DESC descSpr;
+				descSpr.obj = ae_ObjectTable.getItem(40);
+				descSpr.team = this->team;
+				descSpr.action = 3;
+				descSpr.flip = SpriteEffects_None;
+				descSpr.cx = target->getCx();
+				descSpr.cy = target->getCy();
+				descSpr.layerDepth = target->getLayerDepth() + 0.001f;
+				//scene->addSprite(new AESprite(descSpr));
+				scene->addSpriteAttachment(target, new AESprite(descSpr));
+
+				dynamic_cast<WLFShrineCaveScene*>(scene)->addNamepadToHUD(target, 11, WLFShrineCaveScene::NAMEPAD_SLOT_TARGET);
 				break;
 			}
 		}
 	}
 	else {
 		INT iHash = targetIndexHash;
-		iHash++;
-		if (iHash >= spriteTable->getHashCount()) iHash = 0;
-		while (iHash != targetIndexHash) {
+		do {
+			iHash++;
+			if (iHash >= spriteTable->getHashCount()) iHash = 0;
 			AESprite* sprite = spriteTable->getItemByHash(iHash);
 			if (dynamic_cast<WLFCharacter*>(sprite) && sprite->getTeam() != this->team) {
 				targetIndexHash = iHash;
 				target = dynamic_cast<WLFCharacter*>(sprite);
+
+				AERO_SPRITE_DESC descSpr;
+				descSpr.obj = ae_ObjectTable.getItem(40);
+				descSpr.team = this->team;
+				descSpr.action = 3;
+				descSpr.flip = SpriteEffects_None;
+				descSpr.cx = target->getCx();
+				descSpr.cy = target->getCy();
+				descSpr.layerDepth = target->getLayerDepth() + 0.001f;
+				//scene->addSprite(new AESprite(descSpr));
+				scene->addSpriteAttachment(target, new AESprite(descSpr));
+
 				break;
 			}
-			iHash++;
-			if (iHash >= spriteTable->getHashCount()) iHash = 0;
-		}
+		} while (iHash != targetIndexHash);
 	}
 }
 
