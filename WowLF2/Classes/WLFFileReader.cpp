@@ -75,7 +75,7 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 		AENSGameControl::exitGame("Cannot open file" + fileName);
 	}
 
-	AEFrame* frames[50];
+	AEFrame* frames[500];
 	AERO_FRAME_DESC descFrame;
 	AERO_ANIMATION_DESC descAnim;
 
@@ -112,7 +112,8 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 			while (TRUE) {
 				getline(fs, line);  iss.clear();  iss.str(line);
 				if (line == "") continue;
-				if (line == "#Animations_End") break;
+				if (line == "#Animations_End")
+					break;
 				iss >> item;
 				if (item == "$Anim") {
 					iss >> item;  INT animNum = stoi(item);
@@ -165,6 +166,9 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 									}
 									else if (item == "angle:") {
 										iss >> item;  attackJudge->angle = stoi(item);
+									}
+									else if (item == "spellid:") {
+										iss >> item;  attackJudge->spellID = stoi(item);
 									}
 									iss >> item;
 								}

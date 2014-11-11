@@ -21,6 +21,7 @@
 #include "AEroEngine.h"
 
 #include "Classes\WLFFileReader.h"
+#include "Classes\WLFBuff.h"
 #include "Classes\WLFSprite.h"
 #include "Classes\WLFScene.h"
 
@@ -83,8 +84,13 @@ extern AECamera								ae_Camera;
 // DirectXTK Global Variables
 //--------------------------------------------------------------------------------------
 extern SpriteBatch*							xtk_SpriteBatch;
-extern SpriteFont*							xtk_SpriteFont;
+extern SpriteFont*							xtk_SpriteFont_Arial_10;
 
+//--------------------------------------------------------------------------------------
+// Project Global Variables
+//--------------------------------------------------------------------------------------
+
+SpriteFont*									xtk_SpriteFont_Arial_7;
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -259,67 +265,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 
 
 //--------------------------------------------------------------------------------------
-// Load game resources (mainly .dds texture)
+// Load game resources (mainly .dds texture) and fonts
 //--------------------------------------------------------------------------------------
 void LoadGameResources() {
 
 	WLFDataFileReader::readResources("Resources\\resources.txt");
-
-	//// Warrior Deep
-	//AERO_RESOURCE_DESC descRes;
-	//descRes.rid = 0;
-	//descRes.rtype = RES_5x10;
-	//descRes.cellW = 80;
-	//descRes.cellH = 80;
-	//HRESULT hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\warrior_deep_0.dds", nullptr, &(descRes.tex));
-	//if (FAILED(hr)) {
-	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	//}
-	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	//// Dummy Bandit
-	//descRes.rid = 1;
-	//descRes.rtype = RES_5x10;
-	//descRes.cellW = 80;
-	//descRes.cellH = 80;
-	//hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\dummy_bandit_0.dds", nullptr, &(descRes.tex));
-	//if (FAILED(hr)) {
-	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	//}
-	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	//// Slash Effect 0
-	//descRes.rid = 10;
-	//descRes.rtype = RES_2x5;
-	//descRes.cellW = 133;
-	//descRes.cellH = 40;
-	//hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\hit_slash_0.dds", nullptr, &(descRes.tex));
-	//if (FAILED(hr)) {
-	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	//}
-	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	//// Slash Effect 1
-	//descRes.rid = 11;
-	//descRes.rtype = RES_1x5;
-	//descRes.cellW = 70;
-	//descRes.cellH = 120;
-	//hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\hit_slash_1.dds", nullptr, &(descRes.tex));
-	//if (FAILED(hr)) {
-	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	//}
-	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
-
-	//// Shrine Cave
-	//descRes.rid = 20;
-	//descRes.rtype = RES_1x1;
-	//descRes.cellW = 1500;
-	//descRes.cellH = 480;
-	//hr = CreateDDSTextureFromFile(g_pd3dDevice, L"Resources\\shrine_cave.dds", nullptr, &(descRes.tex));
-	//if (FAILED(hr)) {
-	//	AENSGameControl::exitGame("On loading texture: Texture load failed.");
-	//}
-	//ae_ResourceTable.addAt(descRes.rid, new AEResource(descRes));
+	xtk_SpriteFont_Arial_7 = new SpriteFont(g_pd3dDevice, L"Resources\\arial_7.spritefont");
 
 }
 
@@ -421,7 +372,8 @@ void Render() {
 	activeScene->render(AEScene::RENDER_BACKGROUND | AEScene::RENDER_SPRITES);
 	xtk_SpriteBatch->End();
 
-	// Render HUD (keeps stationary position on game window)
+	// Render HUD (keeps stationary position on game window by reset transform)
+	// Render debug information along with HUD
 	xtk_SpriteBatch->Begin(
 		SpriteSortMode_BackToFront,
 		g_pBlendState,
@@ -432,11 +384,9 @@ void Render() {
 		gm_TransformForHUD
 	);
 	activeScene->render(AEScene::RENDER_HUD);
-
-	// Render debug information
 	LPTSTR strSpriteCount = new TCHAR[1024];
 	wsprintf(strSpriteCount, L"Sprite Count: %d", activeScene->getSpriteTable()->getHashCount());
-	xtk_SpriteFont->DrawString(xtk_SpriteBatch, strSpriteCount, XMFLOAT2(-320.0f, 220.0f));
+	xtk_SpriteFont_Arial_10->DrawString(xtk_SpriteBatch, strSpriteCount, XMFLOAT2(-320.0f, 220.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
 	xtk_SpriteBatch->End();
 
 	// Present our back buffer to our front buffer

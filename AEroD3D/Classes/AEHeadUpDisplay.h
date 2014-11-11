@@ -26,7 +26,7 @@ public:
 	VOID update();
 	VOID render();
 
-private:
+protected:
 
 	AEHashedTable<AESprite>* spriteTable;
 

@@ -1,6 +1,6 @@
 #Frames
 
-$ImageResource 1
+$ImageResource 2
 0 39 79
 1 39 79
 2 39 79
@@ -50,7 +50,7 @@ $FrameCount 3 next 0
 0 8 8
 0 0 0
 $Body 21 18 64 80 $End
-$CreateSprite 15 action: 1 at: 49 50 frame: 1 team: -1 depth: 0.0 $End
+$CreateSprite 10 action: 3 at: 49 50 frame: 1 team: -1 depth: 0.0 $End
 $Anim_End
 
 $Anim 21 hit_front_upper
@@ -59,7 +59,7 @@ $FrameCount 3 next 0
 0 8 8
 0 0 0
 $Body 21 18 64 80 $End
-$CreateSprite 15 action: 2 at: 17 46 frame: 1 team: -1 flip: 3 depth: 0.0 $End
+$CreateSprite 10 action: 4 at: 17 46 frame: 1 team: -1 flip: 3 depth: 0.0 $End
 $Anim_End
 
 $Anim 22 hit_back_lower
@@ -68,7 +68,7 @@ $FrameCount 3 next 0
 0 8 8
 0 0
 $Body 21 18 64 80 $End
-$CreateSprite 15 action: 2 at: 43 30 frame: 1 team: -1 depth: 0.0 $End
+$CreateSprite 10 action: 4 at: 43 30 frame: 1 team: -1 depth: 0.0 $End
 $Anim_End
 
 $Anim 23 hit_back_upper
@@ -77,7 +77,7 @@ $FrameCount 3 next 0
 0 8 8
 0 0 0
 $Body 21 18 64 80 $End
-$CreateSprite 15 action: 1 at: 49 50 frame: 1 team: -1 depth: 0.0 $End
+$CreateSprite 10 action: 3 at: 49 50 frame: 1 team: -1 depth: 0.0 $End
 $Anim_End
 
 #Animations_End

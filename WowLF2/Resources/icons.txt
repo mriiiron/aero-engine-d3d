@@ -1,0 +1,19 @@
+#Frames
+
+$ImageResource 50
+0 32 32
+$ImageResource_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 icons
+$FrameCount 1 loop -1
+0
+100
+0
+$Anim_End
+
+#Animations_End

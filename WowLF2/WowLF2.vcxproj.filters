@@ -28,6 +28,15 @@
     <ClCompile Include="Classes\WLFScene.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\WLFBuff.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\WLFHeadUpDisplay.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Classes\WLFSpell.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h" />
@@ -44,6 +53,15 @@
       <Filter>Classes</Filter>
     </ClInclude>
     <ClInclude Include="Classes\WLFScene.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\WLFBuff.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\WLFHeadUpDisplay.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\WLFSpell.h">
       <Filter>Classes</Filter>
     </ClInclude>
   </ItemGroup>

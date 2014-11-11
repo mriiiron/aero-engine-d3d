@@ -1,10 +1,14 @@
 0 5x10 80 80 Resources\warrior_deep_0.dds
-1 5x10 80 80 Resources\dummy_bandit_0.dds
+1 5x10 80 80 Resources\warrior_deep_1.dds
+2 5x10 80 80 Resources\dummy_bandit_0.dds
 10 2x5 133 40 Resources\hit_slash_0.dds
 11 1x5 70 120 Resources\hit_slash_1.dds
 15 5x10 40 40 Resources\blood_0.dds
+16 2x5 60 60 Resources\smoke.dds
+17 2x5 70 100 Resources\spark.dds
 20 1x1 1500 480 Resources\shrine_cave.dds
 30 1x1 125 34 Resources\ui_namepad.dds
 31 5x1 85 7 Resources\ui_bars.dds
 32 1x5 30 30 Resources\ui_portraits.dds
 33 1x5 75 37 Resources\crosshair.dds
+50 5x10 64 64 Resources\icons_0.dds

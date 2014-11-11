@@ -1,10 +1,13 @@
 #include "AEroEngine.h"
 #include "WLFAI.h"
 #include "WLFAnimation.h"
+#include "WLFBuff.h"
 #include "WLFSprite.h"
 #include "WLFScene.h"
 
 extern AEConstantTable<AEObject>			ae_ObjectTable;
+extern SpriteBatch*							xtk_SpriteBatch;
+extern SpriteFont*							xtk_SpriteFont_Arial_7;
 
 
 WLFCharacter::WLFCharacter(AERO_SPRITE_DESC desc) : AESprite(desc) {
@@ -15,6 +18,7 @@ WLFCharacter::WLFCharacter(AERO_SPRITE_DESC desc) : AESprite(desc) {
 	attackLock = FALSE;
 	hudItems = { 0, 0, 0 };
 	createAttachmentTable(10);
+	buffTable = new AEHashedTable<WLFBuff>(50);
 }
 
 VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
@@ -30,6 +34,7 @@ VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AE
 
 //  Overrides AESprite::update() completely
 VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
+	updateBuffTable();
 	if (state == STATE_IN_AIR) {
 		changeAction(WLFCharacter::ACTION_IN_AIR);
 		ay = ((WLFShrineCaveScene*)scene)->GRAVITY;
@@ -168,27 +173,19 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 }
 
 VOID WLFCharacter::toBattleStance() {
-	if (this->getAction() == 0) {
-		this->changeAction(WLFCharacter::ACTION_BATTLE_STANCE_START);
-	}
+	this->changeAction(WLFCharacter::ACTION_BATTLE_STANCE_START);
 }
 
 VOID WLFCharacter::toStand() {
-	if (this->getAction() == 1) {
-		this->changeAction(WLFCharacter::ACTION_BATTLE_STANCE_END);
-	}
+	this->changeAction(WLFCharacter::ACTION_BATTLE_STANCE_END);
 }
 
 VOID WLFCharacter::attack_1() {
-	if (this->getAction() == 1) {
-		this->changeAction(13);
-	}
+	this->changeAction(13);
 }
 
 VOID WLFCharacter::attack_2() {
-	if (this->getAction() == 1) {
-		this->changeAction(14);
-	}
+	this->changeAction(14);
 }
 
 VOID WLFCharacter::changeTarget() {
@@ -199,18 +196,15 @@ VOID WLFCharacter::changeTarget() {
 			if (dynamic_cast<WLFCharacter*>(sprite) && sprite->getTeam() != this->team) {
 				targetIndexHash = iHash;
 				target = dynamic_cast<WLFCharacter*>(sprite);
-
 				AERO_SPRITE_DESC descSpr;
 				descSpr.obj = ae_ObjectTable.getItem(40);
 				descSpr.team = this->team;
-				descSpr.action = 3;
+				descSpr.action = 6;
 				descSpr.flip = SpriteEffects_None;
 				descSpr.cx = target->getCx();
 				descSpr.cy = target->getCy();
 				descSpr.layerDepth = target->getLayerDepth() + 0.001f;
-				//scene->addSprite(new AESprite(descSpr));
 				scene->addSpriteAttachment(target, new AESprite(descSpr));
-
 				dynamic_cast<WLFShrineCaveScene*>(scene)->addNamepadToHUD(target, 11, WLFShrineCaveScene::NAMEPAD_SLOT_TARGET);
 				break;
 			}
@@ -223,20 +217,19 @@ VOID WLFCharacter::changeTarget() {
 			if (iHash >= spriteTable->getHashCount()) iHash = 0;
 			AESprite* sprite = spriteTable->getItemByHash(iHash);
 			if (dynamic_cast<WLFCharacter*>(sprite) && sprite->getTeam() != this->team) {
+				dynamic_cast<WLFShrineCaveScene*>(scene)->removeNamepadFromHUD(target);
 				targetIndexHash = iHash;
 				target = dynamic_cast<WLFCharacter*>(sprite);
-
 				AERO_SPRITE_DESC descSpr;
 				descSpr.obj = ae_ObjectTable.getItem(40);
 				descSpr.team = this->team;
-				descSpr.action = 3;
+				descSpr.action = 6;
 				descSpr.flip = SpriteEffects_None;
 				descSpr.cx = target->getCx();
 				descSpr.cy = target->getCy();
 				descSpr.layerDepth = target->getLayerDepth() + 0.001f;
-				//scene->addSprite(new AESprite(descSpr));
 				scene->addSpriteAttachment(target, new AESprite(descSpr));
-
+				dynamic_cast<WLFShrineCaveScene*>(scene)->addNamepadToHUD(target, 11, WLFShrineCaveScene::NAMEPAD_SLOT_TARGET);
 				break;
 			}
 		} while (iHash != targetIndexHash);
@@ -254,4 +247,99 @@ VOID WLFCharacter::adsorbToPlatform() {
 		FLOAT ratio = (tail.x - cx) / (head.x - cx);
 		cy = (ratio * head.y - tail.y) / (ratio - 1);
 	}
+}
+
+VOID WLFCharacter::updateBuffTable() {
+	for (INT iHash = 0; iHash < buffTable->getHashCount(); iHash++) {
+		WLFBuff* buff = buffTable->getItemByHash(iHash);
+		if (buff->isDead()) {
+			buffTable->removeItemByHash(iHash);
+		}
+		else {
+			buff->update();
+		}
+	}
+}
+
+WLFWarrior::WLFWarrior(AERO_SPRITE_DESC desc) : WLFCharacter(desc) {
+	chargeTargetPosX = 0.0f;
+	rage = 0;
+	rageMax = 100;
+}
+
+VOID WLFWarrior::update(AEHashedTable<AEPlatform>* platformTable) {
+	if (action == 10 && fabs(cx - target->getCx()) < 40.0f) {
+		changeAction(12);
+		setVx(0.0f);
+	}
+	WLFCharacter::update(platformTable);
+}
+
+VOID WLFWarrior::mortalStrike() {
+	changeAction(15);
+}
+
+VOID WLFWarrior::overpower() {
+	changeAction(AENSMath::randomIntBetween(13, 14));
+}
+
+VOID WLFWarrior::slam() {
+
+}
+
+VOID WLFWarrior::colossusSmash() {
+
+}
+
+VOID WLFWarrior::thunderClap() {
+
+}
+
+VOID WLFWarrior::charge() {
+	if (fabs(cx - target->getCx()) < 120.0f) {
+		return;
+	}
+	changeAction(11);
+	chargeTargetPosX = target->getCx();
+	if (cx < chargeTargetPosX && flip == SpriteEffects_FlipHorizontally) {
+		flip = SpriteEffects_None;
+	}
+	else if (cx > chargeTargetPosX && flip == SpriteEffects_None) {
+		flip = SpriteEffects_FlipHorizontally;
+	}
+	setVx(5.0f);
+}
+
+
+WLFBar::WLFBar(AERO_SPRITE_DESC desc, WLFCharacter* _host, INT _type) : AESprite(desc) {
+	host = _host;
+	type = _type;
+}
+
+VOID WLFBar::update(AEHashedTable<AEPlatform>* platformTable) {
+
+}
+
+VOID WLFBar::render(INT renderOption, ...) {
+	LPTSTR strBarValue = new TCHAR[1024];
+	switch (type) {
+	case TYPE_HP:
+		AESprite::render(AESprite::RENDER_OPTION_WIPE, AESprite::RENDER_WIPE_LEFT, host->getHPProportion());
+		wsprintf(strBarValue, L"%d / %d", host->getHP(), host->getHPMax());
+		break;
+	case TYPE_ENERGY:
+		if (dynamic_cast<WLFWarrior*>(host)) {
+			AESprite::render(AESprite::RENDER_OPTION_WIPE, AESprite::RENDER_WIPE_LEFT, dynamic_cast<WLFWarrior*>(host)->getRageProportion());
+			wsprintf(strBarValue, L"%d / %d", dynamic_cast<WLFWarrior*>(host)->getRage(), dynamic_cast<WLFWarrior*>(host)->getRageMax());
+		}
+		else {
+			wsprintf(strBarValue, L"");
+		}
+		break;
+	default:
+
+		break;
+	}
+	AEFrame* f = getCurrentFrame();
+	xtk_SpriteFont_Arial_7->DrawString(xtk_SpriteBatch, strBarValue, XMFLOAT2(cx - f->getCenterx(), cy - f->getCentery() - 2.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
 }

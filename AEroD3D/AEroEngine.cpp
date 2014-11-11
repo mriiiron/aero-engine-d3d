@@ -61,7 +61,7 @@ AECamera									ae_Camera;
 // DirectXTK Global Variables
 //--------------------------------------------------------------------------------------
 SpriteBatch*								xtk_SpriteBatch;
-SpriteFont*									xtk_SpriteFont;
+SpriteFont*									xtk_SpriteFont_Arial_10;
 
 //--------------------------------------------------------------------------------------
 // Initialize
@@ -75,7 +75,7 @@ VOID AENSCore::AEInitialize() {
 //--------------------------------------------------------------------------------------
 VOID AENSCore::CleanupDevice() {
 
-	if (xtk_SpriteFont) delete xtk_SpriteFont;
+	if (xtk_SpriteFont_Arial_10) delete xtk_SpriteFont_Arial_10;
 	if (xtk_SpriteBatch) delete xtk_SpriteBatch;
 	if (g_pImmediateContext) g_pImmediateContext->ClearState();
 	if (g_pSamplerLinear) g_pSamplerLinear->Release();
@@ -428,7 +428,7 @@ HRESULT AENSCore::InitDevice()
 	gm_Transform = gm_World * gm_View * gm_Projection;
 
 	xtk_SpriteBatch = new SpriteBatch(g_pImmediateContext);
-	xtk_SpriteFont = new SpriteFont(g_pd3dDevice, L"Resources\\arial_10.spritefont");
+	xtk_SpriteFont_Arial_10 = new SpriteFont(g_pd3dDevice, L"Resources\\arial_10.spritefont");
 
 	return S_OK;
 }

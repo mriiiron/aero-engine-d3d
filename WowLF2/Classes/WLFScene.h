@@ -8,9 +8,9 @@ public:
 	static const INT NAMEPAD_SLOT_PLAYER = 0;
 	static const INT NAMEPAD_SLOT_TARGET = 1;
 
-	WLFShrineCaveScene(INT spriteTableSize);
-
 	static const FLOAT GRAVITY;
+
+	WLFShrineCaveScene(INT spriteTableSize);
 
 	VOID initialize();
 	VOID update();
@@ -20,10 +20,12 @@ public:
 	VOID processCollision();
 
 	VOID addNamepadToHUD(WLFCharacter* character, INT portraitIndex, INT slot);
+	VOID removeNamepadFromHUD(WLFCharacter* character);
 
 private:
 
-	WLFCharacter* player;
+	WLFWarrior* player;
+	INT dik_left, dik_right, dik_up, dik_down, dik_attack_a, dik_attack_b, dik_jump, dik_special;
 
 	static VOID loadObject(INT oid, std::string fileName, std::string objName, AEObjType objType);
 	

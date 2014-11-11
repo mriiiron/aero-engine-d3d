@@ -4,7 +4,9 @@
 #include "WLFFileReader.h"
 #include "WLFAI.h"
 #include "WLFAnimation.h"
+#include "WLFBuff.h"
 #include "WLFSprite.h"
+#include "WLFSpell.h"
 #include "WLFScene.h"
 
 extern AEConstantTable<AEResource>			ae_ResourceTable;
@@ -16,58 +18,25 @@ extern AECamera								ae_Camera;
 const FLOAT WLFShrineCaveScene::GRAVITY = 0.2f;
 
 
-VOID WLFShrineCaveScene::loadObject(INT oid, std::string fileName, std::string objName, AEObjType objType) {
-	AERO_OBJECT_DESC descObj;
-	descObj.oid = oid;
-	descObj.name = objName;
-	descObj.otype = objType;
-	AEObject* obj = new AEObject(descObj);
-	WLFDataFileReader::readObject(fileName, obj);
-	ae_ObjectTable.addAt(oid, obj);
-}
-
-VOID WLFShrineCaveScene::addNamepadToHUD(WLFCharacter* character, INT portraitIndex, INT slot) {
-
-	AERO_SPRITE_DESC descSpr;
-	descSpr.obj = ae_ObjectTable.getItem(40);
-	descSpr.team = character->getTeam();
-	descSpr.action = 0;
-	descSpr.flip = SpriteEffects_None;
-	if (slot == NAMEPAD_SLOT_PLAYER) {
-		descSpr.cx = -300.0f;
-	}
-	else {
-		descSpr.cx = -150.0f;
-	}
-	descSpr.cy = -220.0f;
-	descSpr.layerDepth = 0.01f;
-	AESprite* namepad = new AESprite(descSpr);
-	addSpriteForHUD(namepad);
-
-	descSpr.action = portraitIndex;
-	descSpr.cx = namepad->getCx();
-	descSpr.cy = namepad->getCy();
-	AESprite* portrait = new AESprite(descSpr);
-	addSpriteForHUD(portrait);
-
-	descSpr.action = 1;
-	AESprite* hpbar = new AESprite(descSpr);
-	addSpriteForHUD(hpbar);
-
-	descSpr.action = 2;
-	AESprite* energybar = new AESprite(descSpr);
-	addSpriteForHUD(energybar);
-
-	character->setHUDItemHashes(namepad->getIndex(), portrait->getIndex(), hpbar->getIndex(), energybar->getIndex());
-
-}
-
 WLFShrineCaveScene::WLFShrineCaveScene(INT spriteTableSize) : AEScene(spriteTableSize) {
+
+	// Set key
+
+	WLFShrineCaveScene::dik_left = DIK_A;
+	WLFShrineCaveScene::dik_right = DIK_D;
+	WLFShrineCaveScene::dik_up = DIK_W;
+	WLFShrineCaveScene::dik_down = DIK_S;
+	WLFShrineCaveScene::dik_attack_a = DIK_J;
+	WLFShrineCaveScene::dik_attack_b = DIK_K;
+	WLFShrineCaveScene::dik_jump = DIK_L;
+	WLFShrineCaveScene::dik_special = DIK_I;
+
+	// Load objects
 
 	loadObject(0, "Resources\\warrior_deep.txt", "Warrior Deep", OBJ_CHARACTER);
 	loadObject(1, "Resources\\dummy_bandit.txt", "Dummy Bandit", OBJ_CHARACTER);
-	loadObject(10, "Resources\\effect_hit_slash.txt", "Slash Effect", OBJ_EFFECT);
-	loadObject(15, "Resources\\effect_blood.txt", "Blood Effect", OBJ_EFFECT);
+	loadObject(10, "Resources\\effects.txt", "Effect", OBJ_EFFECT);
+	loadObject(11, "Resources\\icons.txt", "Icon", OBJ_EFFECT);
 	loadObject(40, "Resources\\ui.txt", "UI", OBJ_EFFECT);
 
 	// Create Shrine Cave BG
@@ -137,7 +106,7 @@ VOID WLFShrineCaveScene::initialize() {
 	descSpr.cx = -200.0f;
 	descSpr.cy = 0.0f;
 	descSpr.layerDepth = 0.001f;
-	WLFCharacter* deep = new WLFCharacter(descSpr);
+	WLFWarrior* deep = new WLFWarrior(descSpr);
 	addSprite(deep);
 
 	// Set player
@@ -158,7 +127,7 @@ VOID WLFShrineCaveScene::initialize() {
 	addSprite(bandit1);
 
 	// Create Dummy #2
-	descSpr.cx = 170.0f;
+	descSpr.cx = 0.0f;
 	descSpr.cy = 0.0f;  // 150.0f;
 	WLFCharacter* bandit2 = new WLFCharacter(descSpr);
 	addSprite(bandit2);
@@ -166,6 +135,60 @@ VOID WLFShrineCaveScene::initialize() {
 	// Create player namepad
 	addNamepadToHUD(deep, 10, NAMEPAD_SLOT_PLAYER);
 
+}
+
+VOID WLFShrineCaveScene::loadObject(INT oid, std::string fileName, std::string objName, AEObjType objType) {
+	AERO_OBJECT_DESC descObj;
+	descObj.oid = oid;
+	descObj.name = objName;
+	descObj.otype = objType;
+	AEObject* obj = new AEObject(descObj);
+	WLFDataFileReader::readObject(fileName, obj);
+	ae_ObjectTable.addAt(oid, obj);
+}
+
+VOID WLFShrineCaveScene::addNamepadToHUD(WLFCharacter* character, INT portraitIndex, INT slot) {
+
+	AERO_SPRITE_DESC descSpr;
+	descSpr.obj = ae_ObjectTable.getItem(40);
+	descSpr.team = character->getTeam();
+	descSpr.action = 0;
+	descSpr.flip = SpriteEffects_None;
+	if (slot == NAMEPAD_SLOT_PLAYER) {
+		descSpr.cx = -300.0f;
+	}
+	else {
+		descSpr.cx = -150.0f;
+	}
+	descSpr.cy = -220.0f;
+	descSpr.layerDepth = 0.01f;
+	AESprite* namepad = new AESprite(descSpr);
+	addSpriteForHUD(namepad);
+
+	descSpr.action = portraitIndex;
+	descSpr.cx = namepad->getCx();
+	descSpr.cy = namepad->getCy();
+	AESprite* portrait = new AESprite(descSpr);
+	addSpriteForHUD(portrait);
+
+	descSpr.action = 1;
+	WLFBar* hpbar = new WLFBar(descSpr, character, WLFBar::TYPE_HP);
+	addSpriteForHUD(hpbar);
+
+	descSpr.action = 3;
+	WLFBar* energybar = new WLFBar(descSpr, character, WLFBar::TYPE_ENERGY);
+	addSpriteForHUD(energybar);
+
+	character->setHUDItemIndexes(namepad->getIndex(), portrait->getIndex(), hpbar->getIndex(), energybar->getIndex());
+
+}
+
+VOID WLFShrineCaveScene::removeNamepadFromHUD(WLFCharacter* character) {
+	WLFCharacterHUDItemIndexes namepadItems = character->getHUDItemIndexes();
+	hud->getSpriteTable()->getItem(namepadItems.namepad)->remove();
+	hud->getSpriteTable()->getItem(namepadItems.portrait)->remove();
+	hud->getSpriteTable()->getItem(namepadItems.bar_hp)->remove();
+	hud->getSpriteTable()->getItem(namepadItems.bar_energy)->remove();
 }
 
 VOID WLFShrineCaveScene::update() {
@@ -180,57 +203,64 @@ VOID WLFShrineCaveScene::render(INT renderMode) {
 
 VOID WLFShrineCaveScene::processInput() {
 	if (!isPaused) {
-		if (keyStateBuffer[DIK_W] & 0x80) {
-			player->toStand();
+		if (keyStateBuffer[dik_up] & 0x80) {
+			if (player->getAction() == 1) {
+				player->toStand();
+			}
 		}
 		else {
 
 		}
-		if (keyStateBuffer[DIK_S] & 0x80) {
-			player->toBattleStance();
+		if (keyStateBuffer[dik_down] & 0x80) {
+			if (player->getAction() == 0) {
+				player->toBattleStance();
+			}
 		}
 		else {
 
 		}
-		if (keyStateBuffer[DIK_A] & 0x80) {
+		if (keyStateBuffer[dik_left] & 0x80) {
 			player->keyDown(WLFCharacter::KEY_LEFT);
 		}
 		else {
 			player->keyUp(WLFCharacter::KEY_LEFT);
 		}
-		if (keyStateBuffer[DIK_D] & 0x80) {
+		if (keyStateBuffer[dik_right] & 0x80) {
 			player->keyDown(WLFCharacter::KEY_RIGHT);
 		}
 		else {
 			player->keyUp(WLFCharacter::KEY_RIGHT);
 		}
-		if (keyStateBuffer[DIK_J] & 0x80) {
-			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_1)) {
-				player->attack_1();
+		if (keyStateBuffer[dik_attack_a] & 0x80) {
+			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_A) && player->getAction() == 1) {
+				player->mortalStrike();
 			}
-			player->keyDown(WLFCharacter::KEY_ATTACK_1);
+			player->keyDown(WLFCharacter::KEY_ATTACK_A);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_ATTACK_1);
+			player->keyUp(WLFCharacter::KEY_ATTACK_A);
 		}
-		if (keyStateBuffer[DIK_K] & 0x80) {
-			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_2)) {
-				player->attack_2();
+		if (keyStateBuffer[dik_attack_b] & 0x80) {
+			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_B) && player->getAction() == 1) {
+				player->overpower();
 			}
-			else {
-				INT a = 1;
-			}
-			player->keyDown(WLFCharacter::KEY_ATTACK_2);
+			player->keyDown(WLFCharacter::KEY_ATTACK_B);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_ATTACK_2);
+			player->keyUp(WLFCharacter::KEY_ATTACK_B);
+		}
+		if (keyStateBuffer[dik_special] & 0x80) {
+			if (!player->isKeyPressed(WLFCharacter::KEY_SPECIAL) && player->hasTarget() && (player->getAction() >= 0 || player->getAction() <= 5)) {
+				player->charge();
+			}
+			player->keyDown(WLFCharacter::KEY_SPECIAL);
+		}
+		else {
+			player->keyUp(WLFCharacter::KEY_SPECIAL);
 		}
 		if (keyStateBuffer[DIK_TAB] & 0x80) {
 			if (!player->isKeyPressed(WLFCharacter::KEY_CHANGE_TARGET)) {
 				player->changeTarget();
-			}
-			else {
-				INT a = 1;
 			}
 			player->keyDown(WLFCharacter::KEY_CHANGE_TARGET);
 		}
@@ -238,7 +268,7 @@ VOID WLFShrineCaveScene::processInput() {
 			player->keyUp(WLFCharacter::KEY_CHANGE_TARGET);
 		}
 	}
-	if (keyStateBuffer[DIK_L] & 0x80) {
+	if (keyStateBuffer[dik_jump] & 0x80) {
 		INT a = 1;
 	}
 	if (keyStateBuffer[DIK_RETURN] & 0x80) {
@@ -283,6 +313,19 @@ VOID WLFShrineCaveScene::processCollision() {
 			);
 			if (collisionResult.isCollided) {
 				
+				if (attackJudge->spellID > 0) {
+					WLFSpell* spell = WLFSpell::getSpellByID(attackJudge->spellID);
+					if (spell == nullptr) {
+						AENSGameControl::warning("Warning: Unknown Spell ID.");
+					}
+					else {
+						spell->setCaster(dynamic_cast<WLFCharacter*>(sprite1));
+						spell->setTarget(dynamic_cast<WLFCharacter*>(sprite2));
+						spell->takeEffect();
+					}
+					delete spell;
+				}
+
 				AESprite* spark;
 				AERO_SPRITE_DESC descSpr;
 				descSpr.obj = ae_ObjectTable.getItem(10);  // Slash Effect

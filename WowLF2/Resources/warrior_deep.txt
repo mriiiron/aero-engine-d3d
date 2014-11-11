@@ -44,6 +44,17 @@ $ImageResource 0
 44 41 79
 $ImageResource_End
 
+$ImageResource 1
+0 37 79
+1 37 79
+2 21 79
+3 21 79
+4 41 79
+5 51 79
+6 46 79
+7 37 79
+$ImageResource_End
+
 #Frames_End
 
 
@@ -111,6 +122,8 @@ $FrameCount 4 loop -1
 23 24 25 24
 4 4 4 4
 0 0 0 0
+$CreateSprite 10 action: 10 at: 32 75 frame: 1 team: -1 depth: 0.0 $End
+$CreateSprite 10 action: 10 at: 32 75 frame: 3 team: -1 depth: 0.0 $End
 $Anim_End
 
 $Anim 11 charge_start
@@ -121,9 +134,9 @@ $FrameCount 3 next 10
 $Anim_End
 
 $Anim 12 charge_end
-$FrameCount 2 next 0
+$FrameCount 2 next 1
 26 20
-12 6
+6 6
 0 0
 $Anim_End
 
@@ -132,7 +145,7 @@ $FrameCount 6 next 1
 5 30 31 32 33 34
 1 6 12 4 4 6
 0 -2 0 2 0 0
-$Attack 37 3 70 56 frame: 3 effect: 1 $End
+$Attack 37 3 70 56 frame: 3 effect: 1 spellid: 2 $End
 $Anim_End
 
 $Anim 14 attack_2
@@ -140,7 +153,15 @@ $FrameCount 6 next 1
 5 40 41 42 44 30
 1 6 12 4 4 6
 0 -1 -1 -1 3 0
-$Attack 48 20 99 60 frame: 3 effect: 0 angle: -30 $End
+$Attack 48 20 99 60 frame: 3 effect: 0 angle: -30 spellid: 2 $End
+$Anim_End
+
+$Anim 15 attack_heavy_1
+$FrameCount 8 next 1
+50 51 52 53 54 55 56 57
+8 10 4 4 4 4 4 4
+0 0 0 0 0 0 0 0
+$Attack 38 27 73 54 frame: 3 effect: 0 spellid: 1 $End
 $Anim_End
 
 $Anim 23 run

@@ -150,6 +150,7 @@ VOID AEHashedTable<T>::clear() {
 			occupied[i] = 0;
 			removeItem(i);
 		}
+		table[i] = nullptr;
 		hash[i] = -1;
 	}
 }

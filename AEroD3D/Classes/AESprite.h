@@ -62,6 +62,15 @@ public:
 	static const INT ANGLE_DIRECTION = 1;
 	static const INT ANGLE_DISPLAY = 2;
 
+	static const INT RENDER_OPTION_NORMAL = 0;
+	static const INT RENDER_OPTION_SCALE = 1;
+	static const INT RENDER_OPTION_WIPE = 2;
+
+	static const INT RENDER_WIPE_LEFT = 0;
+	static const INT RENDER_WIPE_RIGHT = 1;
+	static const INT RENDER_WIPE_TOP = 2;
+	static const INT RENDER_WIPE_BOTTOM = 3;
+
 	AESprite(AERO_SPRITE_DESC desc);
 
 	// Get'n'set
@@ -89,6 +98,8 @@ public:
 	INT getStiffTime() { return timeToStiff; }
 	UINT getKeyState() { return keyState; }
 	INT getHP() { return hpValue; }
+	INT getHPMax() { return hpMax; }
+	FLOAT getHPProportion() { return 1.0f * hpValue / hpMax; }
 	INT getFlip() { return flip; }
 	FLOAT getCx() { return cx; }
 	FLOAT getCy() { return cy; }
@@ -118,6 +129,7 @@ public:
 	BOOLEAN isKeyPressed(UINT _key) { return ((_key & keyState) == 0 ? false : true); }
 
 	VOID takeDamage(INT damage) { hpValue -= damage; }
+	VOID remove() { deadFlag = true; }
 	BOOLEAN isAtkJudgeLocked() { return atkJudgeLock; }
 	BOOLEAN isDead() { return deadFlag; }
 
@@ -141,8 +153,8 @@ public:
 
 	/* THESE FUNCTIONS ARE TOTALLY USELESS */
 	AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip);
-	AERect calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip);
-	RECT calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip);
+	AERect calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, SpriteEffects flip);
+	RECT calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, SpriteEffects flip);
 	XMFLOAT2 calcSpriteDrawingPosition(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip);
 	AEBiasRect calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip);
 	/* I'M NOT KIDDING */
@@ -157,7 +169,7 @@ public:
 	virtual VOID applyControl();
 	virtual VOID platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult);
 	virtual VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
-	virtual VOID render();
+	virtual VOID render(INT renderOption = RENDER_OPTION_NORMAL, ...);
 
 protected:
 
@@ -178,7 +190,7 @@ protected:
 	INT state;
 	UINT keyState;
 	BOOLEAN atkJudgeLock = FALSE;
-	INT hpValue = 100, hpMax = 100;
+	INT hpValue, hpMax;
 	INT attachmentTableSize = 0;
 
 };

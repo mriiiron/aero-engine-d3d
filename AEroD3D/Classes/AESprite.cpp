@@ -1,5 +1,6 @@
 #include <d3d11_1.h>
 #include <DirectXColors.h>
+#include <stdarg.h>
 #include <string>
 #include <cmath>
 #include "AEMath.h"
@@ -17,6 +18,7 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	index = frameNum = time = timeToStiff = 0;
 	vx = vy = ax = ay = angle = angleDisplay = vAngle = vAngleDisplay = 0.0f;
 	alpha = 1.0f;
+	hpValue = hpMax = 100;
 	obj = desc.obj;
 	action = desc.action;
 	team = desc.team;
@@ -41,11 +43,11 @@ AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f
 	return AEPoint(x, y);
 }
 
-AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip) {
+AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, SpriteEffects flip) {
 	INT centerx = f->getCenterx(), centery = f->getCentery();
 	INT width = f->getWidth(), height = f->getHeight();
 	FLOAT x1, y1, x2, y2;
-	if (flip == FACING_RIGHT) {
+	if (flip == SpriteEffects_None) {
 		x1 = cx - centerx;
 		y1 = cy - centery;
 		x2 = x1 + width;
@@ -60,11 +62,11 @@ AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip) {
 	return AERect(x1, y1, x2, y2);
 }
 
-RECT AESprite::calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, BYTE flip) {
+RECT AESprite::calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, SpriteEffects flip) {
 	INT centerx = f->getCenterx(), centery = f->getCentery();
 	INT width = f->getWidth(), height = f->getHeight();
 	FLOAT x1, y1, x2, y2;
-	if (flip == FACING_RIGHT) {
+	if (flip == SpriteEffects_None) {
 		x1 = cx - centerx;
 		y1 = cy - centery;
 		x2 = x1 + width;
@@ -174,7 +176,7 @@ VOID AESprite::platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<
 }
 
 VOID AESprite::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
-	// Defaultly do nothing when collision with platforms
+	// By default do nothing when collide with platforms
 }
 
 VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
@@ -223,24 +225,88 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 	if (angleDisplay >= AENSMath::PI) angleDisplay -= 2.0f * AENSMath::PI;
 }
 
-VOID AESprite::render() {
+VOID AESprite::render(INT renderOption, ...) {
+
 	AEFrame* f = obj->getAnim(action)->getFrame(frameNum);
 	FLOAT fwidth = (FLOAT)(f->getWidth()), fcenterx = (FLOAT)(f->getCenterx()), fcentery = (FLOAT)(f->getCentery());
 	AEResource* res = f->getResource();
 	RECT texClipInTexel = res->getTexClipInTexel(f->getImgOffset(), f->getImgCells());
 	FLOAT flipAdjust = flip * (fwidth - 2.0f * fcenterx);
 	FLOAT flipAdjustX = flipAdjust * cosf(angleDisplay), flipAdjustY = flipAdjust * sinf(angleDisplay);
-	xtk_SpriteBatch->Draw(
-		res->getTexture(), // Texture
-		XMFLOAT2(INT(cx - flipAdjustX), INT(cy - flipAdjustY)), // Drawing Position (Origin Point)
-		&texClipInTexel, // Texture Clip Rectangle
-		XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
-		angleDisplay, // Rotation
-		XMFLOAT2(fcenterx, fcentery), // Rotation Origin / Drawing Center
-		1.0f, // Scale
-		flip, // Sprite Effects
-		layerDepth // Z Value
-	);
+
+	va_list va;
+	va_start(va, renderOption);
+
+	switch (renderOption) {
+	case RENDER_OPTION_NORMAL:
+		xtk_SpriteBatch->Draw(
+			res->getTexture(), // Texture
+			XMFLOAT2(INT(cx - flipAdjustX), INT(cy - flipAdjustY)), // Drawing Destination Position (Origin Point)
+			&texClipInTexel, // Texture Clip Rectangle
+			XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
+			angleDisplay, // Rotation
+			XMFLOAT2(fcenterx, fcentery), // Rotation Origin / Drawing Center
+			1.0f, // Scale
+			flip, // Sprite Effects
+			layerDepth // Z Value
+			);
+		break;
+	case RENDER_OPTION_SCALE:
+	{
+		FLOAT scale = (FLOAT)(va_arg(va, DOUBLE));
+		xtk_SpriteBatch->Draw(
+			res->getTexture(), // Texture
+			XMFLOAT2(INT(cx - flipAdjustX), INT(cy - flipAdjustY)), // Drawing Destination Position (Origin Point)
+			&texClipInTexel, // Texture Clip Rectangle
+			XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
+			angleDisplay, // Rotation
+			XMFLOAT2(fcenterx, fcentery), // Rotation Origin / Drawing Center
+			scale, // Scale
+			flip, // Sprite Effects
+			layerDepth // Z Value
+			);
+	}
+		break;
+	case RENDER_OPTION_WIPE:
+	{
+		INT wipeDirection = va_arg(va, INT);
+		FLOAT wipePercent = (FLOAT)(va_arg(va, DOUBLE));
+		RECT destRect = calcSpriteRectInRECT(cx, cy, f, flip);
+		switch (wipeDirection) {
+		case RENDER_WIPE_LEFT:
+			destRect.right = (INT)(destRect.left + wipePercent * (destRect.right - destRect.left));
+			texClipInTexel.right = (INT)(texClipInTexel.left + wipePercent * (texClipInTexel.right - texClipInTexel.left));
+			break;
+		case RENDER_WIPE_RIGHT:
+			destRect.left = (INT)(destRect.right - wipePercent * (destRect.right - destRect.left));
+			texClipInTexel.left = (INT)(texClipInTexel.right - wipePercent * (texClipInTexel.right - texClipInTexel.left));
+			break;
+		case RENDER_WIPE_TOP:
+			break;
+		case RENDER_WIPE_BOTTOM:
+			break;
+		default:
+			va_end(va);
+			AENSGameControl::exitGame("Error: Invalid render option.");
+		}
+		xtk_SpriteBatch->Draw(
+			res->getTexture(), // Texture
+			destRect, // Drawing Destination Rectangle
+			&texClipInTexel, // Texture Clip Rectangle
+			XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
+			angleDisplay, // Rotation
+			XMFLOAT2(0.0f, 0.0f), // Rotation Origin / Drawing Center
+			flip, // Sprite Effects
+			layerDepth // Z Value
+			);
+	}	
+		break;
+	default:
+		va_end(va);
+		AENSGameControl::exitGame("Error: Invalid render option.");
+	}
+
+	va_end(va);
 	
 	// Old drawing method not using SpriteBatch
 	/*
