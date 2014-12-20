@@ -214,7 +214,7 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 								spriteCreate->descSprite.layerDepth = 0.0f;
 								spriteCreate->descSprite.team = 0;
 								iss >> item;
-								INT frame = -1;
+								INT frame = -1;  // Add SpriteCreate for every frame by default
 								while (item != "$End") {
 									if (item == "frame:") {
 										iss >> item;  frame = stoi(item);
@@ -234,6 +234,9 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 									}
 									else if (item == "depth:") {
 										iss >> item;  spriteCreate->descSprite.layerDepth = stof(item);
+									}
+									else if (item == "scale:") {
+										iss >> item;  spriteCreate->descSprite.scale = stof(item);
 									}
 									else if (item == "count:") {
 										iss >> item;  spriteCreate->count = stoi(item);
@@ -255,6 +258,21 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 								while (item != "$End") {
 									iss >> item;
 								}
+							}
+							else if (item == "$CameraShake") {
+								WLFCameraShakeOptions* cameraShake = new WLFCameraShakeOptions;
+								iss >> item;  cameraShake->time = stoi(item);
+								INT frame = 0;
+								while (item != "$End") {
+									if (item == "frame:") {
+										iss >> item;  frame = stoi(item);
+									}
+									else if (item == "amplitude:") {
+										iss >> item;  cameraShake->amplitude = stoi(item);
+									}
+									iss >> item;
+								}
+								anim->addCameraShakeForFrame(frame, cameraShake);
 							}
 						}
 						delete[] frameNums;

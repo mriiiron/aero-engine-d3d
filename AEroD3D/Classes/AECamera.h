@@ -30,15 +30,19 @@ public:
 	VOID setTarget(AESprite* _target) { target = _target; }
 	VOID moveFocus(FLOAT dx, FLOAT dy) { focus.x += dx;  focus.y += dy; }
 	XMFLOAT2 getFocus() { return focus; }
+	XMFLOAT2 getAdjustedFocus() { return adjustedFocus; }
 
 	VOID move(FLOAT dx, FLOAT dy) { focus.x += dx;  focus.y += dy; }
-	VOID update() { focus.x += vx; focus.y += vy; }
+	VOID update();
+
+	VOID shake(INT time, INT amplitude);
 
 private:
 
 	INT mode;
-	XMFLOAT2 focus;
+	XMFLOAT2 focus, adjustedFocus;
 	FLOAT vx, vy;
 	AESprite* target;
+	INT shakeTimer, shakeAmp;
 
 };

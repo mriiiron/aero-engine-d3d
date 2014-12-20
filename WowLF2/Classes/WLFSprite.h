@@ -50,9 +50,12 @@ public:
 	VOID adsorbToPlatform();
 	BOOLEAN isAttackLocked() { return attackLock; }
 	BOOLEAN hasTarget() { if (target == nullptr) return FALSE; else return TRUE; }
+	VOID setPortraitIndex(INT _portraitIndex) { portraitIndex = _portraitIndex; }
+	INT getPortraitIndex() { return portraitIndex; }
 	VOID setAttackLock(BOOLEAN lock) { attackLock = lock; }
 	WLFCharacterHUDItemIndexes getHUDItemIndexes() { return hudItems; }
 	VOID setHUDItemIndexes(INT namepad, INT portrait, INT bar_hp, INT bar_energy) { hudItems = { namepad, portrait, bar_hp, bar_energy }; }
+	AEHashedTable<WLFBuff>* getBuffTable() { return buffTable; }
 
 	VOID addBuff(WLFBuff* buff) { buffTable->add(buff);  buff->setHost(this); }
 	VOID updateBuffTable();
@@ -60,14 +63,14 @@ public:
 protected:
 
 	AEHashedTable<WLFBuff>* buffTable;
+	WLFCharacterHUDItemIndexes hudItems;
 
+	INT portraitIndex;
 	INT targetIndexHash;
 	WLFCharacter* target;
 	AEPlatform* onPlatform;
 	INT onPlatformTailIndex;
 	BOOLEAN attackLock;
-
-	WLFCharacterHUDItemIndexes hudItems;
 
 };
 
@@ -115,5 +118,20 @@ private:
 
 	WLFCharacter* host;
 	INT type;
+
+};
+
+
+class WLFBuffIcon : public AESprite {
+
+public:
+
+	WLFBuffIcon(AERO_SPRITE_DESC desc, WLFBuff* _buff);
+
+	VOID render(INT renderOption = RENDER_OPTION_NORMAL, ...);
+
+private:
+
+	WLFBuff* buff;
 
 };

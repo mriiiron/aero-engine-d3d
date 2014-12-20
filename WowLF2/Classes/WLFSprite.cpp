@@ -3,14 +3,18 @@
 #include "WLFAnimation.h"
 #include "WLFBuff.h"
 #include "WLFSprite.h"
+#include "WLFHeadUpDisplay.h"
 #include "WLFScene.h"
 
 extern AEConstantTable<AEObject>			ae_ObjectTable;
+extern AECamera								ae_Camera;
 extern SpriteBatch*							xtk_SpriteBatch;
 extern SpriteFont*							xtk_SpriteFont_Arial_7;
+extern SpriteFont*							xtk_SpriteFont_Arial_10;
 
 
 WLFCharacter::WLFCharacter(AERO_SPRITE_DESC desc) : AESprite(desc) {
+	portraitIndex = 0;
 	targetIndexHash = 0;
 	target = nullptr;
 	onPlatform = nullptr;
@@ -119,6 +123,10 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 			}
 			scene->addSprite(new AESprite(spriteCreate->descSprite));
 		}
+		WLFCameraShakeOptions* cameraShake = anim->getCameraShakeOptions(frameNum);
+		if (cameraShake != nullptr) {
+			ae_Camera.shake(cameraShake->time, cameraShake->amplitude);
+		}
 		if (frameNum == anim->getFrameCount()) {
 			frameNum = 0;
 			if (anim->isTurnAfterAnim()) {
@@ -205,7 +213,8 @@ VOID WLFCharacter::changeTarget() {
 				descSpr.cy = target->getCy();
 				descSpr.layerDepth = target->getLayerDepth() + 0.001f;
 				scene->addSpriteAttachment(target, new AESprite(descSpr));
-				dynamic_cast<WLFShrineCaveScene*>(scene)->addNamepadToHUD(target, 11, WLFShrineCaveScene::NAMEPAD_SLOT_TARGET);
+				//dynamic_cast<WLFShrineCaveScene*>(scene)->addNamepadToHUD(target, 11, WLFShrineCaveScene::NAMEPAD_SLOT_TARGET);
+				dynamic_cast<WLFHeadUpDisplay*>(scene->getHUD())->setNamepad(WLFHeadUpDisplay::NAMEPAD_SLOT_TARGET, target);
 				break;
 			}
 		}
@@ -214,10 +223,11 @@ VOID WLFCharacter::changeTarget() {
 		INT iHash = targetIndexHash;
 		do {
 			iHash++;
-			if (iHash >= spriteTable->getHashCount()) iHash = 0;
+			if (iHash >= spriteTable->getHashCount()) {
+				iHash = 0;
+			}
 			AESprite* sprite = spriteTable->getItemByHash(iHash);
 			if (dynamic_cast<WLFCharacter*>(sprite) && sprite->getTeam() != this->team) {
-				dynamic_cast<WLFShrineCaveScene*>(scene)->removeNamepadFromHUD(target);
 				targetIndexHash = iHash;
 				target = dynamic_cast<WLFCharacter*>(sprite);
 				AERO_SPRITE_DESC descSpr;
@@ -229,7 +239,8 @@ VOID WLFCharacter::changeTarget() {
 				descSpr.cy = target->getCy();
 				descSpr.layerDepth = target->getLayerDepth() + 0.001f;
 				scene->addSpriteAttachment(target, new AESprite(descSpr));
-				dynamic_cast<WLFShrineCaveScene*>(scene)->addNamepadToHUD(target, 11, WLFShrineCaveScene::NAMEPAD_SLOT_TARGET);
+				//dynamic_cast<WLFShrineCaveScene*>(scene)->addNamepadToHUD(target, 11, WLFShrineCaveScene::NAMEPAD_SLOT_TARGET);
+				dynamic_cast<WLFHeadUpDisplay*>(scene->getHUD())->setNamepad(WLFHeadUpDisplay::NAMEPAD_SLOT_TARGET, target);
 				break;
 			}
 		} while (iHash != targetIndexHash);
@@ -265,6 +276,7 @@ WLFWarrior::WLFWarrior(AERO_SPRITE_DESC desc) : WLFCharacter(desc) {
 	chargeTargetPosX = 0.0f;
 	rage = 0;
 	rageMax = 100;
+	portraitIndex = 10;
 }
 
 VOID WLFWarrior::update(AEHashedTable<AEPlatform>* platformTable) {
@@ -288,11 +300,11 @@ VOID WLFWarrior::slam() {
 }
 
 VOID WLFWarrior::colossusSmash() {
-
+	changeAction(16);
 }
 
 VOID WLFWarrior::thunderClap() {
-
+	changeAction(17);
 }
 
 VOID WLFWarrior::charge() {
@@ -342,4 +354,19 @@ VOID WLFBar::render(INT renderOption, ...) {
 	}
 	AEFrame* f = getCurrentFrame();
 	xtk_SpriteFont_Arial_7->DrawString(xtk_SpriteBatch, strBarValue, XMFLOAT2(cx - f->getCenterx(), cy - f->getCentery() - 2.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
+}
+
+
+WLFBuffIcon::WLFBuffIcon(AERO_SPRITE_DESC desc, WLFBuff* _buff) : AESprite(desc) {
+	buff = _buff;
+}
+
+VOID WLFBuffIcon::render(INT renderOption, ...) {
+	AESprite::render(AESprite::RENDER_OPTION_SCALE, 0.25f);
+	LPTSTR strBuffTimeRemain = new TCHAR[1024];
+	CHAR* narrowCharBuffer = new CHAR[1024];
+	INT sec = buff->getTimeRemain() / 60;
+	sprintf_s(narrowCharBuffer, 1024, "%s %02d:%02d", buff->getName().c_str(), sec / 60, sec % 60);
+	mbstowcs(strBuffTimeRemain, narrowCharBuffer, 1024);
+	xtk_SpriteFont_Arial_10->DrawString(xtk_SpriteBatch, strBuffTimeRemain, XMFLOAT2(cx + 10.0f, cy - 8.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
 }

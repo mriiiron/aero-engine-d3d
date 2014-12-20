@@ -15,19 +15,28 @@
 #include "AESprite.h"
 
 
+class AEScene;
+
+
 class AEHeadUpDisplay {
 
 public:
 
+	static const INT NAMEPAD_SLOT_PLAYER = 0;
+	static const INT NAMEPAD_SLOT_TARGET = 1;
+
 	AEHeadUpDisplay(INT spriteTableSize);
 
 	AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
+	VOID setScene(AEScene* _scene) { scene = _scene; }
+	AEScene* getScene() { return scene; }
 
-	VOID update();
-	VOID render();
+	virtual VOID update();
+	virtual VOID render();
 
 protected:
 
+	AEScene* scene;
 	AEHashedTable<AESprite>* spriteTable;
 
 };

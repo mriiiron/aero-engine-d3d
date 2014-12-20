@@ -31,6 +31,7 @@ struct AERO_SPRITE_DESC {
 	FLOAT cx;
 	FLOAT cy;
 	FLOAT layerDepth;
+	FLOAT scale;
 	INT action;
 	SpriteEffects flip;
 
@@ -39,6 +40,7 @@ struct AERO_SPRITE_DESC {
 		team = 0;
 		cx = cy = 0.0f;
 		layerDepth = 0.0f;
+		scale = 1.0f;
 		action = 0;
 		flip = SpriteEffects_None;
 	}
@@ -85,6 +87,7 @@ public:
 	VOID setFlip(SpriteEffects _flip) { flip = _flip; }
 	VOID setHPValue(INT _hpValue) { hpValue = _hpValue; }
 	VOID setAlpha(FLOAT _alpha) { alpha = _alpha; }
+	VOID setScale(FLOAT _scale) { scale = _scale; }
 	VOID setLayerDepth(FLOAT _layerDepth) { layerDepth = _layerDepth; }
 	VOID adjustAlpha(FLOAT dAlpha) { alpha += dAlpha;  if (alpha < 0.0f) alpha = 0.0f;  if (alpha > 1.0f) alpha = 1.0f; }
 	VOID move(FLOAT dx, FLOAT dy) { cx += dx;  cy += dy; }
@@ -110,6 +113,7 @@ public:
 	FLOAT getAx() { return ax; }
 	FLOAT getAy() { return ay; }
 	FLOAT getAlpha() { return alpha; }
+	FLOAT getScale() { return scale; }
 	FLOAT getLayerDepth() { return layerDepth; }
 	AEPoint getCenter() { return AEPoint(cx, cy); }
 	AEObject* getObject() { return obj; }
@@ -174,9 +178,9 @@ public:
 protected:
 
 	AEObject* obj;
-	AEScene* scene = nullptr;
-	AEAI* ai = nullptr;
-	AEHashedTable<AESprite>* attachmentTable = nullptr;
+	AEScene* scene;
+	AEAI* ai;
+	AEHashedTable<AESprite>* attachmentTable;
 
 	INT action, team;
 	FLOAT cx, cy;
@@ -186,7 +190,7 @@ protected:
 
 	INT index, frameNum, time, timeToStiff;
 	FLOAT vx, vy, ax, ay, angle, angleDisplay, vAngle, vAngleDisplay;
-	FLOAT alpha, layerDepth;
+	FLOAT alpha, layerDepth, scale;
 	INT state;
 	UINT keyState;
 	BOOLEAN atkJudgeLock = FALSE;

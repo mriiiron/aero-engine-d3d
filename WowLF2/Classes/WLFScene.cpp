@@ -6,6 +6,7 @@
 #include "WLFAnimation.h"
 #include "WLFBuff.h"
 #include "WLFSprite.h"
+#include "WLFHeadUpDisplay.h"
 #include "WLFSpell.h"
 #include "WLFScene.h"
 
@@ -41,7 +42,7 @@ WLFShrineCaveScene::WLFShrineCaveScene(INT spriteTableSize) : AEScene(spriteTabl
 
 	// Create Shrine Cave BG
 
-	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(20), 0);
+	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(80), 0);
 	AERO_BGLAYERANIM_DESC descBGLayerAnim;
 	descBGLayerAnim.frameCount = 1;
 	AEBGLayerAnim* bgLayerAnim = new AEBGLayerAnim(descBGLayerAnim);
@@ -91,7 +92,8 @@ WLFShrineCaveScene::WLFShrineCaveScene(INT spriteTableSize) : AEScene(spriteTabl
 	this->setPlatformTable(platforms_shrine_cave);
 
 	// Add HUD
-	hud = new AEHeadUpDisplay(100);
+	hud = new WLFHeadUpDisplay(100);
+	hud->setScene(this);
 
 }
 
@@ -124,16 +126,19 @@ VOID WLFShrineCaveScene::initialize() {
 	descSpr.cy = 0.0f;  // 150.0f;
 	descSpr.layerDepth = 0.01f;
 	WLFCharacter* bandit1 = new WLFCharacter(descSpr);
+	bandit1->setPortraitIndex(11);
 	addSprite(bandit1);
 
 	// Create Dummy #2
 	descSpr.cx = 0.0f;
 	descSpr.cy = 0.0f;  // 150.0f;
 	WLFCharacter* bandit2 = new WLFCharacter(descSpr);
+	bandit2->setPortraitIndex(11);
 	addSprite(bandit2);
 
 	// Create player namepad
-	addNamepadToHUD(deep, 10, NAMEPAD_SLOT_PLAYER);
+	//addNamepadToHUD(deep, 10, NAMEPAD_SLOT_PLAYER);
+	dynamic_cast<WLFHeadUpDisplay*>(hud)->setNamepad(WLFHeadUpDisplay::NAMEPAD_SLOT_PLAYER, deep);
 
 }
 
@@ -149,18 +154,16 @@ VOID WLFShrineCaveScene::loadObject(INT oid, std::string fileName, std::string o
 
 VOID WLFShrineCaveScene::addNamepadToHUD(WLFCharacter* character, INT portraitIndex, INT slot) {
 
+	FLOAT namepadPosX = -300.0f + 150.0f * slot;
+	FLOAT namepadPosY = -220.0f;
+
 	AERO_SPRITE_DESC descSpr;
 	descSpr.obj = ae_ObjectTable.getItem(40);
-	descSpr.team = character->getTeam();
+	descSpr.team = -1;
 	descSpr.action = 0;
 	descSpr.flip = SpriteEffects_None;
-	if (slot == NAMEPAD_SLOT_PLAYER) {
-		descSpr.cx = -300.0f;
-	}
-	else {
-		descSpr.cx = -150.0f;
-	}
-	descSpr.cy = -220.0f;
+	descSpr.cx = namepadPosX;
+	descSpr.cy = namepadPosY;
 	descSpr.layerDepth = 0.01f;
 	AESprite* namepad = new AESprite(descSpr);
 	addSpriteForHUD(namepad);
@@ -194,10 +197,11 @@ VOID WLFShrineCaveScene::removeNamepadFromHUD(WLFCharacter* character) {
 VOID WLFShrineCaveScene::update() {
 	processCollision();
 	AEScene::update();
+	ae_Camera.setFocus(player->getCx(), 0.0f);
+	ae_Camera.update();
 }
 
 VOID WLFShrineCaveScene::render(INT renderMode) {
-	ae_Camera.setFocus(player->getCx(), 0.0f);
 	AEScene::render(renderMode);
 }
 
@@ -207,17 +211,19 @@ VOID WLFShrineCaveScene::processInput() {
 			if (player->getAction() == 1) {
 				player->toStand();
 			}
+			player->keyDown(WLFCharacter::KEY_UP);
 		}
 		else {
-
+			player->keyUp(WLFCharacter::KEY_UP);
 		}
 		if (keyStateBuffer[dik_down] & 0x80) {
 			if (player->getAction() == 0) {
 				player->toBattleStance();
 			}
+			player->keyDown(WLFCharacter::KEY_DOWN);
 		}
 		else {
-
+			player->keyUp(WLFCharacter::KEY_DOWN);
 		}
 		if (keyStateBuffer[dik_left] & 0x80) {
 			player->keyDown(WLFCharacter::KEY_LEFT);
@@ -233,7 +239,12 @@ VOID WLFShrineCaveScene::processInput() {
 		}
 		if (keyStateBuffer[dik_attack_a] & 0x80) {
 			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_A) && player->getAction() == 1) {
-				player->mortalStrike();
+				if (player->isKeyPressed(WLFCharacter::KEY_DOWN)) {
+					player->colossusSmash();
+				}
+				else {
+					player->mortalStrike();
+				}	
 			}
 			player->keyDown(WLFCharacter::KEY_ATTACK_A);
 		}
@@ -242,7 +253,12 @@ VOID WLFShrineCaveScene::processInput() {
 		}
 		if (keyStateBuffer[dik_attack_b] & 0x80) {
 			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_B) && player->getAction() == 1) {
-				player->overpower();
+				if (player->isKeyPressed(WLFCharacter::KEY_DOWN)) {
+					player->thunderClap();
+				}
+				else {
+					player->overpower();
+				}
 			}
 			player->keyDown(WLFCharacter::KEY_ATTACK_B);
 		}
@@ -266,6 +282,9 @@ VOID WLFShrineCaveScene::processInput() {
 		}
 		else {
 			player->keyUp(WLFCharacter::KEY_CHANGE_TARGET);
+		}
+		if (keyStateBuffer[DIK_Q] & 0x80) {
+			ae_Camera.shake(30, 3);
 		}
 	}
 	if (keyStateBuffer[dik_jump] & 0x80) {
@@ -326,30 +345,35 @@ VOID WLFShrineCaveScene::processCollision() {
 					delete spell;
 				}
 
-				AESprite* spark;
-				AERO_SPRITE_DESC descSpr;
-				descSpr.obj = ae_ObjectTable.getItem(10);  // Slash Effect
-				descSpr.team = -1;  // Neutral
-				descSpr.action = attackJudge->effect;
-				descSpr.cx = collisionResult.point.x;
-				descSpr.cy = collisionResult.point.y;
-				descSpr.layerDepth = 0.0f;
-
-				dynamic_cast<WLFCharacter*>(sprite1)->setAttackLock(TRUE);
 				if (sprite1->getFlip() != sprite2->getFlip()) {
 					sprite2->changeAction(AENSMath::randomIntBetween(WLFCharacter::ACTION_HIT_FRONT_LOWER, WLFCharacter::ACTION_HIT_FRONT_UPPER));
-					descSpr.flip = SpriteEffects_None;
-					spark = new AESprite(descSpr);
-					spark->rotateDeg(attackJudge->angle);
 				}
 				else {
-					sprite2->changeAction(AENSMath::randomIntBetween(WLFCharacter::ACTION_HIT_BACK_LOWER, WLFCharacter::ACTION_HIT_BACK_UPPER));
-					descSpr.flip = SpriteEffects_FlipHorizontally;
-					spark = new AESprite(descSpr);
-					spark->rotateDeg(-attackJudge->angle);
+					sprite2->changeAction(AENSMath::randomIntBetween(WLFCharacter::ACTION_HIT_BACK_LOWER, WLFCharacter::ACTION_HIT_BACK_UPPER));		
 				}
-
-				addSprite(spark);
+				
+				if (attackJudge->effect >= 0) {
+					AESprite* spark;
+					AERO_SPRITE_DESC descSpr;
+					descSpr.obj = ae_ObjectTable.getItem(10);  // Slash Effect
+					descSpr.team = -1;  // Neutral
+					descSpr.action = attackJudge->effect;
+					descSpr.cx = collisionResult.point.x;
+					descSpr.cy = collisionResult.point.y;
+					descSpr.layerDepth = 0.0f;
+					dynamic_cast<WLFCharacter*>(sprite1)->setAttackLock(TRUE);
+					if (sprite1->getFlip() != sprite2->getFlip()) {
+						descSpr.flip = SpriteEffects_None;
+						spark = new AESprite(descSpr);
+						spark->rotateDeg(attackJudge->angle);
+					}
+					else {
+						descSpr.flip = SpriteEffects_FlipHorizontally;
+						spark = new AESprite(descSpr);
+						spark->rotateDeg(-attackJudge->angle);
+					}
+					addSprite(spark);
+				}
 
 			}
 		}

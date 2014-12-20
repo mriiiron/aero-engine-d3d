@@ -14,7 +14,10 @@ public:
 	VOID setTimeRemain(INT _timeRemain) { timeRemain = _timeRemain; }
 	VOID setHost(WLFCharacter* _host) { host = _host; }
 	INT getTimeRemain() { return timeRemain; }
+	INT getIconIndex() { return iconIndex; }
+	std::string getName() { return name; }
 	BOOLEAN isDead() { return deadFlag; }
+	AESprite* getSprite(FLOAT cx, FLOAT cy);
 
 	virtual VOID update() = 0;
 
@@ -24,18 +27,29 @@ protected:
 
 	std::string name;
 	INT timeRemain;
-	AEFrame* icon;
+	INT iconIndex;
 	BOOLEAN deadFlag;
 
 };
 
 
 class WLFBuffRend : public WLFBuff {
+public:
+	WLFBuffRend(INT _time);
+	VOID update();
+};
+
+
+class WLFBuffArmorCrack : public WLFBuff {
 
 public:
-
-	WLFBuffRend(INT _time);
-
+	WLFBuffArmorCrack(INT _time);
 	VOID update();
+};
 
+
+class WLFBuffSlowDown : public WLFBuff {
+public:
+	WLFBuffSlowDown(INT _time);
+	VOID update();
 };

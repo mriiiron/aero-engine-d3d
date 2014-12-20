@@ -345,8 +345,8 @@ void Render() {
 	g_pImmediateContext->ClearDepthStencilView( g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
 
 	// Change the view matrix by camera position
-	XMVECTOR Eye = XMVectorSet((INT)(ae_Camera.getFocus().x - (gi_WindowWidth / 2.0f)), (INT)(ae_Camera.getFocus().y - (gi_WindowHeight / 2.0f)), 0.0f, 0.0f);
-	XMVECTOR At = XMVectorSet((INT)(ae_Camera.getFocus().x - (gi_WindowWidth / 2.0f)), (INT)(ae_Camera.getFocus().y - (gi_WindowHeight / 2.0f)), 100.0f, 0.0f);
+	XMVECTOR Eye = XMVectorSet((INT)(ae_Camera.getAdjustedFocus().x - (gi_WindowWidth / 2.0f)), (INT)(ae_Camera.getAdjustedFocus().y - (gi_WindowHeight / 2.0f)), 0.0f, 0.0f);
+	XMVECTOR At = XMVectorSet((INT)(ae_Camera.getAdjustedFocus().x - (gi_WindowWidth / 2.0f)), (INT)(ae_Camera.getAdjustedFocus().y - (gi_WindowHeight / 2.0f)), 100.0f, 0.0f);
 	XMVECTOR Up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	gm_View = XMMatrixLookAtLH(Eye, At, Up);
 

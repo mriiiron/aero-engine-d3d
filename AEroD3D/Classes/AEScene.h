@@ -38,7 +38,7 @@ public:
 	VOID setBackground(AEBackground* _bg) { bg = _bg; }
 	VOID setPlatformTable(AEHashedTable<AEPlatform>* _platformTable) { platformTable = _platformTable; }
 	VOID setSpriteTable(AEHashedTable<AESprite>* _spriteTable) { spriteTable = _spriteTable; }
-	VOID setHUD(AEHeadUpDisplay* _hud) { hud = _hud; }
+	VOID setHUD(AEHeadUpDisplay* _hud) { hud = _hud;  hud->setScene(this); }
 
 	VOID addSprite(AESprite* sprite);
 	VOID addSpriteAttachment(AESprite* host, AESprite* attachment);

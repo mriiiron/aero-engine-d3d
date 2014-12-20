@@ -23,22 +23,28 @@ protected:
 
 
 class WLFMortalStrike : public WLFSpell {
-
 public:
-
 	VOID takeEffect();
-
 	static const INT spellID = 1;
-
 };
 
 
 class WLFOverpower : public WLFSpell {
-
 public:
-
 	VOID takeEffect();
-
 	static const INT spellID = 2;
+};
 
+
+class WLFColossusSmash : public WLFSpell {
+public:
+	VOID takeEffect();
+	static const INT spellID = 3;
+};
+
+
+class WLFThunderClap : public WLFSpell {
+public:
+	VOID takeEffect();
+	static const INT spellID = 4;
 };

@@ -7,6 +7,7 @@ WLFAnimation::WLFAnimation(AERO_ANIMATION_DESC desc) : AEAnimation(desc) {
 		attackJudgeTable[i] = nullptr;
 		bodyJudgeTable[i] = nullptr;
 		spriteCreateTable[i] = nullptr;
+		cameraShakeTable[i] = nullptr;
 	}
 	isTurn = FALSE;
 }
@@ -24,6 +25,10 @@ WLFAnimation::~WLFAnimation() {
 		if (spriteCreateTable[i]) {
 			delete spriteCreateTable[i];
 			spriteCreateTable[i] = nullptr;
+		}
+		if (cameraShakeTable[i]) {
+			delete cameraShakeTable[i];
+			cameraShakeTable[i] = nullptr;
 		}
 	}
 }
@@ -58,4 +63,12 @@ VOID WLFAnimation::addSpriteCreateForFrame(INT index, WLFSpriteCreatePoint* spri
 		return;
 	}
 	spriteCreateTable[index] = spriteCountPoint;
+}
+
+VOID WLFAnimation::addCameraShakeForFrame(INT index, WLFCameraShakeOptions* cameraShakeOptions) {
+	if (index < 0 || index >= frameCount) {
+		// Error
+		return;
+	}
+	cameraShakeTable[index] = cameraShakeOptions;
 }

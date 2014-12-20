@@ -13,6 +13,9 @@ extern AEConstantTable<AEObject>			ae_ObjectTable;
 extern SpriteBatch*							xtk_SpriteBatch;
 
 AESprite::AESprite(AERO_SPRITE_DESC desc) {
+	scene = nullptr;
+	ai = nullptr;
+	attachmentTable = nullptr;
 	keyState = 0;
 	state = 0;
 	index = frameNum = time = timeToStiff = 0;
@@ -25,6 +28,7 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	cx = desc.cx;
 	cy = desc.cy;
 	layerDepth = desc.layerDepth;
+	scale = desc.scale;
 	flip = desc.flip;
 	changeAction(desc.action);
 }
@@ -111,11 +115,11 @@ AEBiasRect AESprite::calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT
 
 VOID AESprite::changeAction(INT _action) {
 	if (_action == ACTION_NUM_DEAD) {
-		deadFlag = true;
+		deadFlag = TRUE;
 		return;
 	}
 	else {
-		deadFlag = false;
+		deadFlag = FALSE;
 	}
 	action = _action;
 	AEAnimation* anim = obj->getAnim(action);
@@ -246,14 +250,14 @@ VOID AESprite::render(INT renderOption, ...) {
 			XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
 			angleDisplay, // Rotation
 			XMFLOAT2(fcenterx, fcentery), // Rotation Origin / Drawing Center
-			1.0f, // Scale
+			scale, // Scale
 			flip, // Sprite Effects
 			layerDepth // Z Value
 			);
 		break;
 	case RENDER_OPTION_SCALE:
 	{
-		FLOAT scale = (FLOAT)(va_arg(va, DOUBLE));
+		FLOAT optionScale = (FLOAT)(va_arg(va, DOUBLE));
 		xtk_SpriteBatch->Draw(
 			res->getTexture(), // Texture
 			XMFLOAT2(INT(cx - flipAdjustX), INT(cy - flipAdjustY)), // Drawing Destination Position (Origin Point)
@@ -261,7 +265,7 @@ VOID AESprite::render(INT renderOption, ...) {
 			XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
 			angleDisplay, // Rotation
 			XMFLOAT2(fcenterx, fcentery), // Rotation Origin / Drawing Center
-			scale, // Scale
+			optionScale, // Scale
 			flip, // Sprite Effects
 			layerDepth // Z Value
 			);

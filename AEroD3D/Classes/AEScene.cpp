@@ -17,6 +17,7 @@ AEScene::AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, A
 	platformTable = _platformTable;
 	spriteTable = _spriteTable;
 	hud = _hud;
+	hud->setScene(this);
 	for (INT i = 0; i < 256; i++) {
 		keyStateBuffer[i] = 0;
 	}

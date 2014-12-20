@@ -5,9 +5,6 @@ class WLFShrineCaveScene : public AEScene {
 
 public:
 
-	static const INT NAMEPAD_SLOT_PLAYER = 0;
-	static const INT NAMEPAD_SLOT_TARGET = 1;
-
 	static const FLOAT GRAVITY;
 
 	WLFShrineCaveScene(INT spriteTableSize);

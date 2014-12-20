@@ -2,6 +2,9 @@
 
 $ImageResource 50
 0 32 32
+1 32 32
+2 32 32
+3 32 32
 $ImageResource_End
 
 #Frames_End
@@ -9,9 +12,30 @@ $ImageResource_End
 
 #Animations
 
-$Anim 0 icons
+$Anim 0 unknown
 $FrameCount 1 loop -1
 0
+100
+0
+$Anim_End
+
+$Anim 1 rend
+$FrameCount 1 loop -1
+1
+100
+0
+$Anim_End
+
+$Anim 2 armor_crack
+$FrameCount 1 loop -1
+2
+100
+0
+$Anim_End
+
+$Anim 3 slow_down
+$FrameCount 1 loop -1
+3
 100
 0
 $Anim_End

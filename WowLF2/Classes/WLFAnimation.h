@@ -9,7 +9,8 @@ struct WLFAttackJudgeArea {
 
 	WLFAttackJudgeArea() {
 		rect = { 0, 0, 0, 0 };
-		effect = angle = 0;
+		angle = 0;
+		effect = -1;
 		spellID = 0;
 	}
 
@@ -47,6 +48,18 @@ struct WLFSpriteCreatePoint {
 
 };
 
+struct WLFCameraShakeOptions {
+
+	INT time;
+	INT amplitude;
+
+	WLFCameraShakeOptions() {
+		time = 0;
+		amplitude = 3;
+	}
+
+};
+
 
 class WLFAnimation : public AEAnimation {
 
@@ -59,11 +72,13 @@ public:
 	WLFAttackJudgeArea* getAttackJudge(INT index) { return attackJudgeTable[index]; }
 	WLFBodyJudgeArea* getBodyJudge(INT index) { return bodyJudgeTable[index]; }
 	WLFSpriteCreatePoint* getSpriteCreate(INT index) { return spriteCreateTable[index]; }
+	WLFCameraShakeOptions* getCameraShakeOptions(INT index) { return cameraShakeTable[index]; }
 
 	VOID addXShiftForFrame(INT index, INT xShift);
 	VOID addAttackJudgeForFrame(INT index, WLFAttackJudgeArea* attackJudgeArea);
 	VOID addBodyJudgeForFrame(INT index, WLFBodyJudgeArea* bodyJudgeArea);
 	VOID addSpriteCreateForFrame(INT index, WLFSpriteCreatePoint* bodyJudgeArea);
+	VOID addCameraShakeForFrame(INT index, WLFCameraShakeOptions* cameraShakeOptions);
 	VOID setTurnAfterAnim(BOOLEAN _isTurn) { isTurn = _isTurn; }
 
 	BOOLEAN isTurnAfterAnim() { return isTurn; }
@@ -74,6 +89,7 @@ private:
 	WLFAttackJudgeArea* attackJudgeTable[MAX_FRAME_COUNT];
 	WLFBodyJudgeArea*  bodyJudgeTable[MAX_FRAME_COUNT];
 	WLFSpriteCreatePoint* spriteCreateTable[MAX_FRAME_COUNT];
+	WLFCameraShakeOptions* cameraShakeTable[MAX_FRAME_COUNT];
 	BOOLEAN isTurn;
 
 };
