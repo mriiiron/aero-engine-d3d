@@ -23,6 +23,7 @@ WLFCharacter::WLFCharacter(AERO_SPRITE_DESC desc) : AESprite(desc) {
 	hudItems = { 0, 0, 0 };
 	createAttachmentTable(10);
 	buffTable = new AEHashedTable<WLFBuff>(50);
+	shakeTimer = shakeAmp = 0;
 }
 
 VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
@@ -30,17 +31,29 @@ VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AE
 	onPlatform = platform;
 	onPlatformTailIndex = tailNodeIndex;
 	state = STATE_ON_GROUND;
-	changeAction(WLFCharacter::ACTION_LAND);
+	WLFAnimation* anim = (WLFAnimation*)(obj->getAnim(action));
+	INT hitGroundAction = anim->getHitGroundAction();
+	changeAction(hitGroundAction < 0 ? WLFCharacter::ACTION_LAND_DEFAULT : hitGroundAction);
+	ax = 0.0f;
 	ay = 0.0f;
+	vx = 0.0f;
 	vy = 0.0f;
 	adsorbToPlatform();
 }
 
-//  Overrides AESprite::update() completely
+// Override AESprite::update() completely
 VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
+	if (shakeTimer > 0) {
+		shakeTimer--;
+	}
+	if (scene->getStandstill() > 0 && obj->getType() != AEObject::OBJ_HIT_SPARK) {
+		return;
+	}
 	updateBuffTable();
 	if (state == STATE_IN_AIR) {
-		changeAction(WLFCharacter::ACTION_IN_AIR);
+		//changeAction(WLFCharacter::ACTION_IN_AIR);
+		onPlatform = nullptr;
+		onPlatformTailIndex = 0;
 		ay = ((WLFShrineCaveScene*)scene)->GRAVITY;
 	}
 	if (state == STATE_ON_GROUND) {
@@ -94,14 +107,25 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 	time++;
 	BOOLEAN isFrameChange = FALSE;
 	INT fac = (flip ? -1 : 1);
-	if (time >= anim->getEndTime(frameNum)) {
-		isFrameChange = TRUE;
-		if (attackLock) attackLock = FALSE;
-		frameNum++;
-		if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
-			time = 0;
+	if ((time == 1 && frameNum == 0) || time >= anim->getEndTime(frameNum)) {
+		if (time >= anim->getEndTime(frameNum)) {
+			isFrameChange = TRUE;
+			if (attackLock) attackLock = FALSE;
+			frameNum++;
+			if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
+				time = 0;
+			}
+			if (frameNum == anim->getFrameCount()) {
+				frameNum = 0;
+				if (anim->isTurnAfterAnim()) {
+					flip = (flip == SpriteEffects_None ? SpriteEffects_FlipHorizontally : SpriteEffects_None);
+				}
+				if (!anim->isLoop()) {
+					changeAction(anim->getNext());
+				}
+			}
+			vx += anim->getXShift(frameNum);
 		}
-		vx += anim->getXShift(frameNum);
 		WLFSpriteCreatePoint* spriteCreate = anim->getSpriteCreate(frameNum);
 		if (spriteCreate != nullptr) {
 			spriteCreate->descSprite.obj = ae_ObjectTable.getItem(spriteCreate->oid);
@@ -127,15 +151,8 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 		if (cameraShake != nullptr) {
 			ae_Camera.shake(cameraShake->time, cameraShake->amplitude);
 		}
-		if (frameNum == anim->getFrameCount()) {
-			frameNum = 0;
-			if (anim->isTurnAfterAnim()) {
-				flip = (flip == SpriteEffects_None ? SpriteEffects_FlipHorizontally : SpriteEffects_None);
-			}
-			if (!anim->isLoop()) {
-				changeAction(anim->getNext());
-			}
-		}
+		vx += anim->getGivenSpeed(frameNum).x;
+		vy += anim->getGivenSpeed(frameNum).y;	
 	}
 	if (state == STATE_IN_AIR) {
 		FLOAT cx_old = cx, cy_old = cy;
@@ -162,8 +179,9 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 			}
 			adsorbToPlatform();
 		}
-		if (vy != 0.0f) {
+		if (vy < 0.0f) {
 			// TODO: Jump out of a platform
+			state = STATE_IN_AIR;
 		}
 	}
 	vx += ax;
@@ -178,6 +196,16 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 	angleDisplay += (fac * vAngleDisplay);
 	if (angleDisplay < -AENSMath::PI) angleDisplay += 2.0f * AENSMath::PI;
 	if (angleDisplay >= AENSMath::PI) angleDisplay -= 2.0f * AENSMath::PI;
+}
+
+VOID WLFCharacter::render(INT renderOption, ...) {
+	if (shakeTimer > 0) {
+		INT xOffset = shakeAmp * (2 * (shakeTimer % 4) / 2 - 1);
+		AESprite::render(AESprite::RENDER_OPTION_OFFSET, xOffset, 0);
+	}
+	else {
+		AESprite::render(AESprite::RENDER_OPTION_NORMAL);
+	}
 }
 
 VOID WLFCharacter::toBattleStance() {
@@ -260,6 +288,24 @@ VOID WLFCharacter::adsorbToPlatform() {
 	}
 }
 
+
+VOID WLFCharacter::addBuff(WLFBuff* buff, WLFCharacter* caster) {
+	BOOLEAN isBuffDuplicated = FALSE;
+	for (INT iHash = 0; iHash < buffTable->getHashCount(); iHash++) {
+		WLFBuff* oldBuff = buffTable->getItemByHash(iHash);
+		if ((oldBuff->getCaster() == caster) && (oldBuff->getName() == buff->getName())) {
+			oldBuff->setTimeRemain(buff->getTimeRemain());
+			isBuffDuplicated = TRUE;
+			break;
+		}
+	}
+	if (!isBuffDuplicated) {
+		buffTable->add(buff);
+		buff->setHost(this);
+		buff->setCaster(caster);
+	}
+}
+
 VOID WLFCharacter::updateBuffTable() {
 	for (INT iHash = 0; iHash < buffTable->getHashCount(); iHash++) {
 		WLFBuff* buff = buffTable->getItemByHash(iHash);
@@ -271,6 +317,12 @@ VOID WLFCharacter::updateBuffTable() {
 		}
 	}
 }
+
+VOID WLFCharacter::shake(INT time, INT amplitude) {
+	shakeTimer = time;
+	shakeAmp = amplitude;
+}
+
 
 WLFWarrior::WLFWarrior(AERO_SPRITE_DESC desc) : WLFCharacter(desc) {
 	chargeTargetPosX = 0.0f;
@@ -296,7 +348,7 @@ VOID WLFWarrior::overpower() {
 }
 
 VOID WLFWarrior::slam() {
-
+	changeAction(19);
 }
 
 VOID WLFWarrior::colossusSmash() {

@@ -254,10 +254,6 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 							}
 							else if (item == "$Turn") {
 								anim->setTurnAfterAnim(TRUE);
-								iss >> item;
-								while (item != "$End") {
-									iss >> item;
-								}
 							}
 							else if (item == "$CameraShake") {
 								WLFCameraShakeOptions* cameraShake = new WLFCameraShakeOptions;
@@ -273,6 +269,27 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 									iss >> item;
 								}
 								anim->addCameraShakeForFrame(frame, cameraShake);
+							}
+							else if (item == "$HitGround") {
+								iss >> item;
+								anim->setHitGroundAction(stoi(item));
+							}
+							else if (item == "$GiveSpeed") {
+								INT frame = 0;
+								FLOAT x = 0.0f, y = 0.0f;
+								while (item != "$End") {
+									if (item == "x:") {
+										iss >> item;  x = stof(item);
+									}
+									else if (item == "y:") {
+										iss >> item;  y = stof(item);
+									}
+									else if (item == "frame:") {
+										iss >> item;  frame = stoi(item);
+									}
+									iss >> item;
+								}
+								anim->giveSpeedForFrame(frame, { x, y });
 							}
 						}
 						delete[] frameNums;

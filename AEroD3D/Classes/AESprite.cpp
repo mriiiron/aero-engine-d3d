@@ -303,7 +303,42 @@ VOID AESprite::render(INT renderOption, ...) {
 			flip, // Sprite Effects
 			layerDepth // Z Value
 			);
-	}	
+	}
+		break;
+	case RENDER_OPTION_OFFSET:
+	{
+		INT xOffset = va_arg(va, INT);
+		INT yOffset = va_arg(va, INT);
+		xtk_SpriteBatch->Draw(
+			res->getTexture(), // Texture
+			XMFLOAT2(INT(cx - flipAdjustX + xOffset), INT(cy - flipAdjustY + yOffset)), // Drawing Destination Position (Origin Point)
+			&texClipInTexel, // Texture Clip Rectangle
+			XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
+			angleDisplay, // Rotation
+			XMFLOAT2(fcenterx, fcentery), // Rotation Origin / Drawing Center
+			scale, // Scale
+			flip, // Sprite Effects
+			layerDepth // Z Value
+			);
+	}
+		break;
+	case RENDER_OPTION_TILT:
+	{
+		FLOAT r = (FLOAT)(va_arg(va, DOUBLE));
+		FLOAT g = (FLOAT)(va_arg(va, DOUBLE));
+		FLOAT b = (FLOAT)(va_arg(va, DOUBLE));
+		xtk_SpriteBatch->Draw(
+			res->getTexture(), // Texture
+			XMFLOAT2(INT(cx - flipAdjustX), INT(cy - flipAdjustY)), // Drawing Destination Position (Origin Point)
+			&texClipInTexel, // Texture Clip Rectangle
+			XMVectorSet(r, g, b, alpha), // Tilting Color
+			angleDisplay, // Rotation
+			XMFLOAT2(fcenterx, fcentery), // Rotation Origin / Drawing Center
+			scale, // Scale
+			flip, // Sprite Effects
+			layerDepth // Z Value
+			);
+	}
 		break;
 	default:
 		va_end(va);

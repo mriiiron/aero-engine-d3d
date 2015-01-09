@@ -1,20 +1,22 @@
 #Frames
 
-$ImageResource 10
-0 72 11
-1 72 11
-2 72 11
-3 72 11
-4 72 11
-5 72 11
+$ImageResource 23
+0 30 200
+1 30 200
+2 30 200
+3 30 200
+4 30 200
+5 30 200
+6 30 200
+7 30 200
 $ImageResource_End
 
-$ImageResource 11
-0 35 60
-1 35 60
-2 35 60
-3 35 60
-4 35 60
+$ImageResource 24
+0 25 25
+1 25 25
+2 25 25
+3 25 25
+4 25 25
 $ImageResource_End
 
 $ImageResource 15
@@ -185,13 +187,21 @@ $FrameCount 9 next 1000
 105 106 107 108 109 110 111 112 113
 2 2 2 2 2 2 2 2 2
 0 0 0 0 0 0 0 0 0
+$CreateSprite 10 action: 15 at: 60 37 frame: 7 team: -1 depth: 0.0 $End
 $Anim_End
 
-$Anim 14 lightning_strike
+$Anim 14 lightning_strike_0
 $FrameCount 9 next 1000
 115 116 117 118 119 120 121 122 123
 2 2 2 2 2 2 2 2 2
 0 0 0 0 0 0 0 0 0
+$Anim_End
+
+$Anim 15 lightning_strike_1
+$FrameCount 8 next 1000
+0 1 2 3 4 5 6 7
+2 2 2 2 2 2 2 2
+0 0 0 0 0 0 0 0
 $Anim_End
 
 #Animations_End

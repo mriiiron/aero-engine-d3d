@@ -1,0 +1,94 @@
+#Frames
+
+$ImageResource 3
+0 30 113
+1 30 113
+2 30 113
+3 30 113
+4 30 113
+$ImageResource_End
+
+$ImageResource 4
+0 51 133
+1 76 133
+2 76 133
+3 51 133
+$ImageResource_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 stand
+$FrameCount 1 loop -1
+0
+10
+0
+$Body 15 2 44 116 $End
+$Anim_End
+
+$Anim 8 in_air
+$FrameCount 1 loop -1
+0
+10
+0
+$Anim_End
+
+$Anim 9 land
+$FrameCount 1 next 0
+0
+1
+0
+$Anim_End
+
+$Anim 20 hit_front_lower
+$FrameCount 1 next 30
+3
+1
+0
+$Anim_End
+
+$Anim 21 hit_front_upper
+$FrameCount 1 next 30
+3
+1
+0
+$Anim_End
+
+$Anim 22 hit_back_lower
+$FrameCount 1 next 31
+1
+1
+0
+$Anim_End
+
+$Anim 23 hit_back_upper
+$FrameCount 1 next 31
+1
+1
+0
+$Anim_End
+
+$Anim 30 hit_light_front
+$FrameCount 3 next 0
+3 4 3
+3 8 3
+0 0 0
+$Anim_End
+
+$Anim 31 hit_light_front
+$FrameCount 3 next 0
+1 2 1
+3 8 3
+0 0 0
+$Anim_End
+
+$Anim 33 hit_heavy
+$FrameCount 7 next 0
+3 4 3 0 1 2 1
+3 3 3 4 4 4 4
+0 0 0 0 0 0 0
+$Anim_End
+
+#Animations_End

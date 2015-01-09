@@ -34,11 +34,13 @@ WLFShrineCaveScene::WLFShrineCaveScene(INT spriteTableSize) : AEScene(spriteTabl
 
 	// Load objects
 
-	loadObject(0, "Resources\\warrior_deep.txt", "Warrior Deep", OBJ_CHARACTER);
-	loadObject(1, "Resources\\dummy_bandit.txt", "Dummy Bandit", OBJ_CHARACTER);
-	loadObject(10, "Resources\\effects.txt", "Effect", OBJ_EFFECT);
-	loadObject(11, "Resources\\icons.txt", "Icon", OBJ_EFFECT);
-	loadObject(40, "Resources\\ui.txt", "UI", OBJ_EFFECT);
+	loadObject(0, "Resources\\warrior_deep.txt", "Warrior Deep", AEObject::OBJ_CHARACTER);
+	loadObject(1, "Resources\\dummy_bandit.txt", "Dummy Bandit", AEObject::OBJ_CHARACTER);
+	loadObject(2, "Resources\\dummy.txt", "Dummy", AEObject::OBJ_CHARACTER);
+	loadObject(10, "Resources\\effects.txt", "Effect", AEObject::OBJ_EFFECT);
+	loadObject(11, "Resources\\icons.txt", "Icon", AEObject::OBJ_EFFECT);
+	loadObject(12, "Resources\\sparks.txt", "Hit Spark", AEObject::OBJ_HIT_SPARK);
+	loadObject(40, "Resources\\ui.txt", "UI", AEObject::OBJ_EFFECT);
 
 	// Create Shrine Cave BG
 
@@ -95,6 +97,8 @@ WLFShrineCaveScene::WLFShrineCaveScene(INT spriteTableSize) : AEScene(spriteTabl
 	hud = new WLFHeadUpDisplay(100);
 	hud->setScene(this);
 
+	standstill = 0;
+
 }
 
 VOID WLFShrineCaveScene::initialize() {
@@ -103,7 +107,7 @@ VOID WLFShrineCaveScene::initialize() {
 	AERO_SPRITE_DESC descSpr;
 	descSpr.obj = ae_ObjectTable.getItem(0);
 	descSpr.team = 0;
-	descSpr.action = 0;
+	descSpr.action = WLFCharacter::ACTION_IN_AIR;
 	descSpr.flip = SpriteEffects_None;
 	descSpr.cx = -200.0f;
 	descSpr.cy = 0.0f;
@@ -117,10 +121,10 @@ VOID WLFShrineCaveScene::initialize() {
 	// Set camera focusing on player
 	ae_Camera.setFocus(player->getCx(), 0.0f);
 
-	// Create Dummy #1
+	// Create Dummy
 	descSpr.obj = ae_ObjectTable.getItem(1);
 	descSpr.team = 1;
-	descSpr.action = 0;
+	descSpr.action = WLFCharacter::ACTION_IN_AIR;
 	descSpr.flip = SpriteEffects_FlipHorizontally;
 	descSpr.cx = 210.0f;
 	descSpr.cy = 0.0f;  // 150.0f;
@@ -129,7 +133,8 @@ VOID WLFShrineCaveScene::initialize() {
 	bandit1->setPortraitIndex(11);
 	addSprite(bandit1);
 
-	// Create Dummy #2
+	// Create Dummy Bandit
+	descSpr.obj = ae_ObjectTable.getItem(2);
 	descSpr.cx = 0.0f;
 	descSpr.cy = 0.0f;  // 150.0f;
 	WLFCharacter* bandit2 = new WLFCharacter(descSpr);
@@ -142,11 +147,11 @@ VOID WLFShrineCaveScene::initialize() {
 
 }
 
-VOID WLFShrineCaveScene::loadObject(INT oid, std::string fileName, std::string objName, AEObjType objType) {
+VOID WLFShrineCaveScene::loadObject(INT oid, std::string fileName, std::string objName, INT objType) {
 	AERO_OBJECT_DESC descObj;
 	descObj.oid = oid;
 	descObj.name = objName;
-	descObj.otype = objType;
+	descObj.type = objType;
 	AEObject* obj = new AEObject(descObj);
 	WLFDataFileReader::readObject(fileName, obj);
 	ae_ObjectTable.addAt(oid, obj);
@@ -194,10 +199,40 @@ VOID WLFShrineCaveScene::removeNamepadFromHUD(WLFCharacter* character) {
 	hud->getSpriteTable()->getItem(namepadItems.bar_energy)->remove();
 }
 
+// Override AEScene::update() completely
 VOID WLFShrineCaveScene::update() {
+	if (isPaused) {
+		return;
+	}
+	if (standstill > 0) {
+		standstill--;
+	}
 	processCollision();
-	AEScene::update();
-	ae_Camera.setFocus(player->getCx(), 0.0f);
+	if (bg) {
+		bg->update();
+	}
+	if (spriteTable) {
+		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+			AESprite* sprite = spriteTable->getItemByHash(iHash);
+			if (sprite->isDead()) {
+				spriteTable->removeItemByHash(iHash);
+			}
+			else {
+				sprite->update(platformTable);
+			}
+		}
+		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+			AESprite* sprite = spriteTable->getItemByHash(iHash);
+			if (sprite->hasAttachments()) {
+				sprite->updateAttachments();
+			}
+		}
+	}
+	if (hud) {
+		hud->update();
+	}
+	//ae_Camera.setFocus(player->getCx(), 0.0f);
+	ae_Camera.setFocus(0.0f, 0.0f);
 	ae_Camera.update();
 }
 
@@ -253,7 +288,10 @@ VOID WLFShrineCaveScene::processInput() {
 		}
 		if (keyStateBuffer[dik_attack_b] & 0x80) {
 			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_B) && player->getAction() == 1) {
-				if (player->isKeyPressed(WLFCharacter::KEY_DOWN)) {
+				if (player->getFlip() == SpriteEffects_None && player->isKeyPressed(WLFCharacter::KEY_RIGHT) || player->getFlip() == SpriteEffects_FlipHorizontally && player->isKeyPressed(WLFCharacter::KEY_LEFT)) {
+					player->slam();
+				}
+				else if (player->isKeyPressed(WLFCharacter::KEY_DOWN)) {
 					player->thunderClap();
 				}
 				else {
@@ -288,7 +326,7 @@ VOID WLFShrineCaveScene::processInput() {
 		}
 	}
 	if (keyStateBuffer[dik_jump] & 0x80) {
-		INT a = 1;
+ 		INT a = 1;
 	}
 	if (keyStateBuffer[DIK_RETURN] & 0x80) {
 		if (!isPauseKeyPressed) {
@@ -355,13 +393,12 @@ VOID WLFShrineCaveScene::processCollision() {
 				if (attackJudge->effect >= 0) {
 					AESprite* spark;
 					AERO_SPRITE_DESC descSpr;
-					descSpr.obj = ae_ObjectTable.getItem(10);  // Slash Effect
+					descSpr.obj = ae_ObjectTable.getItem(12);  // Slash Effect
 					descSpr.team = -1;  // Neutral
 					descSpr.action = attackJudge->effect;
 					descSpr.cx = collisionResult.point.x;
 					descSpr.cy = collisionResult.point.y;
 					descSpr.layerDepth = 0.0f;
-					dynamic_cast<WLFCharacter*>(sprite1)->setAttackLock(TRUE);
 					if (sprite1->getFlip() != sprite2->getFlip()) {
 						descSpr.flip = SpriteEffects_None;
 						spark = new AESprite(descSpr);
@@ -374,6 +411,10 @@ VOID WLFShrineCaveScene::processCollision() {
 					}
 					addSprite(spark);
 				}
+
+				dynamic_cast<WLFCharacter*>(sprite1)->setAttackLock(TRUE);
+				dynamic_cast<WLFCharacter*>(sprite2)->shake(20, 1);
+				setStandstill(20);
 
 			}
 		}

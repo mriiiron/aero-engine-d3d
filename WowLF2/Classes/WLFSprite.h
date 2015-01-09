@@ -20,7 +20,7 @@ public:
 	static const INT ACTION_BATTLE_STANCE_START = 4;
 	static const INT ACTION_BATTLE_STANCE_END = 5;
 	static const INT ACTION_IN_AIR = 8;
-	static const INT ACTION_LAND = 9;
+	static const INT ACTION_LAND_DEFAULT = 9;
 	static const INT ACTION_HIT_FRONT_LOWER = 20;
 	static const INT ACTION_HIT_FRONT_UPPER = 21;
 	static const INT ACTION_HIT_BACK_LOWER = 22;
@@ -40,6 +40,7 @@ public:
 
 	VOID platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult);
 	VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
+	VOID render(INT renderOption = RENDER_OPTION_NORMAL, ...);
 
 	VOID toBattleStance();
 	VOID toStand();
@@ -57,8 +58,10 @@ public:
 	VOID setHUDItemIndexes(INT namepad, INT portrait, INT bar_hp, INT bar_energy) { hudItems = { namepad, portrait, bar_hp, bar_energy }; }
 	AEHashedTable<WLFBuff>* getBuffTable() { return buffTable; }
 
-	VOID addBuff(WLFBuff* buff) { buffTable->add(buff);  buff->setHost(this); }
+	VOID addBuff(WLFBuff* buff, WLFCharacter* caster);
 	VOID updateBuffTable();
+
+	VOID shake(INT time, INT amplitude);
 
 protected:
 
@@ -71,6 +74,7 @@ protected:
 	AEPlatform* onPlatform;
 	INT onPlatformTailIndex;
 	BOOLEAN attackLock;
+	INT shakeTimer, shakeAmp;
 
 };
 

@@ -27,7 +27,7 @@ WLFSpell* WLFSpell::getSpellByID(INT spellID) {
 
 VOID WLFMortalStrike::takeEffect() {
 	target->takeDamage(5);
-	target->addBuff(new WLFBuffRend(1500));
+	target->addBuff(new WLFBuffRend(1500), caster);
 }
 
 
@@ -38,11 +38,11 @@ VOID WLFOverpower::takeEffect() {
 
 VOID WLFColossusSmash::takeEffect() {
 	target->takeDamage(3);
-	target->addBuff(new WLFBuffArmorCrack(360));
+	target->addBuff(new WLFBuffArmorCrack(360), caster);
 }
 
 
 VOID WLFThunderClap::takeEffect() {
 	target->takeDamage(1);
-	target->addBuff(new WLFBuffSlowDown(600));
+	target->addBuff(new WLFBuffSlowDown(600), caster);
 }

@@ -7,6 +7,7 @@ extern AEConstantTable<AEObject>			ae_ObjectTable;
 
 WLFBuff::WLFBuff(INT _time) {
 	host = nullptr;
+	caster = nullptr;
 	name = "Unknown";
 	timeRemain = _time;
 	iconIndex = 0;

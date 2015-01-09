@@ -30,18 +30,23 @@ $ImageResource 0
 26 37 79
 27 37 79
 28 37 79
+29 34 79
 30 34 79
 31 34 79
 32 24 79
 33 24 79
 34 27 79
+35 50 79
+36 41 79
 37 39 79
 38 33 79
 39 34 79
 40 27 79
 41 40 79
 42 40 79 2-Cell
-44 41 79
+44 41 79 2-Cell
+46 40 79 2-Cell
+48 41 79 2-Cell
 $ImageResource_End
 
 $ImageResource 1
@@ -68,6 +73,18 @@ $ImageResource 1
 32 17 79
 33 17 79
 34 17 79
+38 37 79
+39 37 79
+40 37 79
+41 37 62
+42 37 62
+43 55 79
+44 47 79
+45 37 79
+46 32 79
+47 24 79
+48 37 79
+49 38 79
 $ImageResource_End
 
 #Frames_End
@@ -101,7 +118,7 @@ $FrameCount 2 next 0
 27 28
 6 6
 0 0
-$Turn $End
+$Turn
 $Anim_End
 
 $Anim 4 battle_stance_start
@@ -160,16 +177,16 @@ $Anim_End
 $Anim 13 attack_1
 $FrameCount 6 next 1
 5 30 31 32 33 34
-1 6 12 4 4 6
-0 -2 0 2 0 0
+1 6 12 5 5 6
+0 0 0 0 0 0
 $Attack 37 3 70 56 frame: 3 effect: 1 spellid: 2 $End
 $Anim_End
 
 $Anim 14 attack_2
 $FrameCount 6 next 1
-5 40 41 42 44 30
-1 6 12 4 4 6
-0 -1 -1 -1 3 0
+5 40 41 42 44 29
+1 6 12 5 5 6
+0 0 0 0 0 0
 $Attack 48 20 99 60 frame: 3 effect: 0 angle: -30 spellid: 2 $End
 $Anim_End
 
@@ -186,7 +203,7 @@ $FrameCount 9 next 1
 40 41 60 61 62 63 65 67 68
 6 6 4 4 4 4 4 8 5
 0 0 0 0 0 0 0 0 0
-$Attack 50 16 111 73 frame: 5 effect: 1 spellid: 3 $End
+$Attack 50 16 111 73 frame: 6 effect: 1 spellid: 3 $End
 $CreateSprite 10 action: 12 at: 70 79 frame: 3 team: -1 depth: 0.02 $End
 $CreateSprite 10 action: 10 at: 70 79 frame: 4 team: -1 depth: 0.0 $End
 $CreateSprite 10 action: 11 at: 100 79 frame: 6 team: -1 flip: 3 depth: 0.0 $End
@@ -203,6 +220,30 @@ $CreateSprite 10 action: 13 at: 60 79 frame: 3 team: -1 flip: 1 depth: 0.0 $End
 $CreateSprite 10 action: 13 at: 60 79 frame: 4 team: -1 flip: 2 depth: 0.0 $End
 $CreateSprite 10 action: 10 at: 60 79 frame: 5 team: -1 depth: 0.0 $End
 $CameraShake 30 frame: 3 $End
+$Anim_End
+
+$Anim 18 attack_combo
+$FrameCount 10 next 1
+5 40 41 46 48 36 35 32 33 34
+1 6 12 5 5 10 8 5 5 6
+0 0 0 16 7 0 9 16 0 0
+$Anim_End
+
+$Anim 19 jump_attack
+$FrameCount 10 next 8
+90 91 92 93 94 95 96 97 98 99
+5 6 7 8 15 2 3 3 3 15
+0 0 0 0 0 0 0 0 0 0
+$Attack 22 17 77 82 frame: 7 spellid: 2 effect: 2 $End
+$GiveSpeed y: -5.3 frame: 0 $End
+$HitGround 20
+$Anim_End
+
+$Anim 20 jump_attack_land
+$FrameCount 3 next 1
+89 88 40
+8 8 8
+0 0 0
 $Anim_End
 
 $Anim 23 run

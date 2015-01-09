@@ -1,0 +1,64 @@
+#Frames
+
+$ImageResource 10
+0 72 11
+1 72 11
+2 72 11
+3 72 11
+4 72 11
+5 72 11
+$ImageResource_End
+
+$ImageResource 11
+0 35 60
+1 35 60
+2 35 60
+3 35 60
+4 35 60
+$ImageResource_End
+
+$ImageResource 12
+0 60 58
+1 60 58
+2 60 58
+3 60 58
+4 60 58
+5 60 58
+6 60 58
+7 60 58
+8 60 58
+9 60 58
+10 60 58
+11 60 58
+12 60 58
+13 60 58
+14 60 58
+$ImageResource_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 slash_hor
+$FrameCount 6 next 1000
+0 1 2 3 4 5
+2 3 3 3 3 3
+0 0 0 0 0 0
+$Anim_End
+
+$Anim 1 slash_ver
+$FrameCount 5 next 1000
+10 11 12 13 14
+2 3 3 3 3
+0 0 0 0 0
+$Anim_End
+
+$Anim 2 spark_huge
+$FrameCount 15 next 1000
+15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
+3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+$Anim_End
+
+#Animations_End

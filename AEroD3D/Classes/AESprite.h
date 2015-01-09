@@ -67,6 +67,8 @@ public:
 	static const INT RENDER_OPTION_NORMAL = 0;
 	static const INT RENDER_OPTION_SCALE = 1;
 	static const INT RENDER_OPTION_WIPE = 2;
+	static const INT RENDER_OPTION_OFFSET = 3;
+	static const INT RENDER_OPTION_TILT = 4;
 
 	static const INT RENDER_WIPE_LEFT = 0;
 	static const INT RENDER_WIPE_RIGHT = 1;

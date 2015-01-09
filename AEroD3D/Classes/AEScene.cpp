@@ -22,6 +22,7 @@ AEScene::AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, A
 		keyStateBuffer[i] = 0;
 	}
 	isPauseKeyPressed = isPaused = FALSE;
+	standstill = 0;
 }
 
 AEScene::AEScene(INT spriteTableSize) {
@@ -37,6 +38,7 @@ AEScene::AEScene(INT spriteTableSize) {
 
 AEScene::~AEScene() {
 	if (bg) delete bg;
+	if (platformTable) delete platformTable;
 	if (spriteTable) delete spriteTable;
 	if (hud) delete hud;
 }
@@ -61,40 +63,47 @@ VOID AEScene::addSpriteForHUD(AESprite* hudSprite) {
 }
 
 VOID AEScene::update() {
-	if (!isPaused) {
-		if (bg) {
-			bg->update();
-		}
-		if (spriteTable) {
-
-			// Update sprite table first
-			// Removing a sprite directly from sprite table is forbidden
-			// Must set a sprite to death (deadFlag = true), then remove it next time we update the scene
-			for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
-				AESprite* sprite = spriteTable->getItemByHash(iHash);
-				if (sprite->isDead()) {
-					spriteTable->removeItemByHash(iHash);
-				}
-				else {
-					sprite->update(platformTable);
-				}
-			}
-
-			// Update attachment table for each sprite after updating sprite table
-			// If any attachment sprite is set to death (deadFlag == true), clear the corresponding pointer in attachment table here
-			// To avoid memory leak
-			for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
-				AESprite* sprite = spriteTable->getItemByHash(iHash);
-				if (sprite->hasAttachments()) {
-					sprite->updateAttachments();
-				}
-			}
-			
-		}
-		if (hud) {
-			hud->update();
-		}
+	if (isPaused) {
+		return;
 	}
+	if (standstill > 0) {
+		standstill--;
+		return;
+	}
+	processCollision();
+	if (bg) {
+		bg->update();
+	}
+	if (spriteTable) {
+
+		// Update sprite table first
+		// Removing a sprite directly from sprite table is forbidden
+		// Must set a sprite to death (deadFlag = true), then remove it next time we update the scene
+		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+			AESprite* sprite = spriteTable->getItemByHash(iHash);
+			if (sprite->isDead()) {
+				spriteTable->removeItemByHash(iHash);
+			}
+			else {
+				sprite->update(platformTable);
+			}
+		}
+
+		// Update attachment table for each sprite after updating sprite table
+		// If any attachment sprite is set to death (deadFlag == true), clear the corresponding pointer in attachment table here
+		// To avoid memory leak
+		for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+			AESprite* sprite = spriteTable->getItemByHash(iHash);
+			if (sprite->hasAttachments()) {
+				sprite->updateAttachments();
+			}
+		}
+			
+	}
+	if (hud) {
+		hud->update();
+	}
+
 }
 
 VOID AEScene::render(INT renderMode) {
@@ -115,6 +124,10 @@ VOID AEScene::render(INT renderMode) {
 }
 
 VOID AEScene::processInput() {
+	// To be inherited
+}
+
+VOID AEScene::processCollision() {
 	// To be inherited
 }
 

@@ -35,6 +35,7 @@ public:
 	AEHashedTable<AEPlatform>* getplatformTable() { return platformTable; }
 	AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
 	AEHeadUpDisplay* getHUD() { return hud; }
+	INT getStandstill() { return standstill; }
 	VOID setBackground(AEBackground* _bg) { bg = _bg; }
 	VOID setPlatformTable(AEHashedTable<AEPlatform>* _platformTable) { platformTable = _platformTable; }
 	VOID setSpriteTable(AEHashedTable<AESprite>* _spriteTable) { spriteTable = _spriteTable; }
@@ -45,10 +46,12 @@ public:
 	VOID addSpriteForHUD(AESprite* hudSprite);
 
 	VOID togglePause() { isPaused = !isPaused; }
+	VOID setStandstill(INT time) { standstill = time; }
 
 	virtual VOID update();
 	virtual VOID render(INT renderMode = RENDER_ALL);
 	virtual VOID processInput();
+	virtual VOID processCollision();
 
 protected:
 
@@ -58,6 +61,8 @@ protected:
 	AEHeadUpDisplay* hud;
 
 	BOOLEAN isPauseKeyPressed, isPaused;
+
+	INT standstill;
 
 };
 

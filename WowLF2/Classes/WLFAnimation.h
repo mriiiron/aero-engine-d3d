@@ -69,17 +69,21 @@ public:
 	~WLFAnimation();
 
 	INT getXShift(INT index) { return xShiftTable[index]; }
+	INT getHitGroundAction() { return hitGroundAction; }
 	WLFAttackJudgeArea* getAttackJudge(INT index) { return attackJudgeTable[index]; }
 	WLFBodyJudgeArea* getBodyJudge(INT index) { return bodyJudgeTable[index]; }
 	WLFSpriteCreatePoint* getSpriteCreate(INT index) { return spriteCreateTable[index]; }
 	WLFCameraShakeOptions* getCameraShakeOptions(INT index) { return cameraShakeTable[index]; }
+	XMFLOAT2 getGivenSpeed(INT index) { return giveSpeedTable[index]; }
 
 	VOID addXShiftForFrame(INT index, INT xShift);
 	VOID addAttackJudgeForFrame(INT index, WLFAttackJudgeArea* attackJudgeArea);
 	VOID addBodyJudgeForFrame(INT index, WLFBodyJudgeArea* bodyJudgeArea);
 	VOID addSpriteCreateForFrame(INT index, WLFSpriteCreatePoint* bodyJudgeArea);
 	VOID addCameraShakeForFrame(INT index, WLFCameraShakeOptions* cameraShakeOptions);
+	VOID giveSpeedForFrame(INT index, XMFLOAT2 vec);
 	VOID setTurnAfterAnim(BOOLEAN _isTurn) { isTurn = _isTurn; }
+	VOID setHitGroundAction(INT _hitGroundAction) { hitGroundAction = _hitGroundAction; }
 
 	BOOLEAN isTurnAfterAnim() { return isTurn; }
 
@@ -90,6 +94,8 @@ private:
 	WLFBodyJudgeArea*  bodyJudgeTable[MAX_FRAME_COUNT];
 	WLFSpriteCreatePoint* spriteCreateTable[MAX_FRAME_COUNT];
 	WLFCameraShakeOptions* cameraShakeTable[MAX_FRAME_COUNT];
+	XMFLOAT2 giveSpeedTable[MAX_FRAME_COUNT];
 	BOOLEAN isTurn;
+	INT hitGroundAction;
 
 };
