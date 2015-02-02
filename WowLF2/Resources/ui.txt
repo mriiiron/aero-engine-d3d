@@ -13,6 +13,7 @@ $ImageResource_End
 $ImageResource 32
 0 -2 -2
 1 -2 -2
+2 -2 -2
 $ImageResource_End
 
 $ImageResource 33
@@ -73,6 +74,13 @@ $Anim_End
 $Anim 11 portriat_bandit
 $FrameCount 1 loop -1
 7
+100
+0
+$Anim_End
+
+$Anim 12 portriat_dummy
+$FrameCount 1 loop -1
+8
 100
 0
 $Anim_End

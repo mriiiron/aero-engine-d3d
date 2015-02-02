@@ -1,4 +1,5 @@
 #include "AEroEngine.h"
+#include "WLFData.h"
 #include "WLFAI.h"
 #include "WLFAnimation.h"
 #include "WLFBuff.h"
@@ -24,6 +25,12 @@ WLFCharacter::WLFCharacter(AERO_SPRITE_DESC desc) : AESprite(desc) {
 	createAttachmentTable(10);
 	buffTable = new AEHashedTable<WLFBuff>(50);
 	shakeTimer = shakeAmp = 0;
+	hpMax = hpValue = 1000;
+	fraction = 0.5f;
+	isFractionDisabled = FALSE;
+	for (int i = 0; i < MAX_MOVES_COUNT; i++) {
+		moveInputs[i] = 0;
+	}
 }
 
 VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {
@@ -43,6 +50,11 @@ VOID WLFCharacter::platformCollision(AEPlatform* platform, INT tailNodeIndex, AE
 
 // Override AESprite::update() completely
 VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
+	for (INT i = 0; i < MAX_MOVES_COUNT; i++) {
+		if (moveInputs[i] > 0){
+			moveInputs[i]--;
+		}
+	}
 	if (shakeTimer > 0) {
 		shakeTimer--;
 	}
@@ -58,39 +70,59 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 	}
 	if (state == STATE_ON_GROUND) {
 		if (action == WLFCharacter::ACTION_STAND) {
-			if (isKeyPressed(KEY_RIGHT) && !isKeyPressed(KEY_LEFT)) {
-				if (flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
-					changeAction(WLFCharacter::ACTION_TURN);
-				}
-				else {
-					changeAction(WLFCharacter::ACTION_WALK);
-					flip = SpriteEffects::SpriteEffects_None;
-					setVx(2.0f);
-				}
-			}
-			else if (!isKeyPressed(KEY_RIGHT) && isKeyPressed(KEY_LEFT)) {
+			if (isKeyPressed(WLFKeys::KEY_RIGHT) && !isKeyPressed(WLFKeys::KEY_LEFT)) {
 				if (flip == SpriteEffects::SpriteEffects_None) {
+					changeAction(WLFCharacter::ACTION_WALK);
+					setVx(2.0f);
+				}
+				else if (flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
 					changeAction(WLFCharacter::ACTION_TURN);
 				}
-				else {
+				
+			}
+			else if (!isKeyPressed(WLFKeys::KEY_RIGHT) && isKeyPressed(WLFKeys::KEY_LEFT)) {
+				if (flip == SpriteEffects::SpriteEffects_None) {
 					changeAction(WLFCharacter::ACTION_WALK);
-					flip = SpriteEffects::SpriteEffects_FlipHorizontally;
 					setVx(2.0f);
+				}
+				else if (flip == SpriteEffects::SpriteEffects_None) {
+					changeAction(WLFCharacter::ACTION_TURN);
 				}
 			}
 		}
 		else if (action == WLFCharacter::ACTION_WALK) {
-			if (isKeyPressed(KEY_RIGHT) == isKeyPressed(KEY_LEFT)) {
+			if (isKeyPressed(WLFKeys::KEY_RIGHT) == isKeyPressed(WLFKeys::KEY_LEFT)) {
 				changeAction(WLFCharacter::ACTION_STAND);
 				setVx(0.0f);
 			}
-			else if (isKeyPressed(KEY_RIGHT) && !isKeyPressed(KEY_LEFT) && flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
+			else if (isKeyPressed(WLFKeys::KEY_RIGHT) && !isKeyPressed(WLFKeys::KEY_LEFT) && flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
 				setVx(0.0f);
 				changeAction(WLFCharacter::ACTION_TURN);
 			}
-			else if (!isKeyPressed(KEY_RIGHT) && isKeyPressed(KEY_LEFT) && flip == SpriteEffects::SpriteEffects_None) {
+			else if (!isKeyPressed(WLFKeys::KEY_RIGHT) && isKeyPressed(WLFKeys::KEY_LEFT) && flip == SpriteEffects::SpriteEffects_None) {
 				setVx(0.0f);
 				changeAction(WLFCharacter::ACTION_TURN);
+			}
+		}
+		else if (action == WLFCharacter::ACTION_BATTLE_STANCE || action == WLFCharacter::ACTION_LAND_DEFAULT) {
+			if (isKeyPressed(WLFKeys::KEY_RIGHT) && !isKeyPressed(WLFKeys::KEY_LEFT)) {
+				if (flip == SpriteEffects::SpriteEffects_FlipHorizontally) {
+					turnOverHorizontally();
+				}
+				changeAction(WLFCharacter::ACTION_RUN);
+				setVx(3.0f);
+			}
+			else if (isKeyPressed(WLFKeys::KEY_LEFT) && !isKeyPressed(WLFKeys::KEY_RIGHT)) {
+				if (flip == SpriteEffects::SpriteEffects_None) {
+					turnOverHorizontally();
+				}
+				changeAction(WLFCharacter::ACTION_RUN);
+				setVx(3.0f);
+			}
+		}
+		else if (action == WLFCharacter::ACTION_RUN) {
+			if (isKeyPressed(WLFKeys::KEY_RIGHT) == isKeyPressed(WLFKeys::KEY_LEFT) || (flip == SpriteEffects::SpriteEffects_None && isKeyPressed(WLFKeys::KEY_LEFT) && !isKeyPressed(WLFKeys::KEY_RIGHT)) || (flip == SpriteEffects::SpriteEffects_FlipHorizontally && isKeyPressed(WLFKeys::KEY_RIGHT) && !isKeyPressed(WLFKeys::KEY_LEFT))) {
+				changeAction(WLFCharacter::ACTION_RUN_END);
 			}
 		}
 	}
@@ -100,6 +132,7 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 	WLFAnimation* anim = (WLFAnimation*)(obj->getAnim(action));
 	if (timeToLive == 0) {
 		changeAction(anim->getNext());
+		anim = (WLFAnimation*)(obj->getAnim(action));
 	}
 	if (timeToLive > 0) {
 		timeToLive--;
@@ -122,6 +155,7 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 				}
 				if (!anim->isLoop()) {
 					changeAction(anim->getNext());
+					anim = (WLFAnimation*)(obj->getAnim(action));
 				}
 			}
 			vx += anim->getXShift(frameNum);
@@ -180,8 +214,17 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 			adsorbToPlatform();
 		}
 		if (vy < 0.0f) {
-			// TODO: Jump out of a platform
 			state = STATE_IN_AIR;
+			isFractionDisabled = TRUE;
+		}
+		if (isFractionDisabled) {
+			ax = 0.0f;
+		}
+		else {
+			if (fabs(vx) - fraction <= 0.0f) {
+				vx = 0.0f;
+			}
+			ax = fraction * ((vx < 0.0f) - (vx > 0.0f));
 		}
 	}
 	vx += ax;
@@ -190,12 +233,24 @@ VOID WLFCharacter::update(AEHashedTable<AEPlatform>* platformTable) {
 		vx -= anim->getXShift(frameNum);
 		isFrameChange = FALSE;
 	}
+	WLFCancelOptions* cancel = anim->getCancelOptions(frameNum);
+	if (cancel != nullptr) {
+		if (moveInputs[cancel->moveInput] > 0) {
+			changeAction(cancel->toAction);
+		}
+	}
 	angle += (fac * vAngle);
 	if (angle < -AENSMath::PI) angle += 2.0f * AENSMath::PI;
 	if (angle >= AENSMath::PI) angle -= 2.0f * AENSMath::PI;
 	angleDisplay += (fac * vAngleDisplay);
 	if (angleDisplay < -AENSMath::PI) angleDisplay += 2.0f * AENSMath::PI;
 	if (angleDisplay >= AENSMath::PI) angleDisplay -= 2.0f * AENSMath::PI;
+	if (action == WLFCharacter::ACTION_WALK || action == WLFCharacter::ACTION_RUN) {
+		isFractionDisabled = TRUE;
+	}
+	else {
+		isFractionDisabled = FALSE;
+	}
 }
 
 VOID WLFCharacter::render(INT renderOption, ...) {
@@ -306,6 +361,16 @@ VOID WLFCharacter::addBuff(WLFBuff* buff, WLFCharacter* caster) {
 	}
 }
 
+BOOLEAN WLFCharacter::hasBuff(std::string buffName) {
+	for (INT iHash = 0; iHash < buffTable->getHashCount(); iHash++) {
+		WLFBuff* buff = buffTable->getItemByHash(iHash);
+		if (buffName == buff->getName()) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 VOID WLFCharacter::updateBuffTable() {
 	for (INT iHash = 0; iHash < buffTable->getHashCount(); iHash++) {
 		WLFBuff* buff = buffTable->getItemByHash(iHash);
@@ -323,6 +388,21 @@ VOID WLFCharacter::shake(INT time, INT amplitude) {
 	shakeAmp = amplitude;
 }
 
+VOID WLFCharacter::setTarget(WLFCharacter* target) {
+	AEHashedTable<AESprite>* spriteTable = scene->getSpriteTable();
+	for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
+		AESprite* sprite = spriteTable->getItemByHash(iHash);
+		if (sprite == target) {
+			if (dynamic_cast<WLFCharacter*>(sprite) && sprite->getTeam() != this->team) {
+				targetIndexHash = iHash;
+				target = dynamic_cast<WLFCharacter*>(sprite);
+				dynamic_cast<WLFHeadUpDisplay*>(scene->getHUD())->setNamepad(WLFHeadUpDisplay::NAMEPAD_SLOT_TARGET, target);
+			}
+			break;
+		}
+	}
+}
+
 
 WLFWarrior::WLFWarrior(AERO_SPRITE_DESC desc) : WLFCharacter(desc) {
 	chargeTargetPosX = 0.0f;
@@ -336,6 +416,31 @@ VOID WLFWarrior::update(AEHashedTable<AEPlatform>* platformTable) {
 		changeAction(12);
 		setVx(0.0f);
 	}
+	if (action == WLFCharacter::ACTION_BATTLE_STANCE || action == WLFCharacter::ACTION_RUN || action == WLFCharacter::ACTION_LAND_DEFAULT || action == 20) {
+		if (moveInputs[WLFCharacter::MOVE_FORWARD_B] > 0) {
+			colossusSmash();
+		}
+		else if (moveInputs[WLFCharacter::MOVE_DOWN_B] > 0) {
+			thunderClap();
+		}
+		else if (moveInputs[WLFCharacter::MOVE_B] > 0) {
+			mortalStrike();
+		}
+		else if(moveInputs[WLFCharacter::MOVE_FORWARD_A] > 0) {
+			overpower_2();
+		}
+		else if (moveInputs[WLFCharacter::MOVE_A] > 0) {
+			overpower();
+		}
+		else if (moveInputs[WLFCharacter::MOVE_JUMP] > 0) {
+			jump();
+		}
+	}
+	else if (action == WLFCharacter::ACTION_IN_AIR || action == WLFCharacter::ACTION_JUMP) {
+		if (moveInputs[WLFCharacter::MOVE_B] > 0) {
+			slam();
+		}
+	}
 	WLFCharacter::update(platformTable);
 }
 
@@ -344,7 +449,11 @@ VOID WLFWarrior::mortalStrike() {
 }
 
 VOID WLFWarrior::overpower() {
-	changeAction(AENSMath::randomIntBetween(13, 14));
+	changeAction(14);
+}
+
+VOID WLFWarrior::overpower_2() {
+	changeAction(13);
 }
 
 VOID WLFWarrior::slam() {
@@ -357,6 +466,10 @@ VOID WLFWarrior::colossusSmash() {
 
 VOID WLFWarrior::thunderClap() {
 	changeAction(17);
+}
+
+VOID WLFWarrior::jump() {
+	changeAction(18);
 }
 
 VOID WLFWarrior::charge() {
@@ -420,5 +533,29 @@ VOID WLFBuffIcon::render(INT renderOption, ...) {
 	INT sec = buff->getTimeRemain() / 60;
 	sprintf_s(narrowCharBuffer, 1024, "%s %02d:%02d", buff->getName().c_str(), sec / 60, sec % 60);
 	mbstowcs(strBuffTimeRemain, narrowCharBuffer, 1024);
-	xtk_SpriteFont_Arial_10->DrawString(xtk_SpriteBatch, strBuffTimeRemain, XMFLOAT2(cx + 10.0f, cy - 8.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
+	xtk_SpriteFont_Arial_10->DrawString(xtk_SpriteBatch, strBuffTimeRemain, XMFLOAT2(cx + 10.0f, cy - 8.0f));
+}
+
+
+WLFFloatingText::WLFFloatingText(AERO_SPRITE_DESC desc, std::string _text) : AESprite(desc) {
+	text = _text;
+}
+
+// Override AESprite::update(), allowing empty sprites
+// This kind of sprite is only the locator of floating text
+VOID WLFFloatingText::update(AEHashedTable<AEPlatform>* platformTable) {
+	if (ai) {
+		ai->execute();
+	}
+	INT fac = (flip ? -1 : 1);
+	cx += (fac * vx);
+	cy += vy;
+	vx += ax;
+	vy += ay;
+}
+
+VOID WLFFloatingText::render(INT renderOption, ...) {
+	LPTSTR text_wchar = new TCHAR[1024];
+	mbstowcs(text_wchar, text.c_str(), 1024);
+	xtk_SpriteFont_Arial_10->DrawString(xtk_SpriteBatch, text_wchar, XMFLOAT2(cx, cy));
 }

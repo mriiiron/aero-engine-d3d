@@ -1,6 +1,6 @@
 #Frames
 
-$ImageResource 2
+$ImageResource 3
 0 39 79
 1 39 79
 2 39 79

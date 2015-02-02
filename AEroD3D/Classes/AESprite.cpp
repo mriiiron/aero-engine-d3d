@@ -30,7 +30,8 @@ AESprite::AESprite(AERO_SPRITE_DESC desc) {
 	layerDepth = desc.layerDepth;
 	scale = desc.scale;
 	flip = desc.flip;
-	changeAction(desc.action);
+	deadFlag = FALSE;
+	if (obj) changeAction(desc.action);
 }
 
 AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip) {

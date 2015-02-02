@@ -2,6 +2,7 @@
 
 #include "AEroEngine.h"
 #include "WLFFileReader.h"
+#include "WLFData.h"
 #include "WLFAI.h"
 #include "WLFAnimation.h"
 #include "WLFBuff.h"
@@ -44,48 +45,64 @@ WLFShrineCaveScene::WLFShrineCaveScene(INT spriteTableSize) : AEScene(spriteTabl
 
 	// Create Shrine Cave BG
 
-	AEBGLayerFrame* bgLayerFrame = new AEBGLayerFrame(ae_ResourceTable.getItem(80), 0);
 	AERO_BGLAYERANIM_DESC descBGLayerAnim;
+	AEBGLayerFrame* bgLayerFrame_Cave = new AEBGLayerFrame(ae_ResourceTable.getItem(80), 0);
 	descBGLayerAnim.frameCount = 1;
-	AEBGLayerAnim* bgLayerAnim = new AEBGLayerAnim(descBGLayerAnim);
-	bgLayerAnim->addFrame(0, bgLayerFrame, 1000);
+	AEBGLayerAnim* bgLayerAnim_Cave = new AEBGLayerAnim(descBGLayerAnim);
+	bgLayerAnim_Cave->addFrame(0, bgLayerFrame_Cave, 1000);
+
+	AEBGLayerFrame* bgLayerFrame_Roof = new AEBGLayerFrame(ae_ResourceTable.getItem(81), 0);
+	descBGLayerAnim.frameCount = 1;
+	AEBGLayerAnim* bgLayerAnim_Roof = new AEBGLayerAnim(descBGLayerAnim);
+	bgLayerAnim_Roof->addFrame(0, bgLayerFrame_Roof, 1000);
 
 	AERO_BACKGROUND_DESC descBG;
 	descBG.name = "Shrine Cave";
 	AEBackground* bg_shrine_cave = new AEBackground(descBG);
-	bg_shrine_cave->addAnimAt(0, bgLayerAnim);
+	bg_shrine_cave->addAnimAt(0, bgLayerAnim_Cave);
+	bg_shrine_cave->addAnimAt(1, bgLayerAnim_Roof);
 
 	AERO_BGLAYER_DESC descBGLayer;
 	descBGLayer.depth = 0;
-	descBGLayer.locX = -750.0f;
+	descBGLayer.locX = -450.0f;
 	descBGLayer.locY = -240.0f;
-	descBGLayer.width = 1500;
+	descBGLayer.width = 900;
 	descBGLayer.height = 480;
-	AEBGLayer* bgLayer = new AEBGLayer(descBGLayer);
+	AEBGLayer* caveLayer = new AEBGLayer(descBGLayer);
+	AEBGAnimRef* animRef_Cave = new AEBGAnimRef(0, 0, 0);
+	caveLayer->addAnimRef(animRef_Cave);
 
-	AEBGAnimRef* animRef = new AEBGAnimRef(0, 0, 0);
-	bgLayer->addAnimRef(animRef);
+	descBGLayer.depth = -25;
+	descBGLayer.locX = -465.0f;
+	descBGLayer.locY = -240.0f;
+	descBGLayer.width = 930;
+	descBGLayer.height = 160;
+	AEBGLayer* roofLayer = new AEBGLayer(descBGLayer);
+	AEBGAnimRef* animRef_Roof = new AEBGAnimRef(0, 0, 1);
+	roofLayer->addAnimRef(animRef_Roof);
 
-	bg_shrine_cave->addLayer(bgLayer);
+	bg_shrine_cave->addLayer(roofLayer);
+	bg_shrine_cave->addLayer(caveLayer);
+
 	ae_BGLibrary.add(bg_shrine_cave);
 	this->setBackground(bg_shrine_cave);
 
 	// Create Platforms
 	AEPlatform* platform_floor = new AEPlatform(14);
-	platform_floor->addNode({ descBGLayer.locX + 0.0f, descBGLayer.locY + 352.0f });
-	platform_floor->addNode({ descBGLayer.locX + 236.0f, descBGLayer.locY + 352.0f });
-	platform_floor->addNode({ descBGLayer.locX + 287.0f, descBGLayer.locY + 313.0f });
-	platform_floor->addNode({ descBGLayer.locX + 471.0f, descBGLayer.locY + 310.0f });
-	platform_floor->addNode({ descBGLayer.locX + 552.0f, descBGLayer.locY + 368.0f });
-	platform_floor->addNode({ descBGLayer.locX + 643.0f, descBGLayer.locY + 390.0f });
-	platform_floor->addNode({ descBGLayer.locX + 867.0f, descBGLayer.locY + 390.0f });
-	platform_floor->addNode({ descBGLayer.locX + 946.0f, descBGLayer.locY + 344.0f });
-	platform_floor->addNode({ descBGLayer.locX + 990.0f, descBGLayer.locY + 344.0f });
-	platform_floor->addNode({ descBGLayer.locX + 1046.0f, descBGLayer.locY + 382.0f });
-	platform_floor->addNode({ descBGLayer.locX + 1158.0f, descBGLayer.locY + 382.0f });
-	platform_floor->addNode({ descBGLayer.locX + 1370.0f, descBGLayer.locY + 318.0f });
-	platform_floor->addNode({ descBGLayer.locX + 1433.0f, descBGLayer.locY + 278.0f });
-	platform_floor->addNode({ descBGLayer.locX + 1500.0f, descBGLayer.locY + 264.0f });
+	platform_floor->addNode({ descBGLayer.locX + -321.0f, descBGLayer.locY + 352.0f });
+	platform_floor->addNode({ descBGLayer.locX + -85.0f, descBGLayer.locY + 352.0f });
+	platform_floor->addNode({ descBGLayer.locX + -34.0f, descBGLayer.locY + 313.0f });
+	platform_floor->addNode({ descBGLayer.locX + 150.0f, descBGLayer.locY + 310.0f });
+	platform_floor->addNode({ descBGLayer.locX + 231.0f, descBGLayer.locY + 368.0f });
+	platform_floor->addNode({ descBGLayer.locX + 322.0f, descBGLayer.locY + 390.0f });
+	platform_floor->addNode({ descBGLayer.locX + 546.0f, descBGLayer.locY + 390.0f });
+	platform_floor->addNode({ descBGLayer.locX + 625.0f, descBGLayer.locY + 344.0f });
+	platform_floor->addNode({ descBGLayer.locX + 669.0f, descBGLayer.locY + 344.0f });
+	platform_floor->addNode({ descBGLayer.locX + 725.0f, descBGLayer.locY + 382.0f });
+	platform_floor->addNode({ descBGLayer.locX + 837.0f, descBGLayer.locY + 382.0f });
+	platform_floor->addNode({ descBGLayer.locX + 1049.0f, descBGLayer.locY + 318.0f });
+	platform_floor->addNode({ descBGLayer.locX + 1112.0f, descBGLayer.locY + 278.0f });
+	platform_floor->addNode({ descBGLayer.locX + 1179.0f, descBGLayer.locY + 264.0f });
 	platform_floor->calcAngles();
 
 	// Apply platforms
@@ -138,7 +155,7 @@ VOID WLFShrineCaveScene::initialize() {
 	descSpr.cx = 0.0f;
 	descSpr.cy = 0.0f;  // 150.0f;
 	WLFCharacter* bandit2 = new WLFCharacter(descSpr);
-	bandit2->setPortraitIndex(11);
+	bandit2->setPortraitIndex(12);
 	addSprite(bandit2);
 
 	// Create player namepad
@@ -231,8 +248,11 @@ VOID WLFShrineCaveScene::update() {
 	if (hud) {
 		hud->update();
 	}
-	//ae_Camera.setFocus(player->getCx(), 0.0f);
-	ae_Camera.setFocus(0.0f, 0.0f);
+	FLOAT focusX = player->getCx();
+	if (focusX < -85.0f) focusX = -85.0f;
+	if (focusX > 90.0f) focusX = 90.0f;
+	ae_Camera.setFocus(focusX, 0.0f);
+	//ae_Camera.setFocus(0.0f, 0.0f);
 	ae_Camera.update();
 }
 
@@ -241,92 +261,120 @@ VOID WLFShrineCaveScene::render(INT renderMode) {
 }
 
 VOID WLFShrineCaveScene::processInput() {
+
 	if (!isPaused) {
+
+		//
+		// TODO: Processing Input
+		//
+
+		// Up Key (^)
 		if (keyStateBuffer[dik_up] & 0x80) {
-			if (player->getAction() == 1) {
-				player->toStand();
-			}
-			player->keyDown(WLFCharacter::KEY_UP);
+			player->keyDown(WLFKeys::KEY_UP);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_UP);
+			player->keyUp(WLFKeys::KEY_UP);
 		}
+
+		// Down Key (v)
 		if (keyStateBuffer[dik_down] & 0x80) {
-			if (player->getAction() == 0) {
-				player->toBattleStance();
-			}
-			player->keyDown(WLFCharacter::KEY_DOWN);
+			player->keyDown(WLFKeys::KEY_DOWN);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_DOWN);
+			player->keyUp(WLFKeys::KEY_DOWN);
 		}
+
+		// Left Key (<)
 		if (keyStateBuffer[dik_left] & 0x80) {
-			player->keyDown(WLFCharacter::KEY_LEFT);
+			player->keyDown(WLFKeys::KEY_LEFT);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_LEFT);
+			player->keyUp(WLFKeys::KEY_LEFT);
 		}
+
+		// Right Key (>)
 		if (keyStateBuffer[dik_right] & 0x80) {
-			player->keyDown(WLFCharacter::KEY_RIGHT);
+			player->keyDown(WLFKeys::KEY_RIGHT);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_RIGHT);
+			player->keyUp(WLFKeys::KEY_RIGHT);
 		}
+
+		// A Key (A)
 		if (keyStateBuffer[dik_attack_a] & 0x80) {
-			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_A) && player->getAction() == 1) {
-				if (player->isKeyPressed(WLFCharacter::KEY_DOWN)) {
-					player->colossusSmash();
+			if (!player->isKeyPressed(WLFKeys::KEY_ATTACK_A)) {
+				if ((player->getFlip() == SpriteEffects::SpriteEffects_None && player->isKeyPressed(WLFKeys::KEY_RIGHT)) || (player->getFlip() == SpriteEffects::SpriteEffects_FlipHorizontally && player->isKeyPressed(WLFKeys::KEY_LEFT))) {
+					player->applyMoveInput(WLFCharacter::MOVE_FORWARD_A);
+					player->applyMoveInput(WLFCharacter::MOVE_A);
+				}
+				else if ((player->getFlip() == SpriteEffects::SpriteEffects_None && player->isKeyPressed(WLFKeys::KEY_RIGHT)) || (player->getFlip() == SpriteEffects::SpriteEffects_FlipHorizontally && player->isKeyPressed(WLFKeys::KEY_LEFT))) {
+					player->applyMoveInput(WLFCharacter::MOVE_DOWN_A);
 				}
 				else {
-					player->mortalStrike();
+					player->applyMoveInput(WLFCharacter::MOVE_A);
 				}	
 			}
-			player->keyDown(WLFCharacter::KEY_ATTACK_A);
+			player->keyDown(WLFKeys::KEY_ATTACK_A);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_ATTACK_A);
+			player->keyUp(WLFKeys::KEY_ATTACK_A);
 		}
+
+		// B Key (B)
 		if (keyStateBuffer[dik_attack_b] & 0x80) {
-			if (!player->isKeyPressed(WLFCharacter::KEY_ATTACK_B) && player->getAction() == 1) {
-				if (player->getFlip() == SpriteEffects_None && player->isKeyPressed(WLFCharacter::KEY_RIGHT) || player->getFlip() == SpriteEffects_FlipHorizontally && player->isKeyPressed(WLFCharacter::KEY_LEFT)) {
-					player->slam();
+			if (!player->isKeyPressed(WLFKeys::KEY_ATTACK_B)) {
+				if ((player->getFlip() == SpriteEffects::SpriteEffects_None && player->isKeyPressed(WLFKeys::KEY_RIGHT)) || (player->getFlip() == SpriteEffects::SpriteEffects_FlipHorizontally && player->isKeyPressed(WLFKeys::KEY_LEFT))) {
+					player->applyMoveInput(WLFCharacter::MOVE_FORWARD_B);
+					player->applyMoveInput(WLFCharacter::MOVE_B);
 				}
-				else if (player->isKeyPressed(WLFCharacter::KEY_DOWN)) {
-					player->thunderClap();
+				else if (player->isKeyPressed(WLFKeys::KEY_DOWN)) {
+					player->applyMoveInput(WLFCharacter::MOVE_DOWN_B);
+					player->applyMoveInput(WLFCharacter::MOVE_B);
 				}
 				else {
-					player->overpower();
+					player->applyMoveInput(WLFCharacter::MOVE_B);
 				}
 			}
-			player->keyDown(WLFCharacter::KEY_ATTACK_B);
+			player->keyDown(WLFKeys::KEY_ATTACK_B);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_ATTACK_B);
+			player->keyUp(WLFKeys::KEY_ATTACK_B);
 		}
-		if (keyStateBuffer[dik_special] & 0x80) {
-			if (!player->isKeyPressed(WLFCharacter::KEY_SPECIAL) && player->hasTarget() && (player->getAction() >= 0 || player->getAction() <= 5)) {
-				player->charge();
+
+		if (keyStateBuffer[dik_jump] & 0x80) {
+			if (!player->isKeyPressed(WLFKeys::KEY_JUMP) && player->getState() != WLFCharacter::STATE_IN_AIR) {
+				player->applyMoveInput(WLFCharacter::MOVE_JUMP);
 			}
-			player->keyDown(WLFCharacter::KEY_SPECIAL);
+			player->keyDown(WLFKeys::KEY_JUMP);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_SPECIAL);
+			player->keyUp(WLFKeys::KEY_JUMP);
 		}
+
+		// Spetial Key (SP)
+		if (keyStateBuffer[dik_special] & 0x80) {
+			if (!player->isKeyPressed(WLFKeys::KEY_SPECIAL) && player->hasTarget() && (player->getAction() >= 0 || player->getAction() <= 5)) {
+				// TODO: Special Key
+			}
+			player->keyDown(WLFKeys::KEY_SPECIAL);
+		}
+		else {
+			player->keyUp(WLFKeys::KEY_SPECIAL);
+		}
+
 		if (keyStateBuffer[DIK_TAB] & 0x80) {
-			if (!player->isKeyPressed(WLFCharacter::KEY_CHANGE_TARGET)) {
+			if (!player->isKeyPressed(WLFKeys::KEY_CHANGE_TARGET)) {
 				player->changeTarget();
 			}
-			player->keyDown(WLFCharacter::KEY_CHANGE_TARGET);
+			player->keyDown(WLFKeys::KEY_CHANGE_TARGET);
 		}
 		else {
-			player->keyUp(WLFCharacter::KEY_CHANGE_TARGET);
+			player->keyUp(WLFKeys::KEY_CHANGE_TARGET);
 		}
-		if (keyStateBuffer[DIK_Q] & 0x80) {
-			ae_Camera.shake(30, 3);
-		}
+
 	}
-	if (keyStateBuffer[dik_jump] & 0x80) {
- 		INT a = 1;
+	if (keyStateBuffer[DIK_Q] & 0x80) {
+		INT a = 1;
 	}
 	if (keyStateBuffer[DIK_RETURN] & 0x80) {
 		if (!isPauseKeyPressed) {
@@ -343,6 +391,9 @@ VOID WLFShrineCaveScene::processCollision() {
 	INT spriteCount = spriteTable->getHashCount();
 	for (INT i = 0; i < spriteCount; i++) {
 		AESprite* sprite1 = spriteTable->getItemByHash(i);
+		if (sprite1->getObject() == nullptr) {
+			continue;
+		}
 		WLFAnimation* anim1 = (WLFAnimation*)(sprite1->getCurrentAnimation());
 		WLFAttackJudgeArea* attackJudge = anim1->getAttackJudge(sprite1->getFrameNum());
 		if (attackJudge == nullptr || dynamic_cast<WLFCharacter*>(sprite1)->isAttackLocked()) {
@@ -350,7 +401,7 @@ VOID WLFShrineCaveScene::processCollision() {
 		}
 		for (INT j = 0; j < spriteCount; j++) {
 			AESprite* sprite2 = spriteTable->getItemByHash(j);
-			if (i == j || sprite1->getTeam() == sprite2->getTeam()) {
+			if (i == j || sprite1->getTeam() == sprite2->getTeam() || sprite2->getObject() == nullptr) {
 				continue;
 			}
 			WLFAnimation* anim2 = (WLFAnimation*)(sprite2->getCurrentAnimation());
@@ -415,6 +466,8 @@ VOID WLFShrineCaveScene::processCollision() {
 				dynamic_cast<WLFCharacter*>(sprite1)->setAttackLock(TRUE);
 				dynamic_cast<WLFCharacter*>(sprite2)->shake(20, 1);
 				setStandstill(20);
+
+				dynamic_cast<WLFCharacter*>(sprite1)->setTarget(dynamic_cast<WLFCharacter*>(sprite2));
 
 			}
 		}

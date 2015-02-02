@@ -9,6 +9,7 @@ WLFAnimation::WLFAnimation(AERO_ANIMATION_DESC desc) : AEAnimation(desc) {
 		spriteCreateTable[i] = nullptr;
 		cameraShakeTable[i] = nullptr;
 		giveSpeedTable[i] = { 0.0f, 0.0f };
+		cancelTable[i] = nullptr;
 	}
 	isTurn = FALSE;
 	hitGroundAction = -1;
@@ -73,6 +74,14 @@ VOID WLFAnimation::addCameraShakeForFrame(INT index, WLFCameraShakeOptions* came
 		return;
 	}
 	cameraShakeTable[index] = cameraShakeOptions;
+}
+
+VOID WLFAnimation::addCancelForFrame(INT index, WLFCancelOptions* cancelOptions) {
+	if (index < 0 || index >= frameCount) {
+		// Error
+		return;
+	}
+	cancelTable[index] = cancelOptions;
 }
 
 VOID WLFAnimation::giveSpeedForFrame(INT index, XMFLOAT2 vec) {

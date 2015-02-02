@@ -1,5 +1,7 @@
 #include "AEroEngine.h"
 #include "WLFAnimation.h"
+#include "WLFBuff.h"
+#include "WLFSprite.h"
 #include "WLFFileReader.h"
 
 extern ID3D11Device*						g_pd3dDevice;
@@ -67,6 +69,52 @@ VOID WLFDataFileReader::readResources(std::string fileName) {
 
 }
 
+
+WLFFromTo WLFDataFileReader::framesFromToDecrypt(std::string framesFromTo) {
+	size_t delimPos = framesFromTo.find('-');
+	if (delimPos == std::string::npos) {
+		INT frameNum = stoi(framesFromTo);
+		WLFFromTo result = { frameNum, frameNum };
+		return result;
+	}
+	else {
+		INT from = stoi(framesFromTo.substr(0, delimPos));
+		INT to = stoi(framesFromTo.substr(delimPos + 1, std::string::npos));
+		WLFFromTo result = { from, to };
+		return result;
+	}
+}
+
+INT WLFDataFileReader::moveInputDecrypt(std::string move) {
+	if (move == "A") {
+		return WLFCharacter::MOVE_A;
+	}
+	else if (move == ">A") {
+		return WLFCharacter::MOVE_FORWARD_A;
+	}
+	else if (move == "vA") {
+		return WLFCharacter::MOVE_DOWN_A;
+	}
+	else if (move == "^A") {
+		return WLFCharacter::MOVE_UP_A;
+	}
+	else if (move == "B") {
+		return WLFCharacter::MOVE_B;
+	}
+	else if (move == ">B") {
+		return WLFCharacter::MOVE_FORWARD_B;
+	}
+	else if (move == "vB") {
+		return WLFCharacter::MOVE_DOWN_B;
+	}
+	else if (move == "^B") {
+		return WLFCharacter::MOVE_UP_B;
+	}
+	else {
+		// Error
+		return -1;
+	}
+}
 
 VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 
@@ -291,10 +339,29 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 								}
 								anim->giveSpeedForFrame(frame, { x, y });
 							}
+							else if (item == "$Cancel") {
+								WLFCancelOptions* cancel = new WLFCancelOptions;
+								WLFFromTo framesFromTo;
+								while (item != "$End") {
+									if (item == "frame:") {
+										iss >> item;  framesFromTo = framesFromToDecrypt(item);
+									}
+									else if (item == "input:") {
+										iss >> item;  cancel->moveInput = moveInputDecrypt(item);
+									}
+									else if (item == "jumpto:") {
+										iss >> item;  cancel->toAction = stoi(item);
+									}
+									iss >> item;
+								}
+								for (int i = framesFromTo.from; i <= framesFromTo.to; i++) {
+									anim->addCancelForFrame(i, cancel);
+								}
+							}
 						}
-						delete[] frameNums;
-						delete[] endTimes;
-						delete[] xShifts;
+						delete [] frameNums;
+						delete [] endTimes;
+						delete [] xShifts;
 						obj->addAnim(animNum, anim);
 					}
 				}

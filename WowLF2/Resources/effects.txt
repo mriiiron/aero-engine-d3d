@@ -121,6 +121,19 @@ $ImageResource 22
 9 29 202
 $ImageResource_End
 
+$ImageResource 13
+0 8 57
+1 8 57
+2 8 57
+3 8 57
+4 8 57
+5 8 57
+6 8 57
+7 8 57
+8 8 57
+9 8 57
+$ImageResource_End
+
 #Frames_End
 
 
@@ -171,7 +184,7 @@ $Anim_End
 $Anim 11 spark
 $FrameCount 10 next 1000
 75 76 77 78 79 80 81 82 83 84
-3 2 2 2 2 2 2 2 2 2
+2 2 2 2 2 3 3 3 4 4
 0 0 0 0 0 0 0 0 0 0
 $Anim_End
 
@@ -202,6 +215,13 @@ $FrameCount 8 next 1000
 0 1 2 3 4 5 6 7
 2 2 2 2 2 2 2 2
 0 0 0 0 0 0 0 0
+$Anim_End
+
+$Anim 16 spark_ground
+$FrameCount 10 next 1000
+125 126 127 128 129 130 131 132 133 134
+2 2 2 2 2 3 3 3 4 4
+0 0 0 0 0 0 0 0 0 0
 $Anim_End
 
 #Animations_End

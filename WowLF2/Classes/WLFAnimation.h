@@ -60,6 +60,18 @@ struct WLFCameraShakeOptions {
 
 };
 
+struct WLFCancelOptions {
+
+	INT toAction;
+	INT moveInput;
+
+	WLFCancelOptions() {
+		toAction = 0;
+		moveInput = 0;
+	}
+
+};
+
 
 class WLFAnimation : public AEAnimation {
 
@@ -74,6 +86,7 @@ public:
 	WLFBodyJudgeArea* getBodyJudge(INT index) { return bodyJudgeTable[index]; }
 	WLFSpriteCreatePoint* getSpriteCreate(INT index) { return spriteCreateTable[index]; }
 	WLFCameraShakeOptions* getCameraShakeOptions(INT index) { return cameraShakeTable[index]; }
+	WLFCancelOptions* getCancelOptions(INT index) { return cancelTable[index]; }
 	XMFLOAT2 getGivenSpeed(INT index) { return giveSpeedTable[index]; }
 
 	VOID addXShiftForFrame(INT index, INT xShift);
@@ -81,6 +94,7 @@ public:
 	VOID addBodyJudgeForFrame(INT index, WLFBodyJudgeArea* bodyJudgeArea);
 	VOID addSpriteCreateForFrame(INT index, WLFSpriteCreatePoint* bodyJudgeArea);
 	VOID addCameraShakeForFrame(INT index, WLFCameraShakeOptions* cameraShakeOptions);
+	VOID addCancelForFrame(INT index, WLFCancelOptions* cancelOptions);
 	VOID giveSpeedForFrame(INT index, XMFLOAT2 vec);
 	VOID setTurnAfterAnim(BOOLEAN _isTurn) { isTurn = _isTurn; }
 	VOID setHitGroundAction(INT _hitGroundAction) { hitGroundAction = _hitGroundAction; }
@@ -95,6 +109,7 @@ private:
 	WLFSpriteCreatePoint* spriteCreateTable[MAX_FRAME_COUNT];
 	WLFCameraShakeOptions* cameraShakeTable[MAX_FRAME_COUNT];
 	XMFLOAT2 giveSpeedTable[MAX_FRAME_COUNT];
+	WLFCancelOptions* cancelTable[MAX_FRAME_COUNT];
 	BOOLEAN isTurn;
 	INT hitGroundAction;
 

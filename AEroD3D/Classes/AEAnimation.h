@@ -68,7 +68,7 @@ class AEAnimation {
 
 public:
 
-	static const INT MAX_FRAME_COUNT			= 100;
+	static const INT MAX_FRAME_COUNT			= 200;
 
 	AEAnimation(AERO_ANIMATION_DESC desc);
 	~AEAnimation();

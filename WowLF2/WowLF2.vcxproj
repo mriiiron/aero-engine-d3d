@@ -415,6 +415,7 @@
     <ClInclude Include="Classes\WLFAI.h" />
     <ClInclude Include="Classes\WLFAnimation.h" />
     <ClInclude Include="Classes\WLFBuff.h" />
+    <ClInclude Include="Classes\WLFData.h" />
     <ClInclude Include="Classes\WLFFileReader.h" />
     <ClInclude Include="Classes\WLFHeadUpDisplay.h" />
     <ClInclude Include="Classes\WLFScene.h" />

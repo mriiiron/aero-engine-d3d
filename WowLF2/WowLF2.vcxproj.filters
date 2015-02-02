@@ -64,6 +64,9 @@
     <ClInclude Include="Classes\WLFSpell.h">
       <Filter>Classes</Filter>
     </ClInclude>
+    <ClInclude Include="Classes\WLFData.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

@@ -48,3 +48,10 @@ public:
 	VOID takeEffect();
 	static const INT spellID = 4;
 };
+
+
+class WLFSlam : public WLFSpell {
+public:
+	VOID takeEffect();
+	static const INT spellID = 5;
+};
