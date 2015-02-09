@@ -172,7 +172,6 @@ public:
 
 	VOID updateAttachments();
 
-	virtual VOID applyControl();
 	virtual VOID platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult);
 	virtual VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
 	virtual VOID render(INT renderOption = RENDER_OPTION_NORMAL, ...);

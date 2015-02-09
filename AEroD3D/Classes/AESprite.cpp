@@ -119,11 +119,14 @@ VOID AESprite::changeAction(INT _action) {
 		deadFlag = TRUE;
 		return;
 	}
+	AEAnimation* anim = obj->getAnim(_action);
+	if (anim == nullptr) {
+		AENSGameControl::exitGame(obj->getName() + " does not have action " + std::to_string(_action) + ".");
+	}
 	else {
 		deadFlag = FALSE;
 	}
 	action = _action;
-	AEAnimation* anim = obj->getAnim(action);
 	timeToLive = anim->getTTL();
 	frameNum = time = 0;
 }
@@ -161,9 +164,6 @@ XMVECTOR AESprite::getVelocityVector() {
 	return XMVector2Normalize(XMLoadFloat2(&vec2));
 }
 
-VOID AESprite::applyControl() {
-
-}
 
 VOID AESprite::platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<AEPlatform>* platformTable) {
 	XMFLOAT2 sprOldPos = { cx_old, cy_old };

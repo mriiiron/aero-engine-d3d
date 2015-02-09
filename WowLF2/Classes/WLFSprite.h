@@ -16,23 +16,21 @@ public:
 	static const INT STATE_ON_GROUND = 1;
 
 	static const INT ACTION_STAND = 0;
-	static const INT ACTION_BATTLE_STANCE = 1;
-	static const INT ACTION_WALK = 2;
-	static const INT ACTION_TURN = 3;
-	static const INT ACTION_BATTLE_STANCE_START = 4;
-	static const INT ACTION_BATTLE_STANCE_END = 5;
-	static const INT ACTION_RUN = 6;
-	static const INT ACTION_RUN_END = 7;
+	static const INT ACTION_RUN = 1;
+	static const INT ACTION_RUN_END = 2;
+	static const INT ACTION_JUMP = 3;
 	static const INT ACTION_IN_AIR = 8;
 	static const INT ACTION_LAND_DEFAULT = 9;
-	static const INT ACTION_JUMP = 18;
-	static const INT ACTION_HIT_FRONT_LOWER = 20;
-	static const INT ACTION_HIT_FRONT_UPPER = 21;
-	static const INT ACTION_HIT_BACK_LOWER = 22;
-	static const INT ACTION_HIT_BACK_UPPER = 23;
+	static const INT ACTION_HIT_FRONT_LOWER = 10;
+	static const INT ACTION_HIT_FRONT_UPPER = 11;
+	static const INT ACTION_HIT_BACK_LOWER = 12;
+	static const INT ACTION_HIT_BACK_UPPER = 13;
+	static const INT ACTION_HIT_FRONT_HEAVY = 14;
+	static const INT ACTION_HIT_BACK_HEAVY = 15;
+	static const INT ACTION_HIT_FRONT_FALL = 16;
+	static const INT ACTION_HIT_BACK_FALL = 17;
 
 	static const INT MAX_MOVES_COUNT = 20;
-
 	static const INT MOVE_A = 0;
 	static const INT MOVE_FORWARD_A = 1;
 	static const INT MOVE_DOWN_A = 2;
@@ -49,25 +47,23 @@ public:
 	VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
 	VOID render(INT renderOption = RENDER_OPTION_NORMAL, ...);
 
-	VOID toBattleStance();
-	VOID toStand();
-	VOID attack_1();
-	VOID attack_2();
 	VOID changeTarget();
 
 	VOID adsorbToPlatform();
 	BOOLEAN isAttackLocked() { return attackLock; }
-	BOOLEAN hasTarget() { if (target == nullptr) return FALSE; else return TRUE; }
+	
 	VOID setPortraitIndex(INT _portraitIndex) { portraitIndex = _portraitIndex; }
 	INT getPortraitIndex() { return portraitIndex; }
 	VOID setAttackLock(BOOLEAN lock) { attackLock = lock; }
 	WLFCharacterHUDItemIndexes getHUDItemIndexes() { return hudItems; }
 	VOID setHUDItemIndexes(INT namepad, INT portrait, INT bar_hp, INT bar_energy) { hudItems = { namepad, portrait, bar_hp, bar_energy }; }
 	AEHashedTable<WLFBuff>* getBuffTable() { return buffTable; }
+	WLFCharacter* getTarget() { return target; }
+	VOID setTarget(WLFCharacter* _target);
+	VOID setPlayerFlag(BOOLEAN flag) { isPlayerFlag = flag; }
+	BOOLEAN isPlayer() { return isPlayerFlag; }
 	
 	VOID applyMoveInput(INT move, INT tolerance = 5) { moveInputs[move] = tolerance; }
-
-	VOID setTarget(WLFCharacter* target);
 	VOID addBuff(WLFBuff* buff, WLFCharacter* caster);
 	BOOLEAN hasBuff(std::string buffName);
 	VOID updateBuffTable();
@@ -88,6 +84,7 @@ protected:
 	FLOAT fraction;
 	BOOLEAN isFractionDisabled;
 	INT moveInputs[MAX_MOVES_COUNT];
+	BOOLEAN isPlayerFlag;
 
 };
 
@@ -118,6 +115,24 @@ private:
 
 	FLOAT chargeTargetPosX;
 	INT rage, rageMax;
+
+};
+
+
+class WLFBandit : public WLFCharacter {
+
+public:
+
+	WLFBandit(AERO_SPRITE_DESC desc);
+
+	VOID update(AEHashedTable<AEPlatform>* platformTable = nullptr);
+
+	VOID frontKick();
+	VOID maceAttack();
+
+private:
+
+
 
 };
 

@@ -14,3 +14,17 @@ private:
 	FLOAT floatSpeed;
 
 };
+
+
+class WLFBanditAI : public AEAI {
+
+public:
+
+	WLFBanditAI(AESprite* _host);
+	VOID execute();
+
+private:
+
+
+
+};

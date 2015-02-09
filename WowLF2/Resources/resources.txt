@@ -1,9 +1,10 @@
 0 5x10 80 80 Resources\warrior_deep_0.dds
 1 5x10 80 80 Resources\warrior_deep_1.dds
 2 5x10 80 80 Resources\warrior_deep_2.dds
-3 5x10 80 80 Resources\dummy_bandit_0.dds
-4 1x5 60 120 Resources\dummy_0.dds
-5 1x5 100 140 Resources\dummy_1.dds
+3 5x10 80 80 Resources\phantom_bandit_0.dds
+4 1x10 80 100 Resources\phantom_bandit_1.dds
+5 1x5 60 120 Resources\dummy_0.dds
+6 1x5 100 140 Resources\dummy_1.dds
 10 2x5 133 40 Resources\hit_slash_0.dds
 11 1x5 70 120 Resources\hit_slash_1.dds
 12 4x5 110 100 Resources\spark_huge.dds
@@ -12,6 +13,7 @@
 16 2x5 60 60 Resources\smoke.dds
 17 2x5 70 100 Resources\spark.dds
 18 4x5 110 40 Resources\smoke_ground.dds
+19 5x10 80 80 Resources\weapon_shatter.dds
 21 2x5 150 50 Resources\lightning_spark.dds
 22 1x10 60 210 Resources\lightning_strike_0.dds
 23 1x10 50 205 Resources\lightning_strike_1.dds

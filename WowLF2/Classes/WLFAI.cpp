@@ -19,3 +19,21 @@ VOID WLFFloatingTextAI::execute() {
 		host->remove();
 	}
 }
+
+
+WLFBanditAI::WLFBanditAI(AESprite* _host) : AEAI(_host) {
+
+}
+
+VOID WLFBanditAI::execute() {
+	WLFCharacter* bandit = dynamic_cast<WLFCharacter*>(host);
+	WLFShrineCaveScene* scene = dynamic_cast<WLFShrineCaveScene*>(bandit->getScene());
+	if (bandit->getTarget() == nullptr) {
+		bandit->setTarget(scene->getPlayer());
+	}
+	else {
+		if (fabs(bandit->getCx() - bandit->getTarget()->getCx()) < 80.0f){
+			bandit->applyMoveInput(WLFCharacter::MOVE_A);
+		}
+	}
+}

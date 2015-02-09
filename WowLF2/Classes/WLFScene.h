@@ -18,6 +18,8 @@ public:
 	VOID addNamepadToHUD(WLFCharacter* character, INT portraitIndex, INT slot);
 	VOID removeNamepadFromHUD(WLFCharacter* character);
 
+	WLFCharacter* getPlayer() { return player; }
+
 private:
 
 	WLFWarrior* player;

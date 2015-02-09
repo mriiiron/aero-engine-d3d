@@ -124,6 +124,9 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 	}
 
 	AEFrame* frames[500];
+	for (int i = 0; i < 500; i++) {
+		frames[i] = nullptr;
+	}
 	AERO_FRAME_DESC descFrame;
 	AERO_ANIMATION_DESC descAnim;
 
@@ -178,7 +181,11 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
 						INT* xShifts = new INT[descAnim.frameCount];
 						getline(fs, line);  iss.clear();  iss.str(line);
 						for (INT i = 0; i < descAnim.frameCount; i++) {
-							iss >> item;  frameNums[i] = stoi(item);
+							iss >> item;  INT frameNum = stoi(item);
+							if (frames[frameNum] == nullptr) {
+								AENSGameControl::exitGame("Error in " + fileName + ":\nAnimation " + std::to_string(animNum) + " uses an inexistent frame " + std::to_string(frameNum) + ".");
+							}
+							frameNums[i] = frameNum;
 						}
 						getline(fs, line);  iss.clear();  iss.str(line);
 						INT endTime = 0;

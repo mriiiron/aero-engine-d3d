@@ -6,7 +6,7 @@ AEObject::AEObject(AERO_OBJECT_DESC desc) {
 	name = desc.name;
 	type = desc.type;
 	for (INT i = 0; i < MAX_ANIM_COUNT; i++) {
-		animTable[MAX_ANIM_COUNT] = nullptr;
+		animTable[i] = nullptr;
 	}
 }
 

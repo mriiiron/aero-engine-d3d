@@ -110,6 +110,9 @@ $ImageResource 2
 13 27 79
 14 42 79
 15 42 79
+20 37 79
+21 37 79
+30 24 79
 $ImageResource_End
 
 #Frames_End
@@ -117,61 +120,35 @@ $ImageResource_End
 
 #Animations
 
-$Anim 0 stand
-$FrameCount 6 loop -1
-0 1 2 3 2 1
-40 8 8 30 8 8
-0 0 0 0 0 0
-$Anim_End
-
-$Anim 1 battle_stance
+$Anim 0 battle_stance
 $FrameCount 6 loop -1
 5 6 7 8 7 6
 40 8 8 30 8 8
 0 0 0 0 0 0
+$Body 14 23 45 78 $End
 $Anim_End
 
-$Anim 2 walk
-$FrameCount 6 loop -1
-10 11 12 13 12 11
-6 6 6 6 6 6
-0 0 0 0 0 0
-$Anim_End
-
-$Anim 3 turn
-$FrameCount 2 next 4
-27 28
-4 4
-0 0
-$Turn
-$Anim_End
-
-$Anim 4 battle_stance_start
-$FrameCount 3 next 1
-0 4 5
-1 8 1
-0 -4 -2
-$Anim_End
-
-$Anim 5 battle_stance_end
-$FrameCount 3 next 0
-5 4 0
-1 8 1
-0 2 4
-$Anim_End
-
-$Anim 6 run
+$Anim 1 run
 $FrameCount 4 loop -1
 86 85 86 87
 8 8 8 8
 0 0 0 0
 $Anim_End
 
-$Anim 7 run_end
-$FrameCount 1 next 1
+$Anim 2 run_end
+$FrameCount 1 next 0
 78
 12
 0
+$Anim_End
+
+$Anim 3 jump
+$FrameCount 5 next 8
+46 47 48 47 46
+12 8 9 10 100
+0 0 0 0 0
+$GiveSpeed y: -5.3 frame: 0 $End
+$Cancel frame: 1-4 input: A jumpto: 48 $End
 $Anim_End
 
 $Anim 8 in_air
@@ -182,57 +159,104 @@ $FrameCount 1 loop -1
 $Anim_End
 
 $Anim 9 land
-$FrameCount 2 next 1
+$FrameCount 2 next 0
 39 49
 8 8
 0 0
 $Anim_End
 
-$Anim 10 charge
-$FrameCount 4 loop -1
-23 24 25 24
-4 4 4 4
-0 0 0 0
-$CreateSprite 10 action: 10 at: 32 75 frame: 1 team: -1 depth: 0.0 $End
-$CreateSprite 10 action: 10 at: 32 75 frame: 3 team: -1 depth: 0.0 $End
+$Anim 10 hit_front_lower
+$FrameCount 2 next 0
+120 121
+8 8
+0 0
+$Body 14 23 45 78 $End
 $Anim_End
 
-$Anim 11 charge_start
-$FrameCount 3 next 10
-20 21 22
-6 5 4
-0 0 0
-$CreateSprite 10 action: 12 at: 37 79 frame: 1 team: -1 flip: 3 depth: 0.02 $End
-$CreateSprite 10 action: 10 at: 37 79 frame: 2 team: -1 depth: 0.0 $End
+$Anim 11 hit_front_upper
+$FrameCount 2 next 0
+120 121
+8 8
+0 0
+$Body 14 23 45 78 $End
 $Anim_End
 
-$Anim 12 charge_end
-$FrameCount 2 next 1
-26 20
-6 6
+$Anim 12 hit_back_lower
+$FrameCount 2 next 0
+120 121
+8 8
+0 0
+$Body 14 23 45 78 $End
+$Anim_End
+
+$Anim 13 hit_back_upper
+$FrameCount 2 next 0
+120 121
+8 8
+0 0
+$Body 14 23 45 78 $End
+$Anim_End
+
+$Anim 14 hit_front_heavy
+$FrameCount 2 next 0
+120 121
+8 8
 0 0
 $Anim_End
 
-$Anim 13 stab
-$FrameCount 4 next 1
+$Anim 15 hit_back_heavy
+$FrameCount 2 next 0
+120 121
+8 8
+0 0
+$Anim_End
+
+$Anim 40 attack_1
+$FrameCount 4 next 0
 100 101 102 104
 6 12 10 6
 0 0 0 0
 $Attack 32 37 105 59 frame: 2 effect: 2 spellid: 2 $End
-$Cancel frame: 3-4 input: A jumpto: 21 $End
+$Cancel frame: 3-4 input: A jumpto: 41 $End
 $Anim_End
 
-$Anim 14 slash
-$FrameCount 5 next 1
+$Anim 41 attack_1_append
+$FrameCount 2 next 8
+105 106
+6 50
+0 0
+$GiveSpeed x: 1.0 y: -2.0 frame: 0 $End
+$HitGround 42
+$Anim_End
+
+$Anim 42 attack_1_append_land
+$FrameCount 3 next 0
+32 33 34
+5 5 6
+0 0 0
+$Attack 37 3 70 56 frame: 0 effect: 2 spellid: 2 $End
+$Anim_End
+
+$Anim 43 attack_2
+$FrameCount 5 next 0
 40 41 42 44 29
 6 12 5 5 6
 0 0 0 0 0
 $Attack 48 20 99 60 frame: 2 effect: 2 spellid: 2 $End
-$Cancel frame: 3-4 input: A jumpto: 23 $End
+$Cancel frame: 3-4 input: A jumpto: 44 $End
 $Anim_End
 
-$Anim 15 attack_heavy_1
-$FrameCount 8 next 1
+$Anim 44 attack_2_append
+$FrameCount 5 next 0
+30 31 32 33 34
+6 12 5 5 6
+0 0 0 0 0
+$Attack 37 3 70 56 frame: 2 effect: 2 spellid: 2 $End
+$GiveSpeed x: 3.0 frame: 2 $End
+$Anim_End
+
+$Anim 45 attack_heavy_1
+$FrameCount 8 next 0
 50 51 52 53 54 55 56 57
 5 7 3 3 4 5 6 6
 0 0 0 0 0 0 0 0
@@ -240,8 +264,8 @@ $Attack 38 27 73 54 frame: 3 effect: 2 spellid: 1 $End
 $CreateSprite 10 action: 16 at: 62 79 frame: 3 team: -1 depth: 0.0 $End
 $Anim_End
 
-$Anim 16 attack_heavy_2
-$FrameCount 10 next 1
+$Anim 46 attack_heavy_2
+$FrameCount 10 next 0
 40 41 60 61 62 63 65 65 67 68
 6 6 4 4 4 4 1 3 8 5
 0 0 0 0 0 0 0 0 0 0
@@ -252,8 +276,8 @@ $CreateSprite 10 action: 10 at: 100 79 frame: 7 team: -1 depth: 0.0 $End
 $CameraShake 30 frame: 6 amplitude: 1 $End
 $Anim_End
 
-$Anim 17 trample
-$FrameCount 8 next 1
+$Anim 47 trample
+$FrameCount 8 next 0
 40 60 70 71 71 71 72 40
 6 6 10 1 1 16 6 6
 0 0 0 0 0 0 0 0
@@ -264,92 +288,83 @@ $CreateSprite 10 action: 10 at: 60 79 frame: 5 team: -1 depth: 0.0 $End
 $CameraShake 30 frame: 3 $End
 $Anim_End
 
-$Anim 18 jump
-$FrameCount 5 next 8
-46 47 48 47 46
-12 8 9 10 100
-0 0 0 0 0
-$GiveSpeed y: -5.3 frame: 0 $End
-$Anim_End
-
-$Anim 19 jump_attack
+$Anim 48 jump_attack
 $FrameCount 6 next 8
 110 111 112 113 114 115
 5 8 3 3 3 100
 0 0 0 0 0 0
 $Attack 25 20 76 72 frame: 3 spellid: 5 effect: 2 $End
-$HitGround 20
+$HitGround 49
 $Anim_End
 
-$Anim 20 jump_attack_land
-$FrameCount 3 next 1
+$Anim 49 jump_attack_land
+$FrameCount 3 next 0
 89 88 40
 8 8 8
 0 0 0
 $Anim_End
 
-$Anim 21 attack_1_append
-$FrameCount 2 next 8
-105 106
-6 50
-0 0
-$GiveSpeed x: 1.0 y: -2.0 frame: 0 $End
-$HitGround 22
+$Anim 50 charge
+$FrameCount 4 loop -1
+23 24 25 24
+4 4 4 4
+0 0 0 0
+$CreateSprite 10 action: 10 at: 32 75 frame: 1 team: -1 depth: 0.0 $End
+$CreateSprite 10 action: 10 at: 32 75 frame: 3 team: -1 depth: 0.0 $End
 $Anim_End
 
-$Anim 22 attack_1_append_land
-$FrameCount 3 next 1
-32 33 34
-5 5 6
+$Anim 51 charge_start
+$FrameCount 3 next 50
+20 21 22
+6 5 4
 0 0 0
-$Attack 37 3 70 56 frame: 0 effect: 2 spellid: 2 $End
+$CreateSprite 10 action: 12 at: 37 79 frame: 1 team: -1 flip: 3 depth: 0.02 $End
+$CreateSprite 10 action: 10 at: 37 79 frame: 2 team: -1 depth: 0.0 $End
 $Anim_End
 
-$Anim 23 attack_2_append
-$FrameCount 5 next 1
-30 31 32 33 34
-6 12 5 5 6
-0 0 0 0 0
-$Attack 37 3 70 56 frame: 2 effect: 2 spellid: 2 $End
-$GiveSpeed x: 3.0 frame: 2 $End
+$Anim 52 charge_end
+$FrameCount 2 next 0
+26 20
+6 6
+0 0
 $Anim_End
 
-$Anim 25 unused_run
+$Anim 85 unused_run
 $FrameCount 6 loop -1
 15 16 17 18 19 9
 6 6 6 6 6 6
 0 0 0 0 0 0
 $Anim_End
 
-$Anim 26 unused_run_start
-$FrameCount 1 next 3
+$Anim 86 unused_run_start
+$FrameCount 1 next 85
 14
 6
 0
 $Anim_End
 
-$Anim 27 unused_run_end
+$Anim 87 unused_run_end
 $FrameCount 1 next 0
 14
 12
 0
 $Anim_End
 
-$Anim 28 unused_battle_stance_forward
+$Anim 88 unused_battle_stance_forward
 $FrameCount 4 loop -1
 73 74 73 5
 5 5 5 12
 2 2 2 2
 $Anim_End
 
-$Anim 29 unused_battle_stance_backward
+$Anim 89 unused_battle_stance_backward
 $FrameCount 4 loop -1
 76 77 76 5
 5 5 5 12
 -2 -1 -1 -2
 $Anim_End
 
-$Anim 30 unused_rolling_attack
+$Anim 90 unused_rolling_attack
 $FrameCount 10 next 8
 90 91 92 93 94 95 96 97 98 99
 5 6 7 8 15 2 3 3 3 15
@@ -357,6 +372,42 @@ $FrameCount 10 next 8
 $Attack 22 17 77 82 frame: 7 spellid: 5 effect: 2 $End
 $GiveSpeed y: -5.3 frame: 0 $End
 $HitGround 20
+$Anim_End
+
+$Anim 91 unused_stand
+$FrameCount 6 loop -1
+0 1 2 3 2 1
+40 8 8 30 8 8
+0 0 0 0 0 0
+$Anim_End
+
+$Anim 92 unused_walk
+$FrameCount 6 loop -1
+10 11 12 13 12 11
+6 6 6 6 6 6
+0 0 0 0 0 0
+$Anim_End
+
+$Anim 93 unused_turn
+$FrameCount 2 next 0
+27 28
+4 4
+0 0
+$Turn
+$Anim_End
+
+$Anim 94 unused_battle_stance_start
+$FrameCount 3 next 0
+0 4 5
+1 8 1
+0 -4 -2
+$Anim_End
+
+$Anim 95 unused_battle_stance_end
+$FrameCount 3 next 0
+5 4 0
+1 8 1
+0 2 4
 $Anim_End
 
 #Animations_End

@@ -36,11 +36,12 @@ WLFShrineCaveScene::WLFShrineCaveScene(INT spriteTableSize) : AEScene(spriteTabl
 	// Load objects
 
 	loadObject(0, "Resources\\warrior_deep.txt", "Warrior Deep", AEObject::OBJ_CHARACTER);
-	loadObject(1, "Resources\\dummy_bandit.txt", "Dummy Bandit", AEObject::OBJ_CHARACTER);
-	loadObject(2, "Resources\\dummy.txt", "Dummy", AEObject::OBJ_CHARACTER);
+	loadObject(1, "Resources\\phantom_bandit.txt", "Phantom Bandit", AEObject::OBJ_CHARACTER);
+	loadObject(2, "Resources\\dummy.txt", "Training Dummy", AEObject::OBJ_CHARACTER);
 	loadObject(10, "Resources\\effects.txt", "Effect", AEObject::OBJ_EFFECT);
 	loadObject(11, "Resources\\icons.txt", "Icon", AEObject::OBJ_EFFECT);
 	loadObject(12, "Resources\\sparks.txt", "Hit Spark", AEObject::OBJ_HIT_SPARK);
+	loadObject(13, "Resources\\bandit_weapon.txt", "Bandit Weapon Shatters", AEObject::OBJ_EFFECT);
 	loadObject(40, "Resources\\ui.txt", "UI", AEObject::OBJ_EFFECT);
 
 	// Create Shrine Cave BG
@@ -134,29 +135,31 @@ VOID WLFShrineCaveScene::initialize() {
 
 	// Set player
 	player = deep;
+	deep->setPlayerFlag(true);
 
 	// Set camera focusing on player
 	ae_Camera.setFocus(player->getCx(), 0.0f);
 
-	// Create Dummy
+	// Create Bandit
 	descSpr.obj = ae_ObjectTable.getItem(1);
 	descSpr.team = 1;
 	descSpr.action = WLFCharacter::ACTION_IN_AIR;
 	descSpr.flip = SpriteEffects_FlipHorizontally;
-	descSpr.cx = 210.0f;
-	descSpr.cy = 0.0f;  // 150.0f;
-	descSpr.layerDepth = 0.01f;
-	WLFCharacter* bandit1 = new WLFCharacter(descSpr);
-	bandit1->setPortraitIndex(11);
-	addSprite(bandit1);
-
-	// Create Dummy Bandit
-	descSpr.obj = ae_ObjectTable.getItem(2);
 	descSpr.cx = 0.0f;
 	descSpr.cy = 0.0f;  // 150.0f;
-	WLFCharacter* bandit2 = new WLFCharacter(descSpr);
-	bandit2->setPortraitIndex(12);
-	addSprite(bandit2);
+	descSpr.layerDepth = 0.01f;
+	WLFBandit* bandit = new WLFBandit(descSpr);
+	bandit->setAI(new WLFBanditAI(bandit));
+	bandit->setPortraitIndex(11);
+	addSprite(bandit);
+
+	// Create Dummy
+	descSpr.obj = ae_ObjectTable.getItem(2);
+	descSpr.cx = 210.0f;
+	descSpr.cy = 0.0f;  // 150.0f;
+	WLFCharacter* dummy = new WLFCharacter(descSpr);
+	dummy->setPortraitIndex(12);
+	addSprite(dummy);
 
 	// Create player namepad
 	//addNamepadToHUD(deep, 10, NAMEPAD_SLOT_PLAYER);
@@ -353,7 +356,7 @@ VOID WLFShrineCaveScene::processInput() {
 
 		// Spetial Key (SP)
 		if (keyStateBuffer[dik_special] & 0x80) {
-			if (!player->isKeyPressed(WLFKeys::KEY_SPECIAL) && player->hasTarget() && (player->getAction() >= 0 || player->getAction() <= 5)) {
+			if (!player->isKeyPressed(WLFKeys::KEY_SPECIAL) && player->getTarget() != nullptr && (player->getAction() >= 0 || player->getAction() <= 5)) {
 				// TODO: Special Key
 			}
 			player->keyDown(WLFKeys::KEY_SPECIAL);

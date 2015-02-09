@@ -1,6 +1,6 @@
 #Frames
 
-$ImageResource 4
+$ImageResource 5
 0 30 113
 1 30 113
 2 30 113
@@ -8,7 +8,7 @@ $ImageResource 4
 4 30 113
 $ImageResource_End
 
-$ImageResource 5
+$ImageResource 6
 0 51 133
 1 76 133
 2 76 133
@@ -42,28 +42,28 @@ $FrameCount 1 next 0
 0
 $Anim_End
 
-$Anim 20 hit_front_lower
+$Anim 10 hit_front_lower
 $FrameCount 1 next 30
 3
 1
 0
 $Anim_End
 
-$Anim 21 hit_front_upper
+$Anim 11 hit_front_upper
 $FrameCount 1 next 30
 3
 1
 0
 $Anim_End
 
-$Anim 22 hit_back_lower
+$Anim 12 hit_back_lower
 $FrameCount 1 next 31
 1
 1
 0
 $Anim_End
 
-$Anim 23 hit_back_upper
+$Anim 13 hit_back_upper
 $FrameCount 1 next 31
 1
 1
