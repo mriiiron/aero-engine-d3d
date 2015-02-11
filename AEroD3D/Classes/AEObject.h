@@ -16,14 +16,14 @@
 
 struct AERO_OBJECT_DESC {
 
-	INT oid, type;
-	std::string name;
+    INT oid, type;
+    std::string name;
 
-	AERO_OBJECT_DESC() {
-		oid = 0;
-		name = "Unknown Object";
-		type = 0;
-	}
+    AERO_OBJECT_DESC() {
+        oid = 0;
+        name = "Unknown Object";
+        type = 0;
+    }
 
 };
 
@@ -44,27 +44,27 @@ class AEObject {
 
 public:
 
-	static const INT OBJ_UNKNOWN = 0;
-	static const INT OBJ_CHARACTER = 1;
-	static const INT OBJ_PROJECTILE = 2;
-	static const INT OBJ_EFFECT = 3;
-	static const INT OBJ_HIT_SPARK = 4;
+    static const INT OBJ_UNKNOWN = 0;
+    static const INT OBJ_CHARACTER = 1;
+    static const INT OBJ_PROJECTILE = 2;
+    static const INT OBJ_EFFECT = 3;
+    static const INT OBJ_HIT_SPARK = 4;
 
-	static const INT MAX_ANIM_COUNT			= 100;
+    static const INT MAX_ANIM_COUNT			= 100;
 
-	AEObject(AERO_OBJECT_DESC desc);
+    AEObject(AERO_OBJECT_DESC desc);
 
-	AEAnimation* getAnim(INT index) { return animTable[index]; }
-	INT getType() { return type; }
-	std::string getName() { return name; }
+    AEAnimation* getAnim(INT index) { return animTable[index]; }
+    INT getType() { return type; }
+    std::string getName() { return name; }
 
-	VOID addAnim(INT slot, AEAnimation* _anim);
+    VOID addAnim(INT slot, AEAnimation* _anim);
 
 private:
 
-	INT oid;
-	INT type;
-	std::string name;
-	AEAnimation* animTable[MAX_ANIM_COUNT];
+    INT oid;
+    INT type;
+    std::string name;
+    AEAnimation* animTable[MAX_ANIM_COUNT];
 
 };

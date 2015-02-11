@@ -4,7 +4,7 @@
 
 namespace AENSGameControl {
 
-	VOID warning(std::string message);
-	VOID exitGame(std::string message);
+    VOID warning(std::string message);
+    VOID exitGame(std::string message);
 
 }

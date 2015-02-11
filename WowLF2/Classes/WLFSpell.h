@@ -5,53 +5,53 @@ class WLFSpell {
 
 public:
 
-	WLFSpell();
+    WLFSpell();
 
-	VOID setCaster(WLFCharacter* _caster) { caster = _caster; }
-	VOID setTarget(WLFCharacter* _target) { target = _target; }
+    VOID setCaster(WLFCharacter* _caster) { caster = _caster; }
+    VOID setTarget(WLFCharacter* _target) { target = _target; }
 
-	virtual VOID takeEffect() = 0;
+    virtual VOID takeEffect() = 0;
 
-	static WLFSpell* getSpellByID(INT spellID);
+    static WLFSpell* getSpellByID(INT spellID);
 
 protected:
 
-	WLFCharacter* caster;
-	WLFCharacter* target;
+    WLFCharacter* caster;
+    WLFCharacter* target;
 
 };
 
 
 class WLFMortalStrike : public WLFSpell {
 public:
-	VOID takeEffect();
-	static const INT spellID = 1;
+    VOID takeEffect();
+    static const INT spellID = 1;
 };
 
 
 class WLFOverpower : public WLFSpell {
 public:
-	VOID takeEffect();
-	static const INT spellID = 2;
+    VOID takeEffect();
+    static const INT spellID = 2;
 };
 
 
 class WLFColossusSmash : public WLFSpell {
 public:
-	VOID takeEffect();
-	static const INT spellID = 3;
+    VOID takeEffect();
+    static const INT spellID = 3;
 };
 
 
 class WLFThunderClap : public WLFSpell {
 public:
-	VOID takeEffect();
-	static const INT spellID = 4;
+    VOID takeEffect();
+    static const INT spellID = 4;
 };
 
 
 class WLFSlam : public WLFSpell {
 public:
-	VOID takeEffect();
-	static const INT spellID = 5;
+    VOID takeEffect();
+    static const INT spellID = 5;
 };

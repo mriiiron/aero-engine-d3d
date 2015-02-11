@@ -14,12 +14,12 @@ class AEPhysics {
 
 public:
 
-	static const FLOAT CHAR_REBOUND_SPEED;
-	static const FLOAT RESISTANCE_GROUND;
-	static const FLOAT GRAVITY;
+    static const FLOAT CHAR_REBOUND_SPEED;
+    static const FLOAT RESISTANCE_GROUND;
+    static const FLOAT GRAVITY;
 
 private:
 
-	
+    
 
 };

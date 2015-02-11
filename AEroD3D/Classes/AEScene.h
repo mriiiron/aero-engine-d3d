@@ -20,49 +20,49 @@ class AEScene {
 
 public:
 
-	const static INT RENDER_ALL = 0x7;
-	const static INT RENDER_BACKGROUND = 0x1;
-	const static INT RENDER_SPRITES = 0x2;
-	const static INT RENDER_HUD = 0x4;
+    const static INT RENDER_ALL = 0x7;
+    const static INT RENDER_BACKGROUND = 0x1;
+    const static INT RENDER_SPRITES = 0x2;
+    const static INT RENDER_HUD = 0x4;
 
-	AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
-	AEScene(INT spriteTableSize);
-	~AEScene();
+    AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
+    AEScene(INT spriteTableSize);
+    ~AEScene();
 
-	CHAR keyStateBuffer[256];
+    CHAR keyStateBuffer[256];
 
-	AEBackground* getBackground() { return bg; }
-	AEHashedTable<AEPlatform>* getplatformTable() { return platformTable; }
-	AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
-	AEHeadUpDisplay* getHUD() { return hud; }
-	INT getStandstill() { return standstill; }
-	VOID setBackground(AEBackground* _bg) { bg = _bg; }
-	VOID setPlatformTable(AEHashedTable<AEPlatform>* _platformTable) { platformTable = _platformTable; }
-	VOID setSpriteTable(AEHashedTable<AESprite>* _spriteTable) { spriteTable = _spriteTable; }
-	VOID setHUD(AEHeadUpDisplay* _hud) { hud = _hud;  hud->setScene(this); }
+    AEBackground* getBackground() { return bg; }
+    AEHashedTable<AEPlatform>* getplatformTable() { return platformTable; }
+    AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
+    AEHeadUpDisplay* getHUD() { return hud; }
+    INT getStandstill() { return standstill; }
+    VOID setBackground(AEBackground* _bg) { bg = _bg; }
+    VOID setPlatformTable(AEHashedTable<AEPlatform>* _platformTable) { platformTable = _platformTable; }
+    VOID setSpriteTable(AEHashedTable<AESprite>* _spriteTable) { spriteTable = _spriteTable; }
+    VOID setHUD(AEHeadUpDisplay* _hud) { hud = _hud;  hud->setScene(this); }
 
-	VOID addSprite(AESprite* sprite);
-	VOID addSpriteAttachment(AESprite* host, AESprite* attachment);
-	VOID addSpriteForHUD(AESprite* hudSprite);
+    VOID addSprite(AESprite* sprite);
+    VOID addSpriteAttachment(AESprite* host, AESprite* attachment);
+    VOID addSpriteForHUD(AESprite* hudSprite);
 
-	VOID togglePause() { isPaused = !isPaused; }
-	VOID setStandstill(INT time) { standstill = time; }
+    VOID togglePause() { isPaused = !isPaused; }
+    VOID setStandstill(INT time) { standstill = time; }
 
-	virtual VOID update();
-	virtual VOID render(INT renderMode = RENDER_ALL);
-	virtual VOID processInput();
-	virtual VOID processCollision();
+    virtual VOID update();
+    virtual VOID render(INT renderMode = RENDER_ALL);
+    virtual VOID processInput();
+    virtual VOID processCollision();
 
 protected:
 
-	AEBackground* bg;
-	AEHashedTable<AEPlatform>* platformTable;
-	AEHashedTable<AESprite>* spriteTable;
-	AEHeadUpDisplay* hud;
+    AEBackground* bg;
+    AEHashedTable<AEPlatform>* platformTable;
+    AEHashedTable<AESprite>* spriteTable;
+    AEHeadUpDisplay* hud;
 
-	BOOLEAN isPauseKeyPressed, isPaused;
+    BOOLEAN isPauseKeyPressed, isPaused;
 
-	INT standstill;
+    INT standstill;
 
 };
 
@@ -71,21 +71,21 @@ class AESceneManager {
 
 public:
 
-	static const INT MAX_SCENE_COUNT			= 20;
-	static const INT SCENE_NONE					= -1;
+    static const INT MAX_SCENE_COUNT			= 20;
+    static const INT SCENE_NONE					= -1;
 
-	AESceneManager();
+    AESceneManager();
 
-	AEScene* getActiveScene() { return activeSceneIndex >= 0 ? table[activeSceneIndex] : nullptr; }
-	
-	VOID addSceneAt(INT index, AEScene* scene);
-	VOID stopAll();
-	VOID runScene(INT index);
-	
+    AEScene* getActiveScene() { return activeSceneIndex >= 0 ? table[activeSceneIndex] : nullptr; }
+    
+    VOID addSceneAt(INT index, AEScene* scene);
+    VOID stopAll();
+    VOID runScene(INT index);
+    
 
 private:
 
-	AEScene* table[MAX_SCENE_COUNT];
-	INT activeSceneIndex;
+    AEScene* table[MAX_SCENE_COUNT];
+    INT activeSceneIndex;
 
 };

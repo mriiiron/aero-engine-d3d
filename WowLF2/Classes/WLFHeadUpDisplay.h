@@ -2,25 +2,25 @@
 
 
 struct WLFCharacterHUDItem {
-	INT namepadIndex, portraitIndex, barHPIndex, barEnergyIndex;
-	INT buffIndex[20];
-	INT buffCount;
-	WLFCharacter* charRef;
+    INT namepadIndex, portraitIndex, barHPIndex, barEnergyIndex;
+    INT buffIndex[20];
+    INT buffCount;
+    WLFCharacter* charRef;
 };
 
 class WLFHeadUpDisplay : public AEHeadUpDisplay {
 
 public:
 
-	WLFHeadUpDisplay(INT spriteTableSize);
+    WLFHeadUpDisplay(INT spriteTableSize);
 
-	VOID update();
+    VOID update();
 
-	VOID removeNamepad(INT slot);
-	VOID setNamepad(INT slot, WLFCharacter* character);
+    VOID removeNamepad(INT slot);
+    VOID setNamepad(INT slot, WLFCharacter* character);
 
 private:
 
-	WLFCharacterHUDItem items[2];
+    WLFCharacterHUDItem items[2];
 
 };

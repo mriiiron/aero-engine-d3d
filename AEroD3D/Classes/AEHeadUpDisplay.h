@@ -22,21 +22,21 @@ class AEHeadUpDisplay {
 
 public:
 
-	static const INT NAMEPAD_SLOT_PLAYER = 0;
-	static const INT NAMEPAD_SLOT_TARGET = 1;
+    static const INT NAMEPAD_SLOT_PLAYER = 0;
+    static const INT NAMEPAD_SLOT_TARGET = 1;
 
-	AEHeadUpDisplay(INT spriteTableSize);
+    AEHeadUpDisplay(INT spriteTableSize);
 
-	AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
-	VOID setScene(AEScene* _scene) { scene = _scene; }
-	AEScene* getScene() { return scene; }
+    AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
+    VOID setScene(AEScene* _scene) { scene = _scene; }
+    AEScene* getScene() { return scene; }
 
-	virtual VOID update();
-	virtual VOID render();
+    virtual VOID update();
+    virtual VOID render();
 
 protected:
 
-	AEScene* scene;
-	AEHashedTable<AESprite>* spriteTable;
+    AEScene* scene;
+    AEHashedTable<AESprite>* spriteTable;
 
 };

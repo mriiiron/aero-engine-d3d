@@ -5,5 +5,5 @@
 #include "AESprite.h"
 
 AEAI::AEAI(AESprite* _host) {
-	host = _host;
+    host = _host;
 }

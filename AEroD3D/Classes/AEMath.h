@@ -19,66 +19,66 @@ using namespace DirectX;
 
 struct AEPoint {
 
-	FLOAT x, y;
+    FLOAT x, y;
 
-	AEPoint() {
-		x = y = 0.0f;
-	}
+    AEPoint() {
+        x = y = 0.0f;
+    }
 
-	AEPoint(FLOAT _x, FLOAT _y) {
-		x = _x;  y = _y;
-	}
+    AEPoint(FLOAT _x, FLOAT _y) {
+        x = _x;  y = _y;
+    }
 
 };
 
 
 struct AERect {
 
-	FLOAT x1, x2, y1, y2;
+    FLOAT x1, x2, y1, y2;
 
-	AERect() {
-		x1 = x2 = y1 = y2 = 0.0f;
-	}
+    AERect() {
+        x1 = x2 = y1 = y2 = 0.0f;
+    }
 
-	AERect(FLOAT _x1, FLOAT _x2, FLOAT _y1, FLOAT _y2) {
-		x1 = _x1;  x2 = _x2;  y1 = _y1;  y2 = _y2;
-	}
+    AERect(FLOAT _x1, FLOAT _x2, FLOAT _y1, FLOAT _y2) {
+        x1 = _x1;  x2 = _x2;  y1 = _y1;  y2 = _y2;
+    }
 
 };
 
 
 struct AEBiasRect {
 
-	FLOAT x1, y1, x2, y2, x3, y3, x4, y4;
+    FLOAT x1, y1, x2, y2, x3, y3, x4, y4;
 
-	AEBiasRect() {
-		x1 = y1 = x2 = y2 = x3 = y3 = x4 = y4 = 0.0f;
-	}
+    AEBiasRect() {
+        x1 = y1 = x2 = y2 = x3 = y3 = x4 = y4 = 0.0f;
+    }
 
-	AEBiasRect(FLOAT _x1, FLOAT _y1, FLOAT _x2, FLOAT _y2, FLOAT _x3, FLOAT _y3, FLOAT _x4, FLOAT _y4) {
-		x1 = _x1;  y1 = _y1;  x2 = _x2;  y2 = _y2; x3 = _x3;  y3 = _y3;  x4 = _x4;  y4 = _y4;
-	}
+    AEBiasRect(FLOAT _x1, FLOAT _y1, FLOAT _x2, FLOAT _y2, FLOAT _x3, FLOAT _y3, FLOAT _x4, FLOAT _y4) {
+        x1 = _x1;  y1 = _y1;  x2 = _x2;  y2 = _y2; x3 = _x3;  y3 = _y3;  x4 = _x4;  y4 = _y4;
+    }
 
 };
 
 
 struct SimpleVertex {
 
-	XMFLOAT3 Pos;
-	XMFLOAT2 Tex;
-	XMFLOAT4 Clr;
+    XMFLOAT3 Pos;
+    XMFLOAT2 Tex;
+    XMFLOAT4 Clr;
 
-	SimpleVertex() {
-		Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
-		Tex = XMFLOAT2(0.0f, 0.0f);
-		Clr = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	}
+    SimpleVertex() {
+        Pos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+        Tex = XMFLOAT2(0.0f, 0.0f);
+        Clr = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    }
 
-	SimpleVertex(XMFLOAT3 _Pos, XMFLOAT2 _Tex, XMFLOAT4 _Clr) {
-		Pos = _Pos;
-		Tex = _Tex;
-		Clr = _Clr;
-	}
+    SimpleVertex(XMFLOAT3 _Pos, XMFLOAT2 _Tex, XMFLOAT4 _Clr) {
+        Pos = _Pos;
+        Tex = _Tex;
+        Clr = _Clr;
+    }
 
 };
 
@@ -87,53 +87,54 @@ class AEVector2 {
 
 public:
 
-	AEVector2(FLOAT _x, FLOAT _y) { x = _x;  y = _y; }
+    AEVector2(FLOAT _x, FLOAT _y) { x = _x;  y = _y; }
 
-	static AEVector2 normalize(AEVector2 v);
-	static FLOAT crossProduct(AEVector2 v1, AEVector2 v2);
-	static FLOAT dotProduct(AEVector2 v1, AEVector2 v2);
-	static FLOAT angleBetween(AEVector2 v1, AEVector2 v2);
-	static AEVector2 rad2vec(FLOAT angleRad);
-	static FLOAT vec2rad(AEVector2 v);
+    static AEVector2 normalize(AEVector2 v);
+    static FLOAT crossProduct(AEVector2 v1, AEVector2 v2);
+    static FLOAT dotProduct(AEVector2 v1, AEVector2 v2);
+    static FLOAT angleBetween(AEVector2 v1, AEVector2 v2);
+    static AEVector2 rad2vec(FLOAT angleRad);
+    static FLOAT vec2rad(AEVector2 v);
 
-	FLOAT model() { return sqrtf(x * x + y * y); }
+    FLOAT model() { return sqrtf(x * x + y * y); }
 
-	FLOAT x, y;
+    FLOAT x, y;
 
 };
 
 
 namespace AENSMath {
 
-	const FLOAT PI = 3.14159265f;
+    const FLOAT PI = 3.14159265f;
 
-	enum AEFlipDirection {
-		HORIZONTAL, VERTICAL
-	};
+    enum AEFlipDirection {
+        HORIZONTAL, VERTICAL
+    };
 
-	INT randomIntBetween(INT start, INT end);
-	FLOAT randomClampf();
-	XMFLOAT2 randomPointWithinCircle(FLOAT radius);
+    INT randomIntBetween(INT start, INT end);
+    FLOAT randomClampf();
+    XMFLOAT2 randomPointWithinCircle(FLOAT radius);
 
-	FLOAT deg2rad(FLOAT deg);
-	FLOAT rad2deg(FLOAT rad);
-	
-	FLOAT euclideanDistance(XMFLOAT2 p1, XMFLOAT2 p2);
+    FLOAT deg2rad(FLOAT deg);
+    FLOAT rad2deg(FLOAT rad);
+    
+    FLOAT euclideanDistance(XMFLOAT2 p1, XMFLOAT2 p2);
 
-	BOOLEAN floatEqual(FLOAT f1, FLOAT f2, FLOAT threshold = 0.001f);
+    BOOLEAN floatEqual(FLOAT f1, FLOAT f2, FLOAT threshold = 0.001f);
+    BOOLEAN inBetween(FLOAT f, FLOAT lower, FLOAT upper);
 
-	XMFLOAT2 rotatePoint(XMFLOAT2 p, XMFLOAT2 origin, FLOAT angle);
+    XMFLOAT2 rotatePoint(XMFLOAT2 p, XMFLOAT2 origin, FLOAT angle);
 
-	INT log2(INT x);
-	
-	AERect flipRect(AERect rect, AEFlipDirection direction);
-	AEBiasRect flipRect(AEBiasRect rect, AEFlipDirection direction);
+    INT log2(INT x);
+    
+    AERect flipRect(AERect rect, AEFlipDirection direction);
+    AEBiasRect flipRect(AEBiasRect rect, AEFlipDirection direction);
 
-	AERect moveRect(RECT rect, FLOAT dx, FLOAT dy);
+    AERect moveRect(RECT rect, FLOAT dx, FLOAT dy);
 
-	XMFLOAT2 lineIntersect(XMFLOAT2 A, XMFLOAT2 B, XMFLOAT2 C, XMFLOAT2 D);
-	BOOLEAN pointEqual(XMFLOAT2 A, XMFLOAT2 B);
-	BOOLEAN pointOnSegment(XMFLOAT2 P, XMFLOAT2 A, XMFLOAT2 B);
+    XMFLOAT2 lineIntersect(XMFLOAT2 A, XMFLOAT2 B, XMFLOAT2 C, XMFLOAT2 D);
+    BOOLEAN pointEqual(XMFLOAT2 A, XMFLOAT2 B);
+    BOOLEAN pointOnSegment(XMFLOAT2 P, XMFLOAT2 A, XMFLOAT2 B);
 
 };
 

@@ -28,20 +28,20 @@ class AEAI {
 
 public:
 
-	static const INT EXEC_INTERVAL			= 3;
+    static const INT EXEC_INTERVAL			= 3;
 
-	AEAI(AESprite* _host);
-	VOID enable() { enabled = TRUE; }
-	VOID disable() { enabled = FALSE; }
-	VOID setIndex(INT _index) { index = _index; }
-	BOOLEAN isEnabled() { return (enabled ? 1 : 0); }
+    AEAI(AESprite* _host);
+    VOID enable() { enabled = TRUE; }
+    VOID disable() { enabled = FALSE; }
+    VOID setIndex(INT _index) { index = _index; }
+    BOOLEAN isEnabled() { return (enabled ? 1 : 0); }
 
-	virtual VOID execute() = 0;
+    virtual VOID execute() = 0;
 
 protected:
 
-	AESprite* host;
-	BOOLEAN enabled;
-	INT index;
+    AESprite* host;
+    BOOLEAN enabled;
+    INT index;
 
 };
