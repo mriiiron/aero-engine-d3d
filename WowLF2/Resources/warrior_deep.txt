@@ -112,7 +112,20 @@ $ImageResource 2
 15 42 79
 20 37 79
 21 37 79
+22 37 79
+23 27 79
+24 27 79
+25 27 79
+29 37 79
 30 24 79
+31 27 79
+33 37 79
+34 37 79
+35 37 79
+36 37 79
+37 37 79
+38 37 79
+39 37 79
 $ImageResource_End
 
 #Frames_End
@@ -167,48 +180,48 @@ $Anim_End
 
 $Anim 10 hit_front_lower
 $FrameCount 2 next 0
-120 121
-8 8
+130 131
+22 10
 0 0
 $Body 14 23 45 78 $End
 $Anim_End
 
 $Anim 11 hit_front_upper
-$FrameCount 2 next 0
-120 121
-8 8
-0 0
+$FrameCount 3 next 0
+120 121 122
+12 10 10
+0 0 0
 $Body 14 23 45 78 $End
 $Anim_End
 
 $Anim 12 hit_back_lower
-$FrameCount 2 next 0
-120 121
-8 8
-0 0
+$FrameCount 3 next 0
+123 124 125
+12 10 10
+0 0 0
 $Body 14 23 45 78 $End
 $Anim_End
 
 $Anim 13 hit_back_upper
 $FrameCount 2 next 0
-120 121
-8 8
+130 131
+22 10
 0 0
 $Body 14 23 45 78 $End
 $Anim_End
 
 $Anim 14 hit_front_heavy
-$FrameCount 2 next 0
-120 121
-8 8
-0 0
+$FrameCount 9 next 0
+120 133 134 135 136 137 138 139 129
+1 5 6 6 6 8 10 15 10
+0 -15 -7 -9 -6 -13 -2 -7 6
 $Anim_End
 
 $Anim 15 hit_back_heavy
-$FrameCount 2 next 0
-120 121
-8 8
-0 0
+$FrameCount 3 next 0
+123 124 125
+12 10 10
+0 0 0
 $Anim_End
 
 $Anim 40 attack_1
@@ -270,7 +283,7 @@ $FrameCount 10 next 0
 6 6 4 4 4 4 1 3 8 5
 0 0 0 0 0 0 0 0 0 0
 $Attack 50 16 111 73 frame: 6 effect: 2 spellid: 3 $End
-$CreateSprite 10 action: 12 at: 70 79 frame: 3 team: -1 depth: 0.02 $End
+$CreateSprite 10 action: 12 at: 70 79 frame: 3 team: -1 depth: 0.05 $End
 $CreateSprite 10 action: 11 at: 100 79 frame: 6 team: -1 flip: 3 depth: 0.0 $End
 $CreateSprite 10 action: 10 at: 100 79 frame: 7 team: -1 depth: 0.0 $End
 $CameraShake 30 frame: 6 amplitude: 1 $End

@@ -60,7 +60,7 @@ protected:
     AEHashedTable<AESprite>* spriteTable;
     AEHeadUpDisplay* hud;
 
-    BOOLEAN isPauseKeyPressed, isPaused;
+    BOOLEAN isPauseKeyPressed, isStepFrameKeyPressed, isPaused, isStepFraming;
 
     INT standstill;
 

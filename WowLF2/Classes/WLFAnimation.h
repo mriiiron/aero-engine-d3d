@@ -4,12 +4,13 @@
 struct WLFAttackJudgeArea {
 
     RECT rect;
-    INT effect, angle;
+    INT effect, angle, might;
     INT spellID;
 
     WLFAttackJudgeArea() {
         rect = { 0, 0, 0, 0 };
         angle = 0;
+        might = 0;
         effect = -1;
         spellID = 0;
     }

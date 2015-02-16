@@ -21,7 +21,7 @@ AEScene::AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, A
     for (INT i = 0; i < 256; i++) {
         keyStateBuffer[i] = 0;
     }
-    isPauseKeyPressed = isPaused = FALSE;
+    isPauseKeyPressed = isPaused = isStepFrameKeyPressed = isStepFraming = FALSE;
     standstill = 0;
 }
 
@@ -33,7 +33,7 @@ AEScene::AEScene(INT spriteTableSize) {
     for (INT i = 0; i < 256; i++) {
         keyStateBuffer[i] = 0;
     }
-    isPauseKeyPressed = isPaused = FALSE;
+    isPauseKeyPressed = isPaused = isStepFrameKeyPressed = isStepFraming = FALSE;
 }
 
 AEScene::~AEScene() {
@@ -65,6 +65,10 @@ VOID AEScene::addSpriteForHUD(AESprite* hudSprite) {
 VOID AEScene::update() {
     if (isPaused) {
         return;
+    }
+    if (isStepFraming) {
+        isPaused = TRUE;
+        isStepFraming = FALSE;
     }
     if (standstill > 0) {
         standstill--;

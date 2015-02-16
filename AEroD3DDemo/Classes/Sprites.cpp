@@ -259,7 +259,7 @@ VOID Bullet::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollis
 	AESprite* spr_exp1 = new AESprite(descSpr);
 	spr_exp1->setAI(new BigSmokeEffectUnivAI(spr_exp1));
 	scene->addSprite(spr_exp1);
-	kill();
+	remove();
 }
 
 VOID Bullet::update(AEHashedTable<AEPlatform>* platformTable) {

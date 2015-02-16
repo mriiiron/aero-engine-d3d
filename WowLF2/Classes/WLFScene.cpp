@@ -224,6 +224,10 @@ VOID WLFShrineCaveScene::update() {
     if (isPaused) {
         return;
     }
+    if (isStepFraming) {
+        isPaused = TRUE;
+        isStepFraming = FALSE;
+    }
     if (standstill > 0) {
         standstill--;
     }
@@ -376,8 +380,15 @@ VOID WLFShrineCaveScene::processInput() {
         }
 
     }
-    if (keyStateBuffer[DIK_Q] & 0x80) {
-        INT a = 1;
+    if (keyStateBuffer[DIK_BACKSLASH] & 0x80) {
+        if (!isStepFrameKeyPressed) {
+            isStepFrameKeyPressed = TRUE;
+            isStepFraming = TRUE;
+            togglePause();
+        }
+    }
+    else {
+        isStepFrameKeyPressed = FALSE;
     }
     if (keyStateBuffer[DIK_RETURN] & 0x80) {
         if (!isPauseKeyPressed) {
@@ -387,6 +398,9 @@ VOID WLFShrineCaveScene::processInput() {
     }
     else {
         isPauseKeyPressed = FALSE;
+    }
+    if (keyStateBuffer[DIK_Q] & 0x80) {
+        INT a = 1;
     }
 }
 
@@ -437,11 +451,21 @@ VOID WLFShrineCaveScene::processCollision() {
                     delete spell;
                 }
 
-                if (sprite1->getFlip() != sprite2->getFlip()) {
-                    sprite2->changeAction(AENSMath::randomIntBetween(WLFCharacter::ACTION_HIT_FRONT_LOWER, WLFCharacter::ACTION_HIT_FRONT_UPPER));
+                if (attackJudge->might > 0) {
+                    if (sprite1->getFlip() != sprite2->getFlip()) {
+                        sprite2->changeAction(WLFCharacter::ACTION_HIT_FRONT_HEAVY);
+                    }
+                    else {
+                        sprite2->changeAction(WLFCharacter::ACTION_HIT_BACK_HEAVY);
+                    }
                 }
                 else {
-                    sprite2->changeAction(AENSMath::randomIntBetween(WLFCharacter::ACTION_HIT_BACK_LOWER, WLFCharacter::ACTION_HIT_BACK_UPPER));		
+                    if (sprite1->getFlip() != sprite2->getFlip()) {
+                        sprite2->changeAction(AENSMath::randomIntBetween(WLFCharacter::ACTION_HIT_FRONT_LOWER, WLFCharacter::ACTION_HIT_FRONT_UPPER));
+                    }
+                    else {
+                        sprite2->changeAction(AENSMath::randomIntBetween(WLFCharacter::ACTION_HIT_BACK_LOWER, WLFCharacter::ACTION_HIT_BACK_UPPER));
+                    }
                 }
                 
                 if (attackJudge->effect >= 0) {

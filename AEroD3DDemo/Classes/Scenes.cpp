@@ -59,7 +59,6 @@ GeneralSampleScene::GeneralSampleScene(AEBackground* _bg, AEHashedTable<AEPlatfo
 	AERO_OBJECT_DESC descObj;
 	descObj.oid = 0;
 	descObj.name = "Gedama";
-	descObj.otype = OBJ_CHARACTER;
 	AEObject* gedama_obj = new AEObject(descObj);
 	gedama_obj->addAnim(0, gedama_anim_0);
 	gedama_obj->addAnim(1, gedama_anim_1);
@@ -315,7 +314,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	AERO_OBJECT_DESC descObj;
 	descObj.oid = 1;
 	descObj.name = "Japanese Fighter";
-	descObj.otype = OBJ_CHARACTER;
 	AEObject* jf_obj = new AEObject(descObj);
 	jf_obj->addAnim(0, jf_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, jf_obj);
@@ -323,7 +321,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	// Create Rocket object
 	descObj.oid = 2;
 	descObj.name = "Rocket";
-	descObj.otype = OBJ_PROJECTILE;
 	AEObject* rocket_obj = new AEObject(descObj);
 	rocket_obj->addAnim(0, rocket_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, rocket_obj);
@@ -331,7 +328,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	// Create Homing Bullet object
 	descObj.oid = 6;
 	descObj.name = "Homing Bullet";
-	descObj.otype = OBJ_PROJECTILE;
 	AEObject* homing_obj = new AEObject(descObj);
 	homing_obj->addAnim(0, homing_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, homing_obj);
@@ -339,7 +335,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	// Create Smoke object
 	descObj.oid = 3;
 	descObj.name = "Rocket Smoke";
-	descObj.otype = OBJ_EFFECT;
 	AEObject* smoke_obj = new AEObject(descObj);
 	smoke_obj->addAnim(0, smoke_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, smoke_obj);
@@ -347,7 +342,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	// Create TurretBase object
 	descObj.oid = 4;
 	descObj.name = "Turret Base";
-	descObj.otype = OBJ_CHARACTER;
 	AEObject* turretbase_obj = new AEObject(descObj);
 	turretbase_obj->addAnim(0, turretbase_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, turretbase_obj);
@@ -355,7 +349,6 @@ VerticalScrollerScene::VerticalScrollerScene(AEBackground* _bg, AEHashedTable<AE
 	// Create Turret object
 	descObj.oid = 5;
 	descObj.name = "Turret";
-	descObj.otype = OBJ_CHARACTER;
 	AEObject* turret_obj = new AEObject(descObj);
 	turret_obj->addAnim(0, turret_anim_0);
 	turret_obj->addAnim(1, turret_anim_1);
@@ -490,7 +483,7 @@ VOID VerticalScrollerScene::clipOutFarSprites() {
 		AESprite* sprite = spriteTable->getItemByHash(iHash);
 		AEPoint center = sprite->getCenter();
 		if (center.x < (FLOAT)borderLeft || center.x >(FLOAT)borderRight || center.y < (FLOAT)borderTop || center.y > (FLOAT)borderBottom) {
-			sprite->kill();
+			sprite->remove();
 		}
 	}
 }
@@ -770,7 +763,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	AERO_OBJECT_DESC descObj;
 	descObj.oid = 7;
 	descObj.name = "Helicopter";
-	descObj.otype = OBJ_CHARACTER;
 	AEObject* heli_obj = new AEObject(descObj);
 	heli_obj->addAnim(0, heli_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, heli_obj);
@@ -778,7 +770,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	// Create Flak Base object
 	descObj.oid = 8;
 	descObj.name = "Flak Base";
-	descObj.otype = OBJ_CHARACTER;
 	AEObject* flakbase_obj = new AEObject(descObj);
 	flakbase_obj->addAnim(0, flakbase_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, flakbase_obj);
@@ -786,7 +777,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	// Create Flak Cannon object
 	descObj.oid = 9;
 	descObj.name = "Flak Cannon";
-	descObj.otype = OBJ_CHARACTER;
 	AEObject* flakcannon_obj = new AEObject(descObj);
 	flakcannon_obj->addAnim(0, flakcannon_anim_0);
 	flakcannon_obj->addAnim(1, flakcannon_anim_1);
@@ -796,7 +786,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	// Create Flak Cannon Muzzle Flash object
 	descObj.oid = 10;
 	descObj.name = "Flak Muzzle Flash";
-	descObj.otype = OBJ_EFFECT;
 	AEObject* flakflash_obj = new AEObject(descObj);
 	flakflash_obj->addAnim(0, flakflash_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, flakflash_obj);
@@ -804,7 +793,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	// Create Shell object
 	descObj.oid = 11;
 	descObj.name = "Bullet Shell";
-	descObj.otype = OBJ_EFFECT;
 	AEObject* shell_obj = new AEObject(descObj);
 	shell_obj->addAnim(0, shell_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, shell_obj);
@@ -812,7 +800,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	// Create Big Smoke object
 	descObj.oid = 12;
 	descObj.name = "Big Smoke";
-	descObj.otype = OBJ_EFFECT;
 	AEObject* bigsmoke_obj = new AEObject(descObj);
 	bigsmoke_obj->addAnim(0, bigsmoke_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, bigsmoke_obj);
@@ -820,7 +807,6 @@ SideScrollerPlatformScene::SideScrollerPlatformScene(AEBackground* _bg, AEHashed
 	// Create Explosion 1 object
 	descObj.oid = 13;
 	descObj.name = "Explosion 1";
-	descObj.otype = OBJ_EFFECT;
 	AEObject* exp1_obj = new AEObject(descObj);
 	exp1_obj->addAnim(0, exp1_anim_0);
 	ae_ObjectTable.addAt(descObj.oid, exp1_obj);

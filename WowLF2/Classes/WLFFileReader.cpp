@@ -216,6 +216,9 @@ VOID WLFDataFileReader::readObject(std::string fileName, AEObject* obj) {
                                     if (item == "frame:") {
                                         iss >> item;  frame = stoi(item);
                                     }
+                                    else if (item == "might:") {
+                                        iss >> item;  attackJudge->might = stoi(item);
+                                    }
                                     else if (item == "effect:") {
                                         iss >> item;  attackJudge->effect = stoi(item);
                                     }

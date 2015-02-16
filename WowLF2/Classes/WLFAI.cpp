@@ -33,12 +33,12 @@ VOID WLFBanditAI::execute() {
     }
     else {
         if (bandit->getFlip() == SpriteEffects_None) {
-            if (AENSMath::inBetween(bandit->getTarget()->getCx() - bandit->getCx(), 10.0f, 50.0f)) {
+            if (AENSMath::inBetween(bandit->getTarget()->getCx() - bandit->getCx(), 0.0f, 60.0f)) {
                 bandit->applyMoveInput(WLFCharacter::MOVE_A);
             }
         }
         else if (bandit->getFlip() == SpriteEffects_FlipHorizontally) {
-            if (AENSMath::inBetween(bandit->getCx() - bandit->getTarget()->getCx(), 10.0f, 50.0f)) {
+            if (AENSMath::inBetween(bandit->getCx() - bandit->getTarget()->getCx(), 0.0f, 60.0f)) {
                 bandit->applyMoveInput(WLFCharacter::MOVE_A);
             }
         }

@@ -524,5 +524,5 @@ VOID WLFFloatingText::update(AEHashedTable<AEPlatform>* platformTable) {
 VOID WLFFloatingText::render(INT renderOption, ...) {
     LPTSTR text_wchar = new TCHAR[1024];
     mbstowcs(text_wchar, text.c_str(), 1024);
-    xtk_SpriteFont_Arial_10->DrawString(xtk_SpriteBatch, text_wchar, XMFLOAT2(cx, cy));
+    xtk_SpriteFont_Arial_10->DrawString(xtk_SpriteBatch, text_wchar, XMFLOAT2((INT)cx, (INT)cy));
 }

@@ -136,7 +136,7 @@ $FrameCount 5 next 0
 29 19 18 17 0
 8 12 10 8 3
 0 0 0 0 0
-$Attack 39 26 75 45 frame: 1 effect: 2 spellid: 2 $End
+$Attack 30 26 75 45 frame: 1 might: 1 effect: 2 spellid: 2 $End
 $Anim_End
 
 $Anim 42 mace
