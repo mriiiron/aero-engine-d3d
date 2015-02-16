@@ -31,66 +31,66 @@ using namespace DirectX;
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
-extern HINSTANCE							g_hInst;
-extern HWND									g_hWnd;
-extern D3D_DRIVER_TYPE						g_driverType;
-extern D3D_FEATURE_LEVEL					g_featureLevel;
-extern ID3D11Device*						g_pd3dDevice;
-extern ID3D11Device1*						g_pd3dDevice1;
-extern ID3D11DeviceContext*					g_pImmediateContext;
-extern ID3D11DeviceContext1*				g_pImmediateContext1;
-extern IDXGISwapChain*						g_pSwapChain;
-extern ID3D11RenderTargetView*				g_pRenderTargetView;
-extern ID3D11Texture2D*						g_pDepthStencil;
-extern ID3D11DepthStencilView*				g_pDepthStencilView;
-extern ID3D11BlendState*					g_pBlendState;
-extern ID3D11RasterizerState*				g_pRasterizerState;
-extern ID3D11VertexShader*					g_pVertexShader;
-extern ID3D11PixelShader*					g_pPixelShader;
-extern ID3D11InputLayout*					g_pVertexLayout;
-extern ID3D11InputLayout*					g_pDebugVertexLayout;
-extern ID3D11Buffer*						g_pVertexBuffer;
-extern ID3D11Buffer*						g_pIndexBuffer;
-extern ID3D11Buffer*						g_pCBNeverChanges;
-extern ID3D11Buffer*						g_pCBChangeOnResize;
-extern ID3D11Buffer*						g_pCBChangesEveryFrame;
-extern ID3D11SamplerState*					g_pSamplerLinear;
-extern ID3D11Debug*							g_pDebug;
+extern HINSTANCE                            g_hInst;
+extern HWND                                 g_hWnd;
+extern D3D_DRIVER_TYPE                      g_driverType;
+extern D3D_FEATURE_LEVEL                    g_featureLevel;
+extern ID3D11Device*                        g_pd3dDevice;
+extern ID3D11Device1*                       g_pd3dDevice1;
+extern ID3D11DeviceContext*                 g_pImmediateContext;
+extern ID3D11DeviceContext1*                g_pImmediateContext1;
+extern IDXGISwapChain*                      g_pSwapChain;
+extern ID3D11RenderTargetView*              g_pRenderTargetView;
+extern ID3D11Texture2D*                     g_pDepthStencil;
+extern ID3D11DepthStencilView*              g_pDepthStencilView;
+extern ID3D11BlendState*                    g_pBlendState;
+extern ID3D11RasterizerState*               g_pRasterizerState;
+extern ID3D11VertexShader*                  g_pVertexShader;
+extern ID3D11PixelShader*                   g_pPixelShader;
+extern ID3D11InputLayout*                   g_pVertexLayout;
+extern ID3D11InputLayout*                   g_pDebugVertexLayout;
+extern ID3D11Buffer*                        g_pVertexBuffer;
+extern ID3D11Buffer*                        g_pIndexBuffer;
+extern ID3D11Buffer*                        g_pCBNeverChanges;
+extern ID3D11Buffer*                        g_pCBChangeOnResize;
+extern ID3D11Buffer*                        g_pCBChangesEveryFrame;
+extern ID3D11SamplerState*                  g_pSamplerLinear;
+extern ID3D11Debug*                         g_pDebug;
 
-extern XMMATRIX								gm_World;
-extern XMMATRIX								gm_View;
-extern XMMATRIX								gm_Projection;
-extern XMMATRIX								gm_Transform;
-extern XMMATRIX								gm_TransformForHUD;
+extern XMMATRIX                             gm_World;
+extern XMMATRIX                             gm_View;
+extern XMMATRIX                             gm_Projection;
+extern XMMATRIX                             gm_Transform;
+extern XMMATRIX                             gm_TransformForHUD;
 
-extern INT									gi_WindowWidth;
-extern INT									gi_WindowHeight;
+extern INT                                  gi_WindowWidth;
+extern INT                                  gi_WindowHeight;
 
-LPDIRECTINPUT8								g_pDirectInput;
-LPDIRECTINPUTDEVICE8						g_pKeyboardDevice;
+LPDIRECTINPUT8                              g_pDirectInput;
+LPDIRECTINPUTDEVICE8                        g_pKeyboardDevice;
 
 //--------------------------------------------------------------------------------------
 // AE Global Variables
 //--------------------------------------------------------------------------------------
-extern AEConstantTable<AEResource>			ae_ResourceTable;
-extern AEConstantTable<AEObject>			ae_ObjectTable;
-extern AEHashedTable<AEAI>					ae_AITable;
-extern AEHashedTable<AEParticleEmitter>		ae_ParticleTable;
-extern AEBackgroundLibrary					ae_BGLibrary;
-extern AESceneManager						ae_SceneManager;
-extern AECamera								ae_Camera;
+extern AEConstantTable<AEResource>          ae_ResourceTable;
+extern AEConstantTable<AEObject>            ae_ObjectTable;
+extern AEHashedTable<AEAI>                  ae_AITable;
+extern AEHashedTable<AEParticleEmitter>     ae_ParticleTable;
+extern AEBackgroundLibrary                  ae_BGLibrary;
+extern AESceneManager                       ae_SceneManager;
+extern AECamera                             ae_Camera;
 
 //--------------------------------------------------------------------------------------
 // DirectXTK Global Variables
 //--------------------------------------------------------------------------------------
-extern SpriteBatch*							xtk_SpriteBatch;
-extern SpriteFont*							xtk_SpriteFont_Arial_10;
+extern SpriteBatch*                         xtk_SpriteBatch;
+extern SpriteFont*                          xtk_SpriteFont_Arial_10;
 
 //--------------------------------------------------------------------------------------
 // Project Global Variables
 //--------------------------------------------------------------------------------------
 
-SpriteFont*									xtk_SpriteFont_Arial_7;
+SpriteFont*                                 xtk_SpriteFont_Arial_7;
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
