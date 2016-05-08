@@ -18,10 +18,51 @@
 #include "AEObject.h"
 #include "AEAI.h"
 
-#include "XTK\SpriteBatch.h"
+#include "SpriteBatch.h"
 
 
 class AEScene;
+
+
+struct AERO_SPRITE_ATTACHMENT_DESC {
+
+    INT mode;
+    INT slot;
+    FLOAT depthOffset;
+    AESprite* sprite;
+
+    AERO_SPRITE_ATTACHMENT_DESC() {
+        mode = 0;
+        slot = 0;
+        depthOffset = -0.01f;
+        sprite = nullptr;
+    }
+
+};
+
+
+class AESpriteAttachment {
+
+public:
+
+    static const INT ATTACH_MODE_FOLLOW = 0;
+    static const INT ATTACH_MODE_STICKON = 1;
+
+    AESpriteAttachment(AERO_SPRITE_ATTACHMENT_DESC desc);
+
+    AESprite* getSprite() { return sprite; }
+    INT getMode() { return mode; }
+    INT getSlot() { return slot; }
+    FLOAT getDepthOffset() { return depthOffset; }
+
+private:
+
+    INT mode;
+    INT slot;
+    FLOAT depthOffset;
+    AESprite* sprite;
+
+};
 
 
 struct AERO_SPRITE_DESC {
@@ -64,6 +105,9 @@ public:
     static const INT ANGLE_DIRECTION = 1;
     static const INT ANGLE_DISPLAY = 2;
 
+    static const INT MOVE_ALONG_DIRECTION = 0;
+    static const INT MOVE_IGNORE_DIRECTION = 1;
+
     static const INT RENDER_OPTION_NORMAL = 0;
     static const INT RENDER_OPTION_SCALE = 1;
     static const INT RENDER_OPTION_WIPE = 2;
@@ -92,7 +136,6 @@ public:
     VOID setScale(FLOAT _scale) { scale = _scale; }
     VOID setLayerDepth(FLOAT _layerDepth) { layerDepth = _layerDepth; }
     VOID adjustAlpha(FLOAT dAlpha) { alpha += dAlpha;  if (alpha < 0.0f) alpha = 0.0f;  if (alpha > 1.0f) alpha = 1.0f; }
-    VOID move(FLOAT dx, FLOAT dy) { cx += dx;  cy += dy; }
     VOID setAI(AEAI* _ai) { ai = _ai; }
     VOID setScene(AEScene* _scene) { scene = _scene; }
     INT getIndex() { return index; }
@@ -134,12 +177,14 @@ public:
     VOID keyUp(UINT _key) { keyState &= ~_key; }
     BOOLEAN isKeyPressed(UINT _key) { return ((_key & keyState) == 0 ? false : true); }
 
-    VOID takeDamage(INT damage) { hpValue -= damage; }
+    VOID takeDamage(INT damage, BOOL allowNegativeHP = FALSE) { hpValue -= damage;  if (!allowNegativeHP && hpValue < 0) hpValue = 0; }
     VOID remove() { deadFlag = true; }
     BOOLEAN isAtkJudgeLocked() { return atkJudgeLock; }
     BOOLEAN isDead() { return deadFlag; }
 
     VOID turnOverHorizontally() { if (flip == SpriteEffects_None) flip = SpriteEffects_FlipHorizontally; else if (flip == SpriteEffects_FlipHorizontally) flip = SpriteEffects_None; }
+
+    VOID move(FLOAT dx, FLOAT dy, INT option = MOVE_ALONG_DIRECTION);
 
     FLOAT getAngle(INT option = ANGLE_DIRECTION);
     FLOAT getVAngle(INT option = ANGLE_DIRECTION);
@@ -151,11 +196,10 @@ public:
     VOID rotateDeg(FLOAT degree, INT option = ANGLE_BOTH);
 
     VOID createAttachmentTable(INT size);
-    BOOLEAN hasAttachments() { return (attachmentTable == nullptr ? FALSE : TRUE); }
-    AEHashedTable<AESprite>* getAttachmentTable() { return attachmentTable; }
+    BOOLEAN allowAttachments() { return (attachmentTable == nullptr ? FALSE : TRUE); }
+    AEHashedTable<AESpriteAttachment>* getAttachmentTable() { return attachmentTable; }
 
-    VOID changeAction(INT _action);
-    VOID toNextFrame(AEAnimation anim);
+    VOID changeAction(INT targetAction, INT targetFrameNum = 0, BOOL willResetAction = TRUE);
 
     /* THESE FUNCTIONS ARE TOTALLY USELESS */
     AEPoint calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip);
@@ -181,7 +225,7 @@ protected:
     AEObject* obj;
     AEScene* scene;
     AEAI* ai;
-    AEHashedTable<AESprite>* attachmentTable;
+    AEHashedTable<AESpriteAttachment>* attachmentTable;
 
     INT action, team;
     FLOAT cx, cy;

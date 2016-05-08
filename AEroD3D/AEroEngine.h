@@ -1,12 +1,5 @@
 #pragma once
 
-// DirectXTK Classes
-
-#include "Classes\XTK\DDSTextureLoader.h"
-#include "Classes\XTK\SpriteBatch.h"
-#include "Classes\XTK\SpriteFont.h"
-#include "Classes\XTK\CommonStates.h"
-
 
 // AEro Engine Classes
 
@@ -18,11 +11,14 @@
 
 #include "Classes\AETable.h"
 #include "Classes\AEResource.h"
-#include "Classes\AEBackground.h"
+#include "Classes\AEAnimation.h"
 #include "Classes\AEPlatform.h"
+#include "Classes\AEBackground.h"
 #include "Classes\AEParticleSystem.h"
 
 #include "Classes\AEObject.h"
+
+#include "Classes\AEFileReader.h"
 
 #include "Classes\AESprite.h"
 #include "Classes\AEHeadUpDisplay.h"

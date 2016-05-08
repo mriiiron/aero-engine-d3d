@@ -9,12 +9,15 @@ AEFrame::AEFrame(AERO_FRAME_DESC desc) {
     imgCells = desc.imgCells;
     width = desc.res->getCellWidth() * imgCells;
     height = desc.res->getCellHeight();
-    centerx = desc.centerx;
-    centery = desc.centery;
+    center.x = desc.centerx;
+    center.y = desc.centery;
+    for (INT i = 0; i < MAX_ATTACH_SLOTS; i++) {
+        attachSlotTable[i] = AEPointI(0, 0);
+    }
 }
 
 AEFrame::~AEFrame() {
-    // TODO
+    delete[] attachSlotTable;
 }
 
 

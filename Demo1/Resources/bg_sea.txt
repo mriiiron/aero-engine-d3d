@@ -1,0 +1,111 @@
+#BG_Head
+
+Name: Sea
+
+#BG_Head_End
+
+
+#Frames
+
+$Frame 0
+$Image 15 0 1 center 0 0
+$Frame_End
+
+$Frame 1
+$Image 15 1 1 center 0 0
+$Frame_End
+
+$Frame 2
+$Image 15 2 1 center 0 0
+$Frame_End
+
+$Frame 3
+$Image 15 3 1 center 0 0
+$Frame_End
+
+$Frame 4
+$Image 15 4 1 center 0 0
+$Frame_End
+
+$Frame 5
+$Image 15 5 1 center 0 0
+$Frame_End
+
+$Frame 6
+$Image 15 6 1 center 0 0
+$Frame_End
+
+$Frame 7
+$Image 15 7 1 center 0 0
+$Frame_End
+
+$Frame 8
+$Image 15 8 1 center 0 0
+$Frame_End
+
+$Frame 9
+$Image 15 9 1 center 0 0
+$Frame_End
+
+$Frame 10
+$Image 15 10 1 center 0 0
+$Frame_End
+
+$Frame 11
+$Image 15 11 1 center 0 0
+$Frame_End
+
+$Frame 12
+$Image 15 12 1 center 0 0
+$Frame_End
+
+$Frame 13
+$Image 15 13 1 center 0 0
+$Frame_End
+
+$Frame 14
+$Image 15 14 1 center 0 0
+$Frame_End
+
+$Frame 15
+$Image 15 15 1 center 0 0
+$Frame_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 sea_tile
+$FrameCount 16 loop -1
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
+$Anim_End
+
+#Animations_End
+
+
+#Layers
+
+$Layer 0 tile_0
+$Depth 0
+$Element 0 -192 -256 alpha: 0.6 $End
+$Element 0 -64 -256 alpha: 0.6 $End
+$Element 0 64 -256 alpha: 0.6 $End
+$Element 0 -192 -128 alpha: 0.6 $End
+$Element 0 -64 -128 alpha: 0.6 $End
+$Element 0 64 -128 alpha: 0.6 $End
+$Element 0 -192 0 alpha: 0.6 $End
+$Element 0 -64 0 alpha: 0.6 $End
+$Element 0 64 0 alpha: 0.6 $End
+$Element 0 -192 128 alpha: 0.6 $End
+$Element 0 -64 128 alpha: 0.6 $End
+$Element 0 64 128 alpha: 0.6 $End
+$Layer_End
+
+#Layers_End
+
+
+#Platforms
+
+#Platforms_End

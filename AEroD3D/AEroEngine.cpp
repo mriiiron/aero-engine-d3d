@@ -8,6 +8,8 @@
 
 #include "AEroEngine.h"
 
+#include "SpriteFont.h"
+
 using namespace DirectX;
 
 //--------------------------------------------------------------------------------------
@@ -53,7 +55,7 @@ INT                                         gi_WindowHeight;
 AEConstantTable<AEResource>                 ae_ResourceTable(100);
 AEConstantTable<AEObject>                   ae_ObjectTable(100);
 //AEHashedTable<AEParticleEmitter>          ae_ParticleTable(1000);
-AEBackgroundLibrary                         ae_BGLibrary;
+AEConstantTable<AEBackground>               ae_BackgroundTable(30);
 AESceneManager                              ae_SceneManager;
 AECamera                                    ae_Camera;
 
@@ -61,7 +63,6 @@ AECamera                                    ae_Camera;
 // DirectXTK Global Variables
 //--------------------------------------------------------------------------------------
 SpriteBatch*                                xtk_SpriteBatch;
-SpriteFont*                                 xtk_SpriteFont_Arial_10;
 
 //--------------------------------------------------------------------------------------
 // Initialize
@@ -75,7 +76,6 @@ VOID AENSCore::AEInitialize() {
 //--------------------------------------------------------------------------------------
 VOID AENSCore::CleanupDevice() {
 
-    if (xtk_SpriteFont_Arial_10) delete xtk_SpriteFont_Arial_10;
     if (xtk_SpriteBatch) delete xtk_SpriteBatch;
     if (g_pImmediateContext) g_pImmediateContext->ClearState();
     if (g_pSamplerLinear) g_pSamplerLinear->Release();
@@ -97,8 +97,6 @@ VOID AENSCore::CleanupDevice() {
     if (g_pImmediateContext) g_pImmediateContext->Release();
     if (g_pd3dDevice1) g_pd3dDevice1->Release();
     if (g_pd3dDevice) g_pd3dDevice->Release();
-
-    g_pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
     if (g_pDebug) g_pDebug->Release();
 
 }
@@ -206,10 +204,10 @@ HRESULT AENSCore::InitDevice()
     if (FAILED(hr))
         return hr;
 
-    // Enable debug layer
-    hr = g_pd3dDevice->QueryInterface(IID_PPV_ARGS(&g_pDebug));
-    if (FAILED(hr))
-        return hr;
+    //// Enable debug layer
+    //hr = g_pd3dDevice->QueryInterface(IID_PPV_ARGS(&g_pDebug));
+    //if (FAILED(hr))
+    //    return hr;
 
     // Obtain the Direct3D 11.1 versions if available
     hr = g_pd3dDevice->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(&g_pd3dDevice1));
@@ -428,7 +426,6 @@ HRESULT AENSCore::InitDevice()
     gm_Transform = gm_World * gm_View * gm_Projection;
 
     xtk_SpriteBatch = new SpriteBatch(g_pImmediateContext);
-    xtk_SpriteFont_Arial_10 = new SpriteFont(g_pd3dDevice, L"Resources\\arial_10.spritefont");
 
     return S_OK;
 }

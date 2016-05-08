@@ -5,16 +5,23 @@
 using namespace DirectX;
 
 
-struct AEPlatformSegment {
+struct AERO_PLATFORM_DESC {
+
+    INT pid;
+    INT nodeCount;
+
+    AERO_PLATFORM_DESC() {
+        pid = 0;
+        nodeCount = 0;
+    }
 
 };
-
 
 class AEPlatform {
 
 public:
 
-    AEPlatform(INT _nodeCount);
+    AEPlatform(AERO_PLATFORM_DESC desc);
     ~AEPlatform();
 
     INT getNodeCount() { return nodeCount; }
@@ -26,7 +33,8 @@ public:
 
 private:
 
-    INT maxIndex = 0, nodeCount;
+    INT pid;
+    INT maxIndex, nodeCount;
     XMFLOAT2* nodeTable;
     FLOAT* angleTable;
 

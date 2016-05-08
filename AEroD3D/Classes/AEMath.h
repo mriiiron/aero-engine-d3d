@@ -17,6 +17,21 @@
 using namespace DirectX;
 
 
+struct AEPointI {
+
+    INT x, y;
+
+    AEPointI() {
+        x = y = 0;
+    }
+
+    AEPointI(INT _x, INT _y) {
+        x = _x;  y = _y;
+    }
+
+};
+
+
 struct AEPoint {
 
     FLOAT x, y;
@@ -34,14 +49,14 @@ struct AEPoint {
 
 struct AERect {
 
-    FLOAT x1, x2, y1, y2;
+    FLOAT x1, y1, x2, y2;
 
     AERect() {
-        x1 = x2 = y1 = y2 = 0.0f;
+        x1 = y1 = x2 = y2 = 0.0f;
     }
 
-    AERect(FLOAT _x1, FLOAT _x2, FLOAT _y1, FLOAT _y2) {
-        x1 = _x1;  x2 = _x2;  y1 = _y1;  y2 = _y2;
+    AERect(FLOAT _x1, FLOAT _y1, FLOAT _x2, FLOAT _y2) {
+        x1 = _x1;  y1 = _y1;  x2 = _x2;  y2 = _y2;
     }
 
 };
@@ -119,6 +134,7 @@ namespace AENSMath {
     FLOAT rad2deg(FLOAT rad);
     
     FLOAT euclideanDistance(XMFLOAT2 p1, XMFLOAT2 p2);
+    FLOAT euclideanDistance(AEPoint p1, AEPoint p2);
 
     BOOLEAN floatEqual(FLOAT f1, FLOAT f2, FLOAT threshold = 0.001f);
     BOOLEAN inBetween(FLOAT f, FLOAT lower, FLOAT upper);
@@ -130,7 +146,7 @@ namespace AENSMath {
     AERect flipRect(AERect rect, AEFlipDirection direction);
     AEBiasRect flipRect(AEBiasRect rect, AEFlipDirection direction);
 
-    AERect moveRect(RECT rect, FLOAT dx, FLOAT dy);
+    AERect moveRect(AERect rect, FLOAT dx, FLOAT dy);
 
     XMFLOAT2 lineIntersect(XMFLOAT2 A, XMFLOAT2 B, XMFLOAT2 C, XMFLOAT2 D);
     BOOLEAN pointEqual(XMFLOAT2 A, XMFLOAT2 B);

@@ -15,28 +15,36 @@ AEResource::AEResource(AERO_RESOURCE_DESC desc) {
     cellH = desc.cellH;
 }
 
-INT AEResource::getCellCount() {
+INT AEResource::getImageCount() {
     switch (rtype) {
     case RES_1x1:
         return 1;
+        break;
     case RES_1x5:
-        return 5;
     case RES_5x1:
         return 5;
+        break;
     case RES_1x10:
-        return 10;
     case RES_2x5:
         return 10;
+        break;
     case RES_4x5:
+    case RES_2x10:
         return 20;
+        break;
     case RES_5x10:
         return 50;
+        break;
     default:
         return 0;
+        break;
     }
 }
 
 AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse) {
+    if (imgOffset < 0 || imgOffset >= getImageCount()) {
+        AENSGameControl::exitGame("Cannot get sprite texture: image offset out of range.");
+    }
     FLOAT x1, x2, y1, y2;
     switch (rtype) {
     case RES_1x1:
@@ -75,6 +83,12 @@ AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse) {
         y1 = 0.25f * (imgOffset / 5);
         y2 = y1 + 0.25f;
         break;
+    case RES_2x10:
+        x1 = 0.1f * (imgOffset % 10);
+        x2 = x1 + 0.1f * imgCellCount;
+        y1 = 0.5f * (imgOffset / 5);
+        y2 = y1 + 0.5f;
+        break;
     case RES_5x10:
         x1 = 0.1f * (imgOffset % 10);
         x2 = x1 + 0.1f * imgCellCount;
@@ -103,24 +117,24 @@ AERect AEResource::getTexClip(INT imgOffset, INT imgCellCount, BYTE inverse) {
 }
 
 RECT AEResource::getTexClipInTexel(INT imgOffset, INT imgCellCount, BYTE inverse) {
-    UINT x1, x2, y1, y2;
+    if (imgOffset < 0 || imgOffset >= getImageCount()) {
+        AENSGameControl::exitGame("Cannot get sprite texture: image offset out of range.");
+    }
+    LONG x1, x2, y1, y2;
     switch (rtype) {
     case RES_1x1:
-        x1 = 0;
-        x2 = cellW;
-        y1 = 0;
-        y2 = cellH;
-        break;
-    case RES_1x5:
-        x1 = cellW * (imgOffset % 5);
-        x2 = x1 + cellW * imgCellCount;
-        y1 = 0;
-        y2 = cellH;
-        break;
     case RES_5x1:
         x1 = 0;
         x2 = cellW;
         y1 = cellH * (imgOffset);
+        y2 = y1 + cellH;
+        break;
+    case RES_1x5:
+    case RES_2x5:
+    case RES_4x5:
+        x1 = cellW * (imgOffset % 5);
+        x2 = x1 + cellW * imgCellCount;
+        y1 = cellH * (imgOffset / 5);
         y2 = y1 + cellH;
         break;
     case RES_1x10:
@@ -129,16 +143,10 @@ RECT AEResource::getTexClipInTexel(INT imgOffset, INT imgCellCount, BYTE inverse
         y1 = 0;
         y2 = cellH;
         break;
-    case RES_2x5:
-        x1 = cellW * (imgOffset % 5);
+    case RES_2x10:
+        x1 = cellW * (imgOffset % 10);
         x2 = x1 + cellW * imgCellCount;
-        y1 = cellH * (imgOffset / 5);
-        y2 = y1 + cellH;
-        break;
-    case RES_4x5:
-        x1 = cellW * (imgOffset % 5);
-        x2 = x1 + cellW * imgCellCount;
-        y1 = cellH * (imgOffset / 5);
+        y1 = cellH * (imgOffset / 10);
         y2 = y1 + cellH;
         break;
     case RES_5x10:

@@ -4,9 +4,10 @@
 #include "AETable.h"
 #include "AEPlatform.h"
 
-AEPlatform::AEPlatform(INT _nodeCount) {
+AEPlatform::AEPlatform(AERO_PLATFORM_DESC desc) {
+    pid = desc.pid;
+    nodeCount = desc.nodeCount;
     maxIndex = 0;
-    nodeCount = _nodeCount;
     nodeTable = new XMFLOAT2[nodeCount];
     angleTable = new FLOAT[nodeCount - 1];
 }

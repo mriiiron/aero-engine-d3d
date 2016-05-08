@@ -2,9 +2,10 @@
 #include "AEMath.h"
 #include "AETable.h"
 #include "AEResource.h"
-#include "AEBackground.h"
 #include "AEHeadUpDisplay.h"
 #include "AEPlatform.h"
+#include "AEAnimation.h"
+#include "AEBackground.h"
 #include "AESprite.h"
 #include "AECamera.h"
 #include "AEScene.h"
@@ -12,24 +13,13 @@
 extern AECamera                             ae_Camera;
 extern AEResourceTable                      ae_ResourceTable;
 
-AEScene::AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud) {
-    bg = _bg;
-    platformTable = _platformTable;
-    spriteTable = _spriteTable;
-    hud = _hud;
-    hud->setScene(this);
-    for (INT i = 0; i < 256; i++) {
-        keyStateBuffer[i] = 0;
+AEScene::AEScene(AERO_SCENE_DESC desc) {
+    bg = desc.bg;
+    spriteTable = new AEHashedTable<AESprite>(desc.spriteTableSize);
+    hud = desc.hud;
+    if (hud) {
+        hud->setScene(this);
     }
-    isPauseKeyPressed = isPaused = isStepFrameKeyPressed = isStepFraming = FALSE;
-    standstill = 0;
-}
-
-AEScene::AEScene(INT spriteTableSize) {
-    bg = nullptr;
-    platformTable = nullptr;
-    spriteTable = new AEHashedTable<AESprite>(spriteTableSize);
-    hud = nullptr;
     for (INT i = 0; i < 256; i++) {
         keyStateBuffer[i] = 0;
     }
@@ -38,7 +28,6 @@ AEScene::AEScene(INT spriteTableSize) {
 
 AEScene::~AEScene() {
     if (bg) delete bg;
-    if (platformTable) delete platformTable;
     if (spriteTable) delete spriteTable;
     if (hud) delete hud;
 }
@@ -48,13 +37,18 @@ VOID AEScene::addSprite(AESprite* sprite) {
     sprite->setIndex(spriteTable->add(sprite));
 }
 
-VOID AEScene::addSpriteAttachment(AESprite* host, AESprite* attachment) {
-    if (!(host->hasAttachments())) {
+VOID AEScene::addSpriteAttachment(AESprite* host, AESprite* attachmentSprite, INT slot, INT attachMode) {
+    if (!(host->allowAttachments())) {
         AENSGameControl::exitGame("Cannot add attachment for Sprite " + host->getObjName() + ".");
         return;
     }
+    attachmentSprite->setScene(this);
+    AERO_SPRITE_ATTACHMENT_DESC desc;
+    desc.sprite = attachmentSprite;
+    desc.mode = attachMode;
+    desc.slot = slot;
+    AESpriteAttachment* attachment = new AESpriteAttachment(desc);
     host->getAttachmentTable()->add(attachment);
-    addSprite(attachment);
 }
 
 VOID AEScene::addSpriteForHUD(AESprite* hudSprite) {
@@ -89,16 +83,21 @@ VOID AEScene::update() {
                 spriteTable->removeItemByHash(iHash);
             }
             else {
-                sprite->update(platformTable);
+                if (bg != nullptr) {
+                    sprite->update(bg->getPlatformTable());
+                }
+                else {
+                    sprite->update();
+                }
             }
         }
 
         // Update attachment table for each sprite after updating sprite table
         // If any attachment sprite is set to death (deadFlag == true), clear the corresponding pointer in attachment table here
-        // To avoid memory leak
+        // to avoid memory leak
         for (INT iHash = 0; iHash < spriteTable->getHashCount(); iHash++) {
             AESprite* sprite = spriteTable->getItemByHash(iHash);
-            if (sprite->hasAttachments()) {
+            if (sprite->allowAttachments()) {
                 sprite->updateAttachments();
             }
         }

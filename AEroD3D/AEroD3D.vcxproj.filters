@@ -57,6 +57,9 @@
     <ClCompile Include="Classes\AECollision.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\AEFileReader.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AEroEngine.h" />
@@ -106,6 +109,9 @@
       <Filter>Classes</Filter>
     </ClInclude>
     <ClInclude Include="Classes\AECollision.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\AEFileReader.h">
       <Filter>Classes</Filter>
     </ClInclude>
   </ItemGroup>

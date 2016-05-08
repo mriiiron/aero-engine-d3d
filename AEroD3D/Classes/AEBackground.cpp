@@ -3,165 +3,109 @@
 #include "AEMath.h"
 #include "AEResource.h"
 #include "AETable.h"
+#include "AEAnimation.h"
+#include "AEPlatform.h"
 #include "AEBackground.h"
-#include "XTK\SpriteBatch.h"
+
+#include "SpriteBatch.h"
 
 extern SpriteBatch*							xtk_SpriteBatch;
 
-AEBGLayerAnim::AEBGLayerAnim(AERO_BGLAYERANIM_DESC desc) {
-    frameCount = desc.frameCount;
-    for (INT i = 0; i < MAX_FRAME_COUNT; i++) {
-        frameTable[i] = nullptr;
-        endTimeTable[i] = 0;
+
+AEBGLayerElement::AEBGLayerElement(AERO_BG_ELEMENT_DESC desc) {
+    cx = desc.cx;
+    cy = desc.cy;
+    anim = desc.anim;
+    alpha = desc.alpha;
+    time = frameNum = 0;
+}
+
+VOID AEBGLayerElement::update() {
+    time++;
+    if (time >= anim->getEndTime(frameNum)) {
+        frameNum++;
+        if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
+            time = 0;
+        }
+        if (frameNum == anim->getFrameCount()) {
+            frameNum = 0;
+        }
     }
 }
 
-AEBGLayerAnim::~AEBGLayerAnim() {
-    // TODO
+VOID AEBGLayerElement::render(FLOAT correction) {
+    AEFrame* f = anim->getFrame(frameNum);
+    FLOAT fwidth = (FLOAT)(f->getWidth()), fcenterx = (FLOAT)(f->getCenter().x), fcentery = (FLOAT)(f->getCenter().y);
+    AEResource* res = f->getResource();
+    RECT texClipInTexel = res->getTexClipInTexel(f->getImgOffset(), f->getImgCells());
+    xtk_SpriteBatch->Draw(
+        res->getTexture(), // Texture
+        XMFLOAT2((INT)(cx + correction), (INT)cy), // Drawing Destination Position (Origin Point)
+        &texClipInTexel, // Texture Clip Rectangle
+        XMVectorSet(1.0f, 1.0f, 1.0f, alpha), // Tilting Color
+        0.0f, // Rotation
+        XMFLOAT2(fcenterx, fcentery), // Rotation Origin / Drawing Center
+        1.0f, // Scale
+        SpriteEffects::SpriteEffects_None, // Sprite Effects
+        1.0f // Z Value
+    );
 }
 
-VOID AEBGLayerAnim::addFrame(INT index, AEBGLayerFrame* frame, INT endTime) {
-    if (index < 0 || index >= frameCount) {
-        // Error
-        return;
-    }
-    frameTable[index] = frame;
-    endTimeTable[index] = endTime;
-}
 
-
-AEBGLayer::AEBGLayer(AERO_BGLAYER_DESC desc) {
+AEBGLayer::AEBGLayer(AERO_BG_LAYER_DESC desc) {
+    name = desc.name;
     depth = desc.depth;
-    width = desc.width;
-    height = desc.height;
-    locX = desc.locX;  locY = desc.locY;
-    animCount = 0;
-    for (INT i = 0; i < MAX_LAYER_ANIMS; i++) {
-        animTable[i] = nullptr;
+    elemTable = new AEConstantTable<AEBGLayerElement>(MAX_LAYER_ELEMENTS);
+}
+
+VOID AEBGLayer::addElement(AEBGLayerElement* elem) {
+    elemTable->add(elem);
+}
+
+VOID AEBGLayer::update() {
+    for (INT i = 0; i < elemTable->getMaxElemCount(); i++) {
+        AEBGLayerElement* elem = elemTable->getItem(i);
+        if (elem != nullptr) {
+            elem->update();
+        }
     }
 }
 
-VOID AEBGLayer::addAnimRef(AEBGAnimRef* ref) {
-    animTable[animCount] = ref;  animCount++;
+VOID AEBGLayer::render(FLOAT correction) {
+    for (INT i = 0; i < elemTable->getMaxElemCount(); i++) {
+        AEBGLayerElement* elem = elemTable->getItem(i);
+        if (elem != nullptr) {
+            elem->render(correction);
+        }
+    }
 }
-
-VOID AEBGLayer::incTimeForAnim(INT index) {
-    animTable[index]->time = animTable[index]->time + 1;
-}
-
-VOID AEBGLayer::incFrameForAnim(INT index) {
-    animTable[index]->frame = animTable[index]->frame + 1;
-}
-
-VOID AEBGLayer::resetAnim(INT index) {
-    animTable[index]->time = animTable[index]->frame = 0;
-}
-
 
 
 AEBackground::AEBackground(AERO_BACKGROUND_DESC desc) {
+    bgid = desc.bgid;
     name = desc.name;
-    layerCount = landformCount = 0;
-    for (int i = 0; i < MAX_LAYER_COUNT; i++) {
-        layerTable[i] = nullptr;
-    }
-    for (int i = 0; i < MAX_LANDFORM_COUNT; i++) {
-        landformTable[i] = nullptr;
-    }
-    for (int i = 0; i < MAX_ANIM_COUNT; i++) {
-        animTable[i] = nullptr;
-    }
-}
-
-VOID AEBackground::addLayer(AEBGLayer* _layer) {
-    layerTable[layerCount] = _layer;
-    layerCount++;
-}
-
-VOID AEBackground::loadAELandformsFromMonochrome(BYTE* pixels, INT width, INT height, INT byteLine) {
-
-}
-
-VOID AEBackground::loadAELandforms(BYTE* pixels, INT width, INT height) {
-
-}
-
-VOID AEBackground::addAnimAt(INT index, AEBGLayerAnim* layerAnim) {
-    animTable[index] = layerAnim;
+    layerTable = new AEConstantTable<AEBGLayer>(MAX_LAYER_COUNT);
+    platformTable = new AEHashedTable<AEPlatform>(MAX_PLATFORM_COUNT);
+    animTable = new AEConstantTable<AEAnimation>(MAX_ANIM_COUNT);
 }
 
 VOID AEBackground::update() {
-    for (INT i = 0; i < layerCount; i++) {
-        for (INT j = 0; j < layerTable[i]->getAnimCount(); j++) {
-            layerTable[i]->incTimeForAnim(j);
-            AEBGLayerAnim* anim = animTable[layerTable[i]->getAnimRef(j)->animIndex];
-            if (layerTable[i]->getTimeOfAnim(j) >= anim->getEndTime(layerTable[i]->getFrameOfAnim(j))) {
-                layerTable[i]->incFrameForAnim(j);
-                if (layerTable[i]->getFrameOfAnim(j) == anim->getFrameCount()) {
-                    layerTable[i]->resetAnim(j);
-                }
-            }
+    for (INT i = 0; i < layerTable->getMaxElemCount(); i++) {
+        AEBGLayer* layer = layerTable->getItem(i);
+        if (layer != nullptr) {
+            layer->update();
         }
     }
 }
 
 VOID AEBackground::render(XMFLOAT2 ae_CameraCenter) {
-    for (INT i = layerCount - 1; i >= 0; i--) {
-        FLOAT dx = ae_CameraCenter.x;
-        FLOAT depth = FLOAT(layerTable[i]->getDepth());
-        FLOAT correction = dx * depth / 100.0f;
-        for (INT j = 0; j < layerTable[i]->getAnimCount(); j++) {
-            AEBGAnimRef* ref = layerTable[i]->getAnimRef(j);
-            AEBGLayerAnim* pLAnim = animTable[ref->animIndex];
-            AEBGLayerFrame* lf = pLAnim->getFrame(ref->frame);
-            AEResource* res = lf->res;
-            INT width = res->getCellWidth();
-            INT height = res->getCellHeight();	
-            AEPoint layerPos = layerTable[i]->getLocation();
-            FLOAT x1, y1;
-            x1 = layerPos.x + ref->x + correction;
-            y1 = layerPos.y + ref->y;
-            RECT texClipInTexel = res->getTexClipInTexel(lf->imgOffset, 1);
-            xtk_SpriteBatch->Draw(
-                res->getTexture(), // Texture
-                XMFLOAT2(x1, y1), // Drawing Position (top-left corner)
-                &texClipInTexel, // Texture Clip Rectangle
-                DirectX::Colors::White, // Tilting Color
-                AENSMath::deg2rad(0), // Rotation
-                XMFLOAT2(0.0f, 0.0f), // Rotation Origin
-                1.0f, // Scale
-                SpriteEffects_None, // Facing (left, right)
-                1.0f // Z Value
-            );
-
-            // Old drawing method not using SpriteBatch
-            /*
-            FLOAT x1, x2, y1, y2;
-            x1 = layerPos.x + ref->x + correction;
-            x2 = x1 + width;
-            y1 = layerPos.y + ref->y;
-            y2 = y1 + height;
-            AERect animRect(x1, y1, x2, y2);
-            AERect texClip = lf->res->getTexClip(lf->imgOffset, 1);
-            lf->res->addToRenderBuffer(animRect, texClip, 1.0f, 100.0f);
-            */
+    for (INT i = 0; i < layerTable->getMaxElemCount(); i++) {
+        AEBGLayer* layer = layerTable->getItem(i);
+        if (layer != nullptr) {
+            FLOAT dx = ae_CameraCenter.x;
+            FLOAT depth = FLOAT(layer->getDepth());
+            FLOAT correction = dx * depth / 100.0f;
+            layer->render(correction);
         }
     }
-}
-
-
-AEBackgroundLibrary::AEBackgroundLibrary() {
-    maxIndex = 0;
-    for (INT i = 0; i < MAX_BG_COUNT; i++) {
-        lib[i] = NULL;
-    }
-}
-
-VOID AEBackgroundLibrary::add(AEBackground* bg) {
-    if (maxIndex > MAX_BG_COUNT) {
-        // Error
-        return;
-    }
-    lib[maxIndex] = bg;
-    maxIndex++;
 }

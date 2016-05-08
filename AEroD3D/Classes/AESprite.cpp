@@ -6,11 +6,23 @@
 #include "AEMath.h"
 #include "AEPhysics.h"
 #include "AEResource.h"
+#include "AEAnimation.h"
+#include "AEPlatform.h"
 #include "AEBackground.h"
 #include "AESprite.h"
 
+
 extern AEConstantTable<AEObject>            ae_ObjectTable;
 extern SpriteBatch*                         xtk_SpriteBatch;
+
+
+AESpriteAttachment::AESpriteAttachment(AERO_SPRITE_ATTACHMENT_DESC desc) {
+    mode = desc.mode;
+    slot = desc.slot;
+    depthOffset = desc.depthOffset;
+    sprite = desc.sprite;
+}
+
 
 AESprite::AESprite(AERO_SPRITE_DESC desc) {
     scene = nullptr;
@@ -38,18 +50,18 @@ AEPoint AESprite::calcRotatedPoint(AEPoint point, FLOAT cx, FLOAT cy, AEFrame* f
     FLOAT cosA = cos(angle), sinA = sin(angle);
     FLOAT x, y;
     if (flip == FACING_RIGHT) {
-        x = cx + (point.x - f->getCenterx()) * cosA - (point.y - f->getCentery()) * sinA;
-        y = cy + (point.x - f->getCenterx()) * sinA + (point.y - f->getCentery()) * cosA;
+        x = cx + (point.x - f->getCenter().x) * cosA - (point.y - f->getCenter().y) * sinA;
+        y = cy + (point.x - f->getCenter().x) * sinA + (point.y - f->getCenter().y) * cosA;
     }
     else {
-        x = cx - (point.x - f->getCenterx()) * cosA + (point.y - f->getCentery()) * sinA;
-        y = cy + (point.x - f->getCenterx()) * sinA + (point.y - f->getCentery()) * cosA;
+        x = cx - (point.x - f->getCenter().x) * cosA + (point.y - f->getCenter().y) * sinA;
+        y = cy + (point.x - f->getCenter().x) * sinA + (point.y - f->getCenter().y) * cosA;
     }
     return AEPoint(x, y);
 }
 
 AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, SpriteEffects flip) {
-    INT centerx = f->getCenterx(), centery = f->getCentery();
+    INT centerx = f->getCenter().x, centery = f->getCenter().y;
     INT width = f->getWidth(), height = f->getHeight();
     FLOAT x1, y1, x2, y2;
     if (flip == SpriteEffects_None) {
@@ -68,7 +80,7 @@ AERect AESprite::calcSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, SpriteEffects fl
 }
 
 RECT AESprite::calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, SpriteEffects flip) {
-    INT centerx = f->getCenterx(), centery = f->getCentery();
+    INT centerx = f->getCenter().x, centery = f->getCenter().y;
     INT width = f->getWidth(), height = f->getHeight();
     FLOAT x1, y1, x2, y2;
     if (flip == SpriteEffects_None) {
@@ -88,7 +100,7 @@ RECT AESprite::calcSpriteRectInRECT(FLOAT cx, FLOAT cy, AEFrame* f, SpriteEffect
 
 AEBiasRect AESprite::calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT angle, BYTE flip) {
     FLOAT cosA = cos(angle), sinA = sin(angle);
-    INT centerx = f->getCenterx(), centery = f->getCentery();
+    INT centerx = f->getCenter().x, centery = f->getCenter().y;
     INT width = f->getWidth(), height = f->getHeight();
     FLOAT x1, y1, x2, y2, x3, y3, x4, y4;
     if (flip == FACING_RIGHT) {
@@ -114,21 +126,25 @@ AEBiasRect AESprite::calcRotatedSpriteRect(FLOAT cx, FLOAT cy, AEFrame* f, FLOAT
     return AEBiasRect(x1, y1, x2, y2, x3, y3, x4, y4);
 }
 
-VOID AESprite::changeAction(INT _action) {
-    if (_action == ACTION_NUM_DEAD) {
+VOID AESprite::changeAction(INT targetAction, INT targetFrameNum, BOOL willResetAction) {
+    if (targetAction == this->action && !willResetAction) {
+        return;
+    }
+    if (targetAction == ACTION_NUM_DEAD) {
         deadFlag = TRUE;
         return;
     }
-    AEAnimation* anim = obj->getAnim(_action);
+    AEAnimation* anim = obj->getAnim(targetAction);
     if (anim == nullptr) {
-        AENSGameControl::exitGame(obj->getName() + " does not have action " + std::to_string(_action) + ".");
+        AENSGameControl::exitGame(obj->getName() + " does not have action " + std::to_string(targetAction) + ".");
     }
     else {
         deadFlag = FALSE;
     }
-    action = _action;
+    action = targetAction;
     timeToLive = anim->getTTL();
-    frameNum = time = 0;
+    frameNum = targetFrameNum;
+    time = (targetFrameNum > 0 ? anim->getEndTime(targetFrameNum - 1) : 0);
 }
 
 XMVECTOR AESprite::getFacingVector(INT option) {
@@ -196,9 +212,9 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
         timeToLive--;
     }
     time++;
-    BOOLEAN isFrameChange = false;
+    BOOLEAN isFrameChange = FALSE;
     if (time >= anim->getEndTime(frameNum)) {
-        isFrameChange = true;
+        isFrameChange = FALSE;
         frameNum++;
         if (time >= anim->getEndTime(anim->getFrameCount() - 1)) {
             time = 0;
@@ -233,7 +249,7 @@ VOID AESprite::update(AEHashedTable<AEPlatform>* platformTable) {
 VOID AESprite::render(INT renderOption, ...) {
 
     AEFrame* f = obj->getAnim(action)->getFrame(frameNum);
-    FLOAT fwidth = (FLOAT)(f->getWidth()), fcenterx = (FLOAT)(f->getCenterx()), fcentery = (FLOAT)(f->getCentery());
+    FLOAT fwidth = (FLOAT)(f->getWidth()), fcenterx = (FLOAT)(f->getCenter().x), fcentery = (FLOAT)(f->getCenter().y);
     AEResource* res = f->getResource();
     RECT texClipInTexel = res->getTexClipInTexel(f->getImgOffset(), f->getImgCells());
     FLOAT flipAdjust = flip * (fwidth - 2.0f * fcenterx);
@@ -406,6 +422,23 @@ VOID AESprite::setVAngleDeg(FLOAT degree, INT option){
     setVAngleRad(AENSMath::deg2rad(degree), option);
 }
 
+VOID AESprite::move(FLOAT dx, FLOAT dy, INT option) {
+    FLOAT cosA, sinA;
+    switch (option) {
+    case MOVE_IGNORE_DIRECTION:
+        cx += dx;
+        cy += dy;
+        break;
+    case MOVE_ALONG_DIRECTION:
+        cosA = cos(angle), sinA = sin(angle);
+        cx += dx * cosA - dy * sinA;
+        cy += dx * sinA + dy * cosA;
+        break;
+    default:
+        break;
+    }
+}
+
 VOID AESprite::rotateRad(FLOAT rad, INT option) {
     if (option != ANGLE_DISPLAY) {
         angle += rad;
@@ -420,18 +453,41 @@ VOID AESprite::rotateDeg(FLOAT degree, INT option) {
 }
 
 VOID AESprite::createAttachmentTable(INT size) {
-    attachmentTable = new AEHashedTable<AESprite>(size);
+    attachmentTable = new AEHashedTable<AESpriteAttachment>(size);
     attachmentTableSize = size;
 }
 
 VOID AESprite::updateAttachments() {
     for (INT iHash = 0; iHash < attachmentTable->getHashCount(); iHash++) {
-        AESprite* attachment = attachmentTable->getItemByHash(iHash);
-        if (attachment->isDead()) {
+        AESpriteAttachment* attachment = attachmentTable->getItemByHash(iHash);
+        AESprite* attachedSprite = attachment->getSprite();
+        if (attachedSprite->isDead()) {
             attachmentTable->removeItemByHash(iHash, MEMORY_NOT_RELEASE);
         }
         else {
-            attachment->move((flip ? -1 : 1) * vx, vy);
+            INT fac;
+            AEFrame* currentFrame = getCurrentFrame();
+            AEPointI attachPoint = currentFrame->getAttachPoint(attachment->getSlot());
+            switch (attachment->getMode()) {
+            case AESpriteAttachment::ATTACH_MODE_FOLLOW:
+                fac = (flip ? -1 : 1);
+                attachedSprite->move(fac * vx, vy);
+                // TODO: Process Attachment Rotation
+                //attachedSprite->rotateRad(fac * vAngle, ANGLE_DIRECTION);
+                //if (attachedSprite->getAngle(ANGLE_DIRECTION) < -AENSMath::PI) attachedSprite->rotateRad(2.0f * AENSMath::PI, ANGLE_DIRECTION);
+                //if (attachedSprite->getAngle(ANGLE_DIRECTION) >= AENSMath::PI) attachedSprite->rotateRad(-2.0f * AENSMath::PI, ANGLE_DIRECTION);
+                //attachedSprite->rotateRad(fac * vAngleDisplay, ANGLE_DISPLAY);
+                //if (attachedSprite->getAngle(ANGLE_DISPLAY) < -AENSMath::PI) attachedSprite->rotateRad(2.0f * AENSMath::PI, ANGLE_DISPLAY);
+                //if (attachedSprite->getAngle(ANGLE_DISPLAY) >= AENSMath::PI) attachedSprite->rotateRad(-2.0f * AENSMath::PI, ANGLE_DISPLAY);
+                break;
+            case AESpriteAttachment::ATTACH_MODE_STICKON:
+                attachedSprite->setCx(cx + attachPoint.x - currentFrame->getCenter().x);
+                attachedSprite->setCy(cy + attachPoint.y - currentFrame->getCenter().y);
+                break;
+            default:
+                AENSGameControl::exitGame("Illegal Sprite Attachment Mode.");
+                break;
+            }
         }
     }
 }

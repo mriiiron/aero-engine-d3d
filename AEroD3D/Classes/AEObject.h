@@ -50,7 +50,8 @@ public:
     static const INT OBJ_EFFECT = 3;
     static const INT OBJ_HIT_SPARK = 4;
 
-    static const INT MAX_ANIM_COUNT			= 100;
+    static const INT MAX_ANIM_COUNT	= 100;
+    static const INT MAX_FRAME_COUNT = 500;
 
     AEObject(AERO_OBJECT_DESC desc);
 
@@ -58,7 +59,7 @@ public:
     INT getType() { return type; }
     std::string getName() { return name; }
 
-    VOID addAnim(INT slot, AEAnimation* _anim);
+    VOID addAnimationAt(INT slot, AEAnimation* _anim);
 
 private:
 

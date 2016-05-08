@@ -25,6 +25,8 @@ class AEFrame {
 
 public:
     
+    static const int MAX_ATTACH_SLOTS           = 100;
+
     AEFrame(AERO_FRAME_DESC desc);
     ~AEFrame();
 
@@ -32,15 +34,18 @@ public:
     INT getImgCells() { return imgCells; }
     INT getWidth() { return width; }
     INT getHeight() { return height; }
-    INT getCenterx() { return centerx; }
-    INT getCentery() { return centery; }
+    AEPointI getCenter() { return center; }
     AEResource* getResource() { return res; }
+    AEPointI getAttachPoint(INT slot) { return attachSlotTable[slot]; }
+    VOID addAttachSlot(INT slotNum, INT x, INT y) { attachSlotTable[slotNum] = AEPointI(x, y); }
 
-private:
+protected:
 
     AEResource* res;
     INT imgOffset, imgCells;
-    INT width, height, centerx, centery;
+    INT width, height;
+    AEPointI center;
+    AEPointI attachSlotTable[MAX_ATTACH_SLOTS];
 
 };
 
@@ -82,6 +87,7 @@ public:
     INT getTTL() { return timeToLive; }
     INT getState() { return state; }
 
+    VOID setTTL(INT _timeToLive) { timeToLive = _timeToLive; }
     VOID addFrame(INT index, AEFrame* frame, INT endTime);
 
 protected:

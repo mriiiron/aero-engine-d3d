@@ -1,0 +1,12 @@
+0 2x10 40 25 Resources\fighter_0.dds
+1 4x5 35 25 Resources\fighter_1.dds
+2 4x5 35 30 Resources\fighter_2.dds
+5 1x5 3 25 Resources\vulcan.dds
+6 1x10 10 20 Resources\rocket.dds
+7 1x5 9 9 Resources\bullet.dds
+10 1x5 50 50 Resources\hit_spark_0.dds
+11 4x5 110 100 Resources\exp_0.dds
+12 5x10 50 50 Resources\exp_1.dds
+13 1x1 25 25 Resources\nozzle_flash.dds
+14 1x5 50 50 Resources\shadow.dds
+15 4x5 128 128 Resources\sea_tile.dds

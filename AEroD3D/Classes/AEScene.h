@@ -16,6 +16,20 @@
 #pragma once
 
 
+struct AERO_SCENE_DESC {
+
+    INT spriteTableSize;
+    AEBackground* bg;
+    AEHeadUpDisplay* hud;
+
+    AERO_SCENE_DESC() {
+        spriteTableSize = 0;
+        bg = nullptr;
+        hud = nullptr;
+    }
+
+};
+
 class AEScene {
 
 public:
@@ -25,24 +39,21 @@ public:
     const static INT RENDER_SPRITES = 0x2;
     const static INT RENDER_HUD = 0x4;
 
-    AEScene(AEBackground* _bg, AEHashedTable<AEPlatform>* _platformTable, AEHashedTable<AESprite>* _spriteTable, AEHeadUpDisplay* _hud);
-    AEScene(INT spriteTableSize);
+    AEScene(AERO_SCENE_DESC desc);
     ~AEScene();
 
     CHAR keyStateBuffer[256];
 
     AEBackground* getBackground() { return bg; }
-    AEHashedTable<AEPlatform>* getplatformTable() { return platformTable; }
     AEHashedTable<AESprite>* getSpriteTable() { return spriteTable; }
     AEHeadUpDisplay* getHUD() { return hud; }
     INT getStandstill() { return standstill; }
     VOID setBackground(AEBackground* _bg) { bg = _bg; }
-    VOID setPlatformTable(AEHashedTable<AEPlatform>* _platformTable) { platformTable = _platformTable; }
     VOID setSpriteTable(AEHashedTable<AESprite>* _spriteTable) { spriteTable = _spriteTable; }
     VOID setHUD(AEHeadUpDisplay* _hud) { hud = _hud;  hud->setScene(this); }
 
     VOID addSprite(AESprite* sprite);
-    VOID addSpriteAttachment(AESprite* host, AESprite* attachment);
+    VOID addSpriteAttachment(AESprite* host, AESprite* attachmentSprite, INT slot, INT attachMode = AESpriteAttachment::ATTACH_MODE_FOLLOW);
     VOID addSpriteForHUD(AESprite* hudSprite);
 
     VOID togglePause() { isPaused = !isPaused; }
@@ -56,7 +67,6 @@ public:
 protected:
 
     AEBackground* bg;
-    AEHashedTable<AEPlatform>* platformTable;
     AEHashedTable<AESprite>* spriteTable;
     AEHeadUpDisplay* hud;
 

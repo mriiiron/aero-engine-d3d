@@ -1,4 +1,5 @@
 #include <d3d11_1.h>
+#include "AEAnimation.h"
 #include "AEObject.h"
 
 AEObject::AEObject(AERO_OBJECT_DESC desc) {
@@ -10,7 +11,7 @@ AEObject::AEObject(AERO_OBJECT_DESC desc) {
     }
 }
 
-VOID AEObject::addAnim(INT slot, AEAnimation* _anim) {
+VOID AEObject::addAnimationAt(INT slot, AEAnimation* _anim) {
     if (slot < 0 || slot >= MAX_ANIM_COUNT) {
         // Error
         return;

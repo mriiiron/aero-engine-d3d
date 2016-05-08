@@ -59,6 +59,10 @@ FLOAT AENSMath::euclideanDistance(XMFLOAT2 p1, XMFLOAT2 p2) {
     return sqrtf((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
 }
 
+FLOAT AENSMath::euclideanDistance(AEPoint p1, AEPoint p2) {
+    return sqrtf((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+}
+
 BOOLEAN AENSMath::floatEqual(FLOAT f1, FLOAT f2, FLOAT threshold) {
     return (fabs(f1 - f2) < threshold) ? TRUE : FALSE;
 }
@@ -106,8 +110,8 @@ AEBiasRect AENSMath::flipRect(AEBiasRect rect, AEFlipDirection direction) {
     }
 }
 
-AERect AENSMath::moveRect(RECT rect, FLOAT dx, FLOAT dy) {
-    return AERect(rect.left + dx, rect.right + dx, rect.top + dy, rect.bottom + dy);
+AERect AENSMath::moveRect(AERect rect, FLOAT dx, FLOAT dy) {
+    return AERect(rect.x1 + dx, rect.y1 + dy, rect.x2 + dx, rect.y2 + dy);
 }
 
 // Assuming AB and CD is not collineate or parallel

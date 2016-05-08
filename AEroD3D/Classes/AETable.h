@@ -21,7 +21,7 @@ public:
     INT getHashCount() { return pHash; }
     INT getSize() { return maxElemCount; }
     INT add(T* t);
-    INT addAt(INT index, T* t);
+    VOID addAt(INT index, T* t);
     VOID removeItem(INT index, INT memoryOption = MEMORY_RELEASE);
     VOID removeItemByHash(INT hashIndex, INT memoryOption = MEMORY_RELEASE);
     VOID clear();
@@ -32,28 +32,6 @@ protected:
     BOOLEAN* occupied;
     INT* hash;
     INT maxIndex, maxElemCount, pHash;
-
-};
-
-
-template <typename T>
-class AEConstantTable {
-
-public:
-
-    AEConstantTable(INT _maxElemCount);
-    ~AEConstantTable();
-
-    VOID addAt(INT index, T* t);
-    T* getItem(INT index) { return table[index]; }
-    INT getMaxElemCount() { return maxElemCount; }
-    BOOLEAN isOccupied(INT index) { return occupied[index]; }
-
-protected:
-
-    T** table;
-    BOOLEAN* occupied;
-    INT maxElemCount;
 
 };
 
@@ -102,7 +80,7 @@ INT AEHashedTable<T>::add(T* t) {
 }
 
 template <typename T>
-INT AEHashedTable<T>::addAt(INT index, T* t) {
+VOID AEHashedTable<T>::addAt(INT index, T* t) {
     if (occupied[index]) {
         AENSGameControl::exitGame("On adding to hashed table: Slot occupied.");
         return -1;
@@ -116,7 +94,6 @@ INT AEHashedTable<T>::addAt(INT index, T* t) {
     }
     table[index] = t;  occupied[index] = 1;
     hash[pHash] = maxIndex;  pHash++;
-    return index;
 }
 
 template <typename T>
@@ -147,17 +124,44 @@ template <typename T>
 VOID AEHashedTable<T>::clear() {
     for (int i = 0; i <= maxIndex; i++) {
         if (occupied[i]) {
-            occupied[i] = 0;
             removeItem(i);
+            occupied[i] = 0;
         }
         table[i] = nullptr;
         hash[i] = -1;
     }
+    maxIndex = -1;
+    pHash = 0;
 }
+
+
+template <typename T>
+class AEConstantTable {
+
+public:
+
+    AEConstantTable(INT _maxElemCount);
+    ~AEConstantTable();
+
+    INT add(T* t);
+    VOID addAt(INT index, T* t);
+    T* getItem(INT index) { return table[index]; }
+    INT getMaxElemCount() { return maxElemCount; }
+    BOOLEAN isOccupied(INT index) { return occupied[index]; }
+
+protected:
+
+    T** table;
+    BOOLEAN* occupied;
+    INT maxElemCount, maxIndex;
+
+};
+
 
 template <typename T>
 AEConstantTable<T>::AEConstantTable(INT _maxElemCount) {
     maxElemCount = _maxElemCount;
+    maxIndex = -1;
     table = new T*[maxElemCount];
     occupied = new BOOLEAN[maxElemCount];
     for (INT i = 0; i < maxElemCount; i++) {
@@ -173,10 +177,35 @@ AEConstantTable<T>::~AEConstantTable() {
 }
 
 template <typename T>
+INT AEConstantTable<T>::add(T* t) {
+    for (INT i = 0; i <= maxIndex; i++) {
+        if (!occupied[i]) {
+            table[i] = t;  occupied[i] = TRUE;
+            return i;
+        }
+    }
+    if (maxIndex >= maxElemCount - 1) {
+        AENSGameControl::exitGame("On adding to constant table: Too many items.");
+        return -1;
+    }
+    else {
+        maxIndex++;
+        table[maxIndex] = t;  occupied[maxIndex] = 1;
+        return maxIndex;
+    }
+}
+
+template <typename T>
 VOID AEConstantTable<T>::addAt(INT index, T* t) {
     if (occupied[index]) {
         AENSGameControl::exitGame("On adding to constant table: Slot occupied.");
     }
+    if (index >= maxElemCount || index < 0) {
+        AENSGameControl::exitGame("On adding to constant table: Index out of range.");
+    }
     table[index] = t;
     occupied[index] = 1;
+    if (index > maxIndex) {
+        maxIndex = index;
+    }
 }

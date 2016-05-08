@@ -1,0 +1,42 @@
+#Object_Head
+
+Name: Hellcow
+Type: 0
+
+#Object_Head_End
+
+
+#Frames
+
+$Frame 0
+$Image 0 0 1 center 19 45
+$Frame_End
+
+$Frame 1
+$Image 0 1 1 center 19 45
+$Frame_End
+
+$Frame 2
+$Image 0 2 1 center 19 45
+$Frame_End
+
+$Frame 3
+$Image 0 3 1 center 19 45
+$Frame_End
+
+$Frame 4
+$Image 0 4 1 center 19 45
+$Frame_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 running
+$FrameCount 6 loop -1
+0 1 2 0 3 4
+12 12 12 12 12 12
+$Anim_End
+
+#Animations_End

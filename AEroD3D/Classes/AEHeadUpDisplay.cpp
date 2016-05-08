@@ -5,7 +5,7 @@
 
 AEHeadUpDisplay::AEHeadUpDisplay(INT spriteTableSize) {
     scene = nullptr;
-    spriteTable = new AEHashedTable<AESprite>(spriteTableSize);
+    spriteTable = (spriteTableSize > 0 ? new AEHashedTable<AESprite>(spriteTableSize) : nullptr);
 }
 
 VOID AEHeadUpDisplay::update() {
