@@ -1,0 +1,253 @@
+#Object_Head
+
+Name: Effects
+Type: 2
+
+#Object_Head_End
+
+
+#Frames
+
+$Frame 0
+$Image 10 0 1 center 25 25
+$Frame_End
+
+$Frame 1
+$Image 10 1 1 center 25 25
+$Frame_End
+
+$Frame 2
+$Image 10 2 1 center 25 25
+$Frame_End
+
+$Frame 3
+$Image 10 3 1 center 25 25
+$Frame_End
+
+$Frame 4
+$Image 10 4 1 center 25 25
+$Frame_End
+
+$Frame 5
+$Image 11 0 1 center 60 58
+$Frame_End
+
+$Frame 6
+$Image 11 1 1 center 60 58
+$Frame_End
+
+$Frame 7
+$Image 11 2 1 center 60 58
+$Frame_End
+
+$Frame 8
+$Image 11 3 1 center 60 58
+$Frame_End
+
+$Frame 9
+$Image 11 4 1 center 60 58
+$Frame_End
+
+$Frame 10
+$Image 11 5 1 center 60 58
+$Frame_End
+
+$Frame 11
+$Image 11 6 1 center 60 58
+$Frame_End
+
+$Frame 12
+$Image 11 7 1 center 60 58
+$Frame_End
+
+$Frame 13
+$Image 11 8 1 center 60 58
+$Frame_End
+
+$Frame 14
+$Image 11 9 1 center 60 58
+$Frame_End
+
+$Frame 15
+$Image 11 10 1 center 60 58
+$Frame_End
+
+$Frame 16
+$Image 11 11 1 center 60 58
+$Frame_End
+
+$Frame 17
+$Image 11 12 1 center 60 58
+$Frame_End
+
+$Frame 18
+$Image 11 13 1 center 60 58
+$Frame_End
+
+$Frame 19
+$Image 11 14 1 center 60 58
+$Frame_End
+
+$Frame 20
+$Image 12 0 1 center 25 25
+$Frame_End
+
+$Frame 21
+$Image 12 1 1 center 25 25
+$Frame_End
+
+$Frame 22
+$Image 12 2 1 center 25 25
+$Frame_End
+
+$Frame 23
+$Image 12 3 1 center 25 25
+$Frame_End
+
+$Frame 24
+$Image 12 4 1 center 25 25
+$Frame_End
+
+$Frame 25
+$Image 12 5 1 center 25 25
+$Frame_End
+
+$Frame 26
+$Image 12 6 1 center 25 25
+$Frame_End
+
+$Frame 27
+$Image 12 7 1 center 25 25
+$Frame_End
+
+$Frame 28
+$Image 12 8 1 center 25 25
+$Frame_End
+
+$Frame 29
+$Image 12 9 1 center 25 25
+$Frame_End
+
+$Frame 30
+$Image 12 10 1 center 25 30
+$Frame_End
+
+$Frame 31
+$Image 12 11 1 center 25 30
+$Frame_End
+
+$Frame 32
+$Image 12 12 1 center 25 30
+$Frame_End
+
+$Frame 33
+$Image 12 13 1 center 25 34
+$Frame_End
+
+$Frame 34
+$Image 12 14 1 center 25 34
+$Frame_End
+
+$Frame 35
+$Image 12 15 1 center 25 34
+$Frame_End
+
+$Frame 36
+$Image 12 16 1 center 25 35
+$Frame_End
+
+$Frame 37
+$Image 12 17 1 center 25 40
+$Frame_End
+
+$Frame 38
+$Image 12 18 1 center 25 40
+$Frame_End
+
+$Frame 39
+$Image 12 19 1 center 25 40
+$Frame_End
+
+$Frame 40
+$Image 12 20 1 center 25 40
+$Frame_End
+
+$Frame 41
+$Image 12 21 1 center 25 40
+$Frame_End
+
+$Frame 42
+$Image 12 22 1 center 25 45
+$Frame_End
+
+$Frame 43
+$Image 12 23 1 center 25 45
+$Frame_End
+
+$Frame 44
+$Image 12 24 1 center 25 45
+$Frame_End
+
+$Frame 45
+$Image 12 25 1 center 25 45
+$Frame_End
+
+$Frame 46
+$Image 13 0 1 center 12 12
+$Frame_End
+
+$Frame 50
+$Image 11 19 1 center 60 58
+$Attack 30 28 90 88
+$Frame_End
+
+$Frame 60
+$Image 14 0 1 center 10 10
+$Frame_End
+
+$Frame 61
+$Image 14 1 1 center 10 10
+$Frame_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 spark_vulcan_hit
+$FrameCount 5 next 1000
+0 1 2 3 4
+2 2 3 3 3
+$Anim_End
+
+$Anim 1 exp_rocket
+$FrameCount 15 next 1000
+5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+2 2 2 2 2 3 3 3 3 3 3 3 3 3 3
+$Anim_End
+
+$Anim 2 exp
+$FrameCount 26 next 1000
+20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45
+2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+$Anim_End
+
+$Anim 3 nozzle_flash
+$FrameCount 1 next 1000
+46
+3
+$Anim_End
+
+$Anim 4 rocket_attack_judge
+$FrameCount 1 next 1000
+50
+30
+$Anim_End
+
+$Anim 5 shadow
+$FrameCount 2 loop -1
+60 60
+2 2
+$Anim_End
+
+#Animations_End

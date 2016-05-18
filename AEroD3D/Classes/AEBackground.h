@@ -64,7 +64,7 @@ class AEBGLayer {
 
 public:
 
-    static const INT MAX_LAYER_ELEMENTS			= 50;
+    static const INT MAX_LAYER_ELEMENTS			= 500;
 
     AEBGLayer(AERO_BG_LAYER_DESC desc);
 
@@ -102,9 +102,9 @@ class AEBackground {
 
 public:
 
-    static const INT MAX_LAYER_COUNT			= 10;
-    static const INT MAX_ANIM_COUNT             = 50;
-    static const INT MAX_PLATFORM_COUNT         = 50;
+    static const INT MAX_LAYER_COUNT			= 100;
+    static const INT MAX_ANIM_COUNT             = 500;
+    static const INT MAX_PLATFORM_COUNT         = 500;
     static const INT ON_LANDFORM_TOLERANCE		= 2;
 
     AEBackground(AERO_BACKGROUND_DESC desc);

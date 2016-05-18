@@ -1,0 +1,112 @@
+#Object_Head
+
+Name: Bullets
+Type: 2
+
+#Object_Head_End
+
+
+#Frames
+
+$Frame 0
+$Image 5 0 1 center 1 12
+$Attack 0 0 2 15
+$Frame_End
+
+$Frame 5
+$Image 6 0 1 center 5 16
+$Frame_End
+
+$Frame 6
+$Image 6 1 1 center 5 16
+$Frame_End
+
+$Frame 7
+$Image 6 2 1 center 5 16
+$Frame_End
+
+$Frame 8
+$Image 6 3 1 center 5 16
+$Frame_End
+
+$Frame 9
+$Image 6 4 1 center 5 16
+$Frame_End
+
+$Frame 10
+$Image 6 5 1 center 5 16
+$Frame_End
+
+$Frame 11
+$Image 6 6 1 center 5 16
+$Frame_End
+
+$Frame 12
+$Image 6 7 1 center 5 16
+$Frame_End
+
+$Frame 13
+$Image 6 8 1 center 5 16
+$Frame_End
+
+$Frame 14
+$Image 7 0 1 center 4 4
+$Attack 3 3 5 5
+$Frame_End
+
+$Frame 15
+$Image 7 1 1 center 4 4
+$Attack 3 3 5 5
+$Frame_End
+
+$Frame 16
+$Image 7 2 1 center 4 4
+$Attack 3 3 5 5
+$Frame_End
+
+$Frame 17
+$Image 7 3 1 center 4 4
+$Attack 3 3 5 5
+$Frame_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 player_vulcan
+$FrameCount 1 next 1000
+0
+50
+$Anim_End
+
+$Anim 1 enemy_rocket
+$FrameCount 3 loop 2
+7 6 5
+3 3 3
+$TTL 500
+$Anim_End
+
+$Anim 2 enemy_rocket
+$FrameCount 4 next 1000
+8 8 8 8
+1 25 1 1
+$CreateSprite object: 5 action: 3 at: 5 20 frame: 1 $End
+$CreateSprite object: 10 action: 1 at: 5 16 frame: 2 $End
+$CreateSprite object: 10 action: 4 at: 5 16 frame: 3 $End
+$Anim_End
+
+$Anim 3 enemy_rocket_fire
+$FrameCount 5 next 1000
+9 10 11 12 13
+3 3 3 3 3
+$Anim_End
+
+$Anim 4 enemy_bullet
+$FrameCount 4 loop 1000
+14 15 16 17
+2 2 2 2
+$TTL 200
+$Anim_End
+
+#Animations_End

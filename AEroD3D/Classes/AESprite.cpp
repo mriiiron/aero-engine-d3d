@@ -182,6 +182,7 @@ XMVECTOR AESprite::getVelocityVector() {
 
 
 VOID AESprite::platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<AEPlatform>* platformTable) {
+
     XMFLOAT2 sprOldPos = { cx_old, cy_old };
     XMFLOAT2 sprNewPos = { cx_old + (flip ? -1 : 1) * vx, cy_old + vy };
     for (INT iHash = 0; iHash < platformTable->getHashCount(); iHash++) {
@@ -193,7 +194,6 @@ VOID AESprite::platformCollisionCheck(FLOAT cx_old, FLOAT cy_old, AEHashedTable<
             }
         }
     }
-
 }
 
 VOID AESprite::platformCollision(AEPlatform* platform, INT tailNodeIndex, AECollisionResult collisionResult) {

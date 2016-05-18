@@ -42,7 +42,7 @@ AECollisionResult AENSCollision::vectorAndSegment(XMFLOAT2 A, XMFLOAT2 B, XMFLOA
     FLOAT r2left = (C.x < D.x ? C.x : D.x), r2right = C.x + D.x - r2left;
     FLOAT r2top = (C.y < D.y ? C.y : D.y), r2bottom = C.y + D.y - r2top;
 
-    if (AENSCollision::rectAndRect(AERect(r1left, r1right, r1top, r1bottom), AERect(r2left, r2right, r2top, r2bottom)).isCollided) {
+    if (AENSCollision::rectAndRect(AERect(r1left, r1top, r1right, r1bottom), AERect(r2left, r2top, r2right, r2bottom)).isCollided) {
 
         // Vector AB with segment CD
         XMFLOAT2 vecABf = { B.x - A.x, B.y - A.y };

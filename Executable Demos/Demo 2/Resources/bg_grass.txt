@@ -1,0 +1,372 @@
+#BG_Head
+
+Name: Grassland
+
+#BG_Head_End
+
+
+#Frames
+
+$Frame 0
+$Image 10 0 1 center 0 0
+$Frame_End
+
+$Frame 1
+$Image 10 1 1 center 0 0
+$Frame_End
+
+$Frame 2
+$Image 10 2 1 center 0 0
+$Frame_End
+
+$Frame 3
+$Image 10 3 1 center 0 0
+$Frame_End
+
+$Frame 4
+$Image 10 4 1 center 0 0
+$Frame_End
+
+$Frame 5
+$Image 10 5 1 center 0 0
+$Frame_End
+
+$Frame 6
+$Image 10 6 1 center 0 0
+$Frame_End
+
+$Frame 7
+$Image 10 7 1 center 0 0
+$Frame_End
+
+$Frame 8
+$Image 10 8 1 center 0 0
+$Frame_End
+
+$Frame 10
+$Image 10 10 1 center 0 0
+$Frame_End
+
+$Frame 11
+$Image 10 11 1 center 0 0
+$Frame_End
+
+$Frame 12
+$Image 10 12 1 center 0 0
+$Frame_End
+
+$Frame 13
+$Image 10 13 1 center 0 0
+$Frame_End
+
+$Frame 14
+$Image 10 14 1 center 0 0
+$Frame_End
+
+$Frame 15
+$Image 10 15 1 center 0 0
+$Frame_End
+
+$Frame 16
+$Image 10 16 1 center 0 0
+$Frame_End
+
+$Frame 17
+$Image 10 17 1 center 0 0
+$Frame_End
+
+$Frame 18
+$Image 10 18 1 center 0 0
+$Frame_End
+
+$Frame 20
+$Image 10 20 1 center 0 0
+$Frame_End
+
+$Frame 21
+$Image 10 21 1 center 0 0
+$Frame_End
+
+$Frame 22
+$Image 10 22 1 center 0 0
+$Frame_End
+
+$Frame 23
+$Image 10 23 1 center 0 0
+$Frame_End
+
+$Frame 24
+$Image 10 24 1 center 0 0
+$Frame_End
+
+$Frame 25
+$Image 10 25 1 center 0 0
+$Frame_End
+
+$Frame 26
+$Image 10 26 1 center 0 0
+$Frame_End
+
+$Frame 27
+$Image 10 27 1 center 0 0
+$Frame_End
+
+$Frame 28
+$Image 10 28 1 center 0 0
+$Frame_End
+
+$Frame 30
+$Image 10 30 1 center 0 0
+$Frame_End
+
+$Frame 31
+$Image 10 31 1 center 0 0
+$Frame_End
+
+$Frame 32
+$Image 10 32 1 center 0 0
+$Frame_End
+
+$Frame 40
+$Image 10 40 1 center 0 0
+$Frame_End
+
+$Frame 41
+$Image 10 41 1 center 0 0
+$Frame_End
+
+$Frame 42
+$Image 10 42 1 center 0 0
+$Frame_End
+
+$Frame 50
+$Image 11 0 1 center 0 0
+$Frame_End
+
+$Frame 51
+$Image 12 0 1 center 0 0
+$Frame_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 grass_tile_stuff_0
+$FrameCount 1 loop -1
+0
+10
+$Anim_End
+
+$Anim 1 grass_tile_surface_0
+$FrameCount 1 loop -1
+1
+10
+$Anim_End
+
+$Anim 2 grass_tile_surface_1
+$FrameCount 1 loop -1
+2
+10
+$Anim_End
+
+$Anim 3 grass_tile_surface_2
+$FrameCount 1 loop -1
+3
+10
+$Anim_End
+
+$Anim 4 grass_tile_surface_3
+$FrameCount 1 loop -1
+4
+10
+$Anim_End
+
+$Anim 10 grass_tile_stuff_1
+$FrameCount 1 loop -1
+10
+10
+$Anim_End
+
+$Anim 11 grass_tile_slope_0
+$FrameCount 1 loop -1
+11
+10
+$Anim_End
+
+$Anim 12 grass_tile_slope_1
+$FrameCount 1 loop -1
+12
+10
+$Anim_End
+
+$Anim 15 grass_tile_inert_0
+$FrameCount 1 loop -1
+15
+10
+$Anim_End
+
+$Anim 16 grass_tile_inert_1
+$FrameCount 1 loop -1
+16
+10
+$Anim_End
+
+$Anim 20 grass_tile_stuff_2
+$FrameCount 1 loop -1
+20
+10
+$Anim_End
+
+$Anim 21 grass_tile_slope_2
+$FrameCount 1 loop -1
+21
+10
+$Anim_End
+
+$Anim 22 grass_tile_slope_3
+$FrameCount 1 loop -1
+22
+10
+$Anim_End
+
+$Anim 30 tree_1
+$FrameCount 1 loop -1
+30
+10
+$Anim_End
+
+$Anim 31 tree_2
+$FrameCount 1 loop -1
+31
+10
+$Anim_End
+
+$Anim 32 tree_3
+$FrameCount 1 loop -1
+32
+10
+$Anim_End
+
+$Anim 40 tree_4
+$FrameCount 1 loop -1
+40
+10
+$Anim_End
+
+$Anim 41 tree_5
+$FrameCount 1 loop -1
+41
+10
+$Anim_End
+
+$Anim 42 tree_6
+$FrameCount 1 loop -1
+42
+10
+$Anim_End
+
+$Anim 50 bg
+$FrameCount 1 loop -1
+50
+10
+$Anim_End
+
+$Anim 51 hills
+$FrameCount 1 loop -1
+51
+10
+$Anim_End
+
+#Animations_End
+
+
+#Layers
+
+$Layer 0 bg
+$Depth 50
+$Element 50 -960 -240 $End
+$Element 50 -320 -240 $End
+$Element 50 320 -240 $End
+$Layer_End
+
+$Layer 1 hills
+$Depth 25
+$Element 51 -960 -240 $End
+$Element 51 -320 -240 $End
+$Element 51 320 -240 $End
+$Layer_End
+
+$Layer 2 map
+$Depth 0
+$Element 2 -320 -64 $End
+$Element 0 -320 0 $End
+$Element 0 -320 64 $End
+$Element 20 -320 128 $End
+$Element 2 -256 -64 $End
+$Element 10 -256 0 $End
+$Element 0 -256 64 $End
+$Element 20 -256 128 $End
+$Element 32 -192 -128 $End
+$Element 2 -192 -64 $End
+$Element 0 -192 0 $End
+$Element 0 -192 64 $End
+$Element 10 -192 128 $End
+$Element 3 -128 -64 $End
+$Element 20 -128 0 $End
+$Element 16 -128 64 $End
+$Element 0 -128 128 $End
+$Element 40 -64 0 $End
+$Element 2 -64 64 $End
+$Element 10 -64 128 $End
+$Element 2 0 64 $End
+$Element 0 0 128 $End
+$Element 11 64 0 $End
+$Element 21 64 64 $End
+$Element 0 64 128 $End
+$Element 42 128 -64 $End
+$Element 2 128 0 $End
+$Element 0 128 64 $End
+$Element 10 128 128 $End
+$Element 12 192 0 $End
+$Element 22 192 64 $End
+$Element 0 192 128 $End
+$Element 2 256 64 $End
+$Element 10 256 128 $End
+$Element 12 320 64 $End
+$Element 22 320 128 $End
+$Element 2 384 128 $End
+$Element 31 448 64 $End
+$Element 2 448 128 $End
+$Element 1 512 0 $End
+$Element 20 512 64 $End
+$Element 15 512 128 $End
+$Element 2 576 0 $End
+$Element 20 576 64 $End
+$Element 0 576 128 $End
+$Element 2 640 0 $End
+$Element 0 640 64 $End
+$Element 10 640 128 $End
+$Element 2 704 0 $End
+$Element 0 704 64 $End
+$Element 0 704 128 $End
+$Layer_End
+
+#Layers_End
+
+
+#Platforms
+
+$Platform 0
+$NodeCount 8
+-64 64
+64 64
+128 0
+192 0
+256 64
+320 64
+384 128
+512 128
+$Platform_End
+
+#Platforms_End

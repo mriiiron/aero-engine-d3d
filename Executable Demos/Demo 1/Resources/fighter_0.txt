@@ -1,0 +1,187 @@
+#Object_Head
+
+Name: Fighter_A
+Type: 0
+
+#Object_Head_End
+
+
+#Frames
+
+$Frame 0
+$Image 0 0 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 1
+$Image 0 10 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 2
+$Image 0 1 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 3
+$Image 0 2 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 4
+$Image 0 3 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 5
+$Image 0 4 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 6
+$Image 0 5 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 7
+$Image 0 6 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 8
+$Image 0 7 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 9
+$Image 0 8 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 10
+$Image 0 11 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 11
+$Image 0 12 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 12
+$Image 0 13 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 13
+$Image 0 14 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 14
+$Image 0 15 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 15
+$Image 0 16 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 16
+$Image 0 17 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 17
+$Image 0 18 1 center 20 8
+$Body 12 3 28 16
+$AttachSlot 0 20 12
+$Frame_End
+
+$Frame 18
+$Image 0 19 1 center 20 8
+$AttachSlot 0 20 12
+$Frame_End
+
+#Frames_End
+
+
+#Animations
+
+$Anim 0 idle
+$FrameCount 2 loop -1
+0 1
+5 5
+$Anim_End
+
+$Anim 1 move_left
+$FrameCount 7 next 2
+10 11 12 13 14 15 16
+8 8 8 8 8 8 8
+$Anim_End
+
+$Anim 2 move_left_hold
+$FrameCount 1 loop -1
+17
+8
+$Anim_End
+
+$Anim 3 move_left_recover
+$FrameCount 7 next 0
+16 15 14 13 12 11 10
+8 8 8 8 8 8 8
+$Anim_End
+
+$Anim 4 move_right
+$FrameCount 7 next 5
+2 3 4 5 6 7 8
+8 8 8 8 8 8 8
+$Anim_End
+
+$Anim 5 move_right_hold
+$FrameCount 1 loop -1
+9
+8
+$Anim_End
+
+$Anim 6 move_right_recover
+$FrameCount 7 next 0
+8 7 6 5 4 3 2
+8 8 8 8 8 8 8
+$Anim_End
+
+$Anim 10 killed
+$FrameCount 4 next 11
+18 18 18 18
+1 8 8 1
+$CreateSprite object: 10 action: 2 at: 20 8 frame: 1 $End
+$CreateSprite object: 10 action: 2 at: 8 15 frame: 2 $End
+$CreateSprite object: 10 action: 2 at: 27 17 frame: 3 $End
+$Anim_End
+
+$Anim 11 killed
+$FrameCount 1 loop -1
+18
+10
+$Anim_End
+
+
+#Animations_End
