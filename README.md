@@ -1,6 +1,8 @@
 aero-engine-d3d
 ===============
 
+> NOTE: This project has been migrated into [WesaJS](https://github.com/mriiiron/wesa) with WebGL/JavaScript!
+
 An 2D game engine created out of DirectX & C++.
 
 Recent demo is released.
